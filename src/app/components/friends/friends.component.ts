@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FriendsService, FriendWithPlans, PendingRequestDetail } from '../../services/friends.service';
+import { FriendsService, FriendWithPlans, PendingRequestDetail, SentRequestDetail } from '../../services/friends.service';
 import { UserProfile, WorkoutPlan } from '../../models/gym.models';
 
 @Component({
@@ -34,10 +34,10 @@ import { UserProfile, WorkoutPlan } from '../../models/gym.models';
       }
 
       <!-- Navigation Tabs -->
-      <div class="flex border-b border-slate-800/80 gap-2">
+      <div class="flex border-b border-slate-800/80 gap-2 overflow-x-auto">
         <button 
           (click)="activeTab.set('friends')"
-          class="px-5 py-3 font-bold text-xs uppercase tracking-wider transition-all border-b-2"
+          class="px-4 py-3 font-bold text-xs uppercase tracking-wider transition-all border-b-2 shrink-0"
           [ngClass]="activeTab() === 'friends' ? 'border-neon-mint text-neon-mint bg-slate-900/40 rounded-t-xl' : 'border-transparent text-slate-400 hover:text-white'"
         >
           Meine Freunde ({{ friends().length }})
@@ -45,10 +45,10 @@ import { UserProfile, WorkoutPlan } from '../../models/gym.models';
 
         <button 
           (click)="activeTab.set('requests')"
-          class="px-5 py-3 font-bold text-xs uppercase tracking-wider transition-all border-b-2 flex items-center gap-2"
+          class="px-4 py-3 font-bold text-xs uppercase tracking-wider transition-all border-b-2 flex items-center gap-2 shrink-0"
           [ngClass]="activeTab() === 'requests' ? 'border-neon-mint text-neon-mint bg-slate-900/40 rounded-t-xl' : 'border-transparent text-slate-400 hover:text-white'"
         >
-          <span>Anfragen</span>
+          <span>Eingehend</span>
           @if (pendingRequests().length > 0) {
             <span class="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black animate-pulse">
               {{ pendingRequests().length }}
@@ -57,8 +57,21 @@ import { UserProfile, WorkoutPlan } from '../../models/gym.models';
         </button>
 
         <button 
+          (click)="activeTab.set('sent')"
+          class="px-4 py-3 font-bold text-xs uppercase tracking-wider transition-all border-b-2 flex items-center gap-2 shrink-0"
+          [ngClass]="activeTab() === 'sent' ? 'border-neon-mint text-neon-mint bg-slate-900/40 rounded-t-xl' : 'border-transparent text-slate-400 hover:text-white'"
+        >
+          <span>Gesendet</span>
+          @if (sentRequests().length > 0) {
+            <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold">
+              {{ sentRequests().length }}
+            </span>
+          }
+        </button>
+
+        <button 
           (click)="activeTab.set('search')"
-          class="px-5 py-3 font-bold text-xs uppercase tracking-wider transition-all border-b-2"
+          class="px-4 py-3 font-bold text-xs uppercase tracking-wider transition-all border-b-2 shrink-0"
           [ngClass]="activeTab() === 'search' ? 'border-neon-mint text-neon-mint bg-slate-900/40 rounded-t-xl' : 'border-transparent text-slate-400 hover:text-white'"
         >
           Freunde suchen
@@ -130,7 +143,7 @@ import { UserProfile, WorkoutPlan } from '../../models/gym.models';
         </div>
       }
 
-      <!-- TAB 2: ANFRAGEN -->
+      <!-- TAB 2: EINGEHENDE ANFRAGEN -->
       @if (activeTab() === 'requests') {
         <div class="space-y-4 max-w-2xl mx-auto">
           @for (req of pendingRequests(); track req.friendshipId) {
@@ -162,14 +175,50 @@ import { UserProfile, WorkoutPlan } from '../../models/gym.models';
               <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
-              <h3 class="text-base font-bold text-slate-300">Keine offenen Anfragen</h3>
-              <p class="text-xs text-slate-500 mt-1">Neue Freundschaftsanfragen erscheinen an dieser Stelle.</p>
+              <h3 class="text-base font-bold text-slate-300">Keine eingehenden Anfragen</h3>
+              <p class="text-xs text-slate-500 mt-1">Wenn dir jemand eine Anfrage sendet, erscheint sie an dieser Stelle.</p>
             </div>
           }
         </div>
       }
 
-      <!-- TAB 3: FREUNDE SUCHEN -->
+      <!-- TAB 3: GESENDETE ANFRAGEN & STATUS -->
+      @if (activeTab() === 'sent') {
+        <div class="space-y-4 max-w-2xl mx-auto">
+          @for (req of sentRequests(); track req.friendshipId) {
+            <div class="glass-card rounded-2xl p-5 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <img [src]="req.recipient.photoURL" class="w-12 h-12 rounded-full border border-slate-700 bg-slate-800 shrink-0" alt="Avatar" />
+                <div>
+                  <h3 class="text-base font-bold text-white">{{ req.recipient.displayName }}</h3>
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <span class="text-xs text-slate-400">Level {{ req.recipient.stats.level }}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 font-extrabold uppercase">
+                      Ausstehend
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button 
+                (click)="cancelSentRequest(req.friendshipId)"
+                class="px-4 py-2 bg-slate-900 hover:bg-red-950/30 border border-slate-800 hover:border-red-900/40 text-slate-400 hover:text-red-400 font-semibold rounded-xl text-xs transition-colors"
+              >
+                Zurückziehen
+              </button>
+            </div>
+          } @empty {
+            <div class="glass-card rounded-2xl p-12 text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+              <h3 class="text-base font-bold text-slate-300">Keine gesendeten Anfragen</h3>
+              <p class="text-xs text-slate-500 mt-1">Hier siehst du den Status deiner abgesendeten Freundschaftsanfragen.</p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- TAB 4: FREUNDE SUCHEN -->
       @if (activeTab() === 'search') {
         <div class="space-y-6 max-w-2xl mx-auto">
           <!-- Search input -->
@@ -230,11 +279,12 @@ export class FriendsComponent {
   private friendsService = inject(FriendsService);
   private router = inject(Router);
 
-  activeTab = signal<'friends' | 'requests' | 'search'>('friends');
+  activeTab = signal<'friends' | 'requests' | 'sent' | 'search'>('friends');
   toastMessage = signal<string | null>(null);
 
   friends = this.friendsService.friends;
   pendingRequests = this.friendsService.pendingRequests;
+  sentRequests = this.friendsService.sentRequests;
   searchResults = this.friendsService.searchResults;
 
   searchQuery = '';
@@ -256,6 +306,11 @@ export class FriendsComponent {
   async declineRequest(friendshipId: string) {
     await this.friendsService.declineFriendRequest(friendshipId);
     this.showToast('Anfrage abgelehnt.');
+  }
+
+  async cancelSentRequest(friendshipId: string) {
+    await this.friendsService.cancelSentRequest(friendshipId);
+    this.showToast('Abgesendete Anfrage zurückgezogen.');
   }
 
   copyPlan(plan: WorkoutPlan) {
