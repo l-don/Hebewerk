@@ -8,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { WorkoutService } from '../../services/workout.service';
 import { FriendsService } from '../../services/friends.service';
 import { MockDataService } from '../../services/mock-data.service';
-import { WorkoutPlan, ActivityFeedItem } from '../../models/gym.models';
+import { WorkoutPlan, ActivityFeedItem, Exercise } from '../../models/gym.models';
 import { environment } from '../../../environments/environment';
 
 // Register Chart.js components
@@ -247,6 +247,7 @@ Chart.register(...registerables);
             </div>
           } @else {
             @if (previewPlan(); as plan) {
+              
               <!-- Header -->
               <div class="space-y-1 pr-6">
                 <div class="flex items-center gap-2">
@@ -261,16 +262,28 @@ Chart.register(...registerables);
                 }
               </div>
 
-              <!-- Exercises List -->
-              <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display block">Enthaltene Übungen ({{ plan.exercises.length }})</span>
-                @for (ex of plan.exercises; track ex.id; let idx = $index) {
-                  <div class="p-3 rounded-xl bg-iron-950 border border-slate-800 flex items-center justify-between gap-4">
-                    <div>
-                      <span class="text-sm font-bold text-white font-display block">{{ idx + 1 }}. {{ ex.name }}</span>
-                      <span class="text-xs text-slate-400 font-mono">{{ ex.sets.length }} Sätze × {{ ex.sets[0]?.reps || 8 }} Wdh.</span>
+              <!-- Compact Exercises & Sets Overview List -->
+              <div class="space-y-3 max-h-64 overflow-y-auto pr-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display block">Enthaltene Übungen & Gewichte ({{ plan.exercises.length }})</span>
+                @for (ex of plan.exercises; track ex.id || idx; let idx = $index) {
+                  <div class="p-3 rounded-xl bg-iron-950 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm font-bold text-white font-display">{{ idx + 1 }}. {{ ex.name }}</span>
+                      <span class="text-xs font-mono font-bold text-forge-amber">{{ ex.sets.length }} {{ ex.sets.length === 1 ? 'Satz' : 'Sätze' }}</span>
                     </div>
-                    <span class="text-xs font-mono font-bold text-forge-amber shrink-0">{{ ex.sets[0]?.weight || 0 }} kg</span>
+                    <!-- Detailed sets pill overview -->
+                    <div class="flex flex-wrap gap-1.5">
+                      @for (s of ex.sets; track setIdx; let setIdx = $index) {
+                        <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-iron-900 border border-slate-800 text-slate-300">
+                          S{{ setIdx + 1 }}: <strong class="text-white">{{ s.reps }}×</strong> <span class="text-steel-cyan font-bold">{{ s.weight }}kg</span>
+                        </span>
+                      }
+                    </div>
+                  </div>
+                }
+                @if (plan.exercises.length === 0) {
+                  <div class="p-4 rounded-xl bg-iron-950 border border-slate-800 text-center text-xs text-slate-400 font-mono">
+                    Keine Übungs-Details verfügbar.
                   </div>
                 }
               </div>
@@ -287,6 +300,7 @@ Chart.register(...registerables);
                   <span>Plan zu meinen Plänen kopieren</span>
                 </button>
               </div>
+
             } @else {
               <!-- Private Plan Info -->
               <div class="text-center py-6 space-y-3">
@@ -518,13 +532,34 @@ export class DashboardComponent implements OnDestroy {
       }
     }
 
+    // 4. Construct fallback plan from embedded activity item exercises if not found in store
+    if (!found && item.details.exercises && item.details.exercises.length > 0) {
+      const convertedExercises: Exercise[] = item.details.exercises.map((ex, idx) => ({
+        id: 'ex_feed_' + idx,
+        name: ex.name,
+        sets: ex.sets.map(s => ({
+          reps: s.reps,
+          weight: s.weight,
+          restSeconds: 90
+        }))
+      }));
+
+      found = {
+        id: planId || 'plan_feed_' + Math.random().toString(36).substring(2, 7),
+        userId: item.userId,
+        name: item.details.workoutName,
+        description: `Absolvierter Trainingsplan von ${item.displayName}`,
+        isPublic: true,
+        exercises: convertedExercises
+      };
+    }
+
     this.isLoadingPlan.set(false);
 
     if (isMine) {
       if (found) {
         this.previewPlan.set(found);
       } else {
-        // Fallback for user's own plan if plan object wasn't found in memory/FS
         this.previewPlan.set({
           id: planId || 'plan_own',
           userId: user!.uid,
@@ -534,7 +569,7 @@ export class DashboardComponent implements OnDestroy {
           exercises: []
         });
       }
-    } else if (found && (found.isPublic || (user && found.userId === user.uid))) {
+    } else if (found && (found.isPublic !== false)) {
       this.previewPlan.set(found);
     } else {
       this.isPlanPrivate.set(true);

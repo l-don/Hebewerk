@@ -84,5 +84,6 @@ export interface ActivityFeedItem {
     workoutName: string;
     xpGained: number;
     detailsString: string;
+    exercises?: LoggedExercise[];
   };
 }

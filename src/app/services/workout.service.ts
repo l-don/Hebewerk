@@ -92,6 +92,7 @@ export class WorkoutService {
   }
 
   private setDefaultPlans(userId: string) {
+    const user = this.authService.currentUser();
     const defaultPlans: WorkoutPlan[] = [
       {
         id: 'plan_full_body',
@@ -175,6 +176,13 @@ export class WorkoutService {
     ];
     this._plans.set(defaultPlans);
     this.savePlans(userId, defaultPlans);
+
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      defaultPlans.forEach(plan => {
+        const planDocRef = doc(this.firestore!, `workout_plans/${plan.id}`);
+        setDoc(planDocRef, plan, { merge: true }).catch(e => {});
+      });
+    }
   }
 
   // --- CRUD Plans ---
@@ -200,7 +208,7 @@ export class WorkoutService {
     if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
       try {
         const planDocRef = doc(this.firestore, `workout_plans/${plan.id}`);
-        await setDoc(planDocRef, plan);
+        await setDoc(planDocRef, plan, { merge: true });
       } catch (e) {
         console.warn('Firestore savePlan error', e);
       }
@@ -323,7 +331,8 @@ export class WorkoutService {
         planId: log.planId,
         workoutName: log.planName,
         xpGained,
-        detailsString: `${log.exercises.length} Übungen in ${log.durationMinutes} min absolviert`
+        detailsString: `${log.exercises.length} Übungen in ${log.durationMinutes} min absolviert`,
+        exercises: log.exercises
       }
     };
     feed.unshift(newItem);
