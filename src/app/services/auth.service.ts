@@ -1,10 +1,16 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { Auth, user, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from '@angular/fire/auth';
+import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { UserProfile, UserStats } from '../models/gym.models';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private afAuth = inject(Auth, { optional: true });
+  private firestore = inject(Firestore, { optional: true });
+
   // Reactive signals for current user
   private _currentUser = signal<UserProfile | null>(null);
   readonly currentUser = computed(() => this._currentUser());
@@ -12,6 +18,73 @@ export class AuthService {
 
   constructor() {
     this.loadSession();
+    this.listenToAuthChanges();
+  }
+
+  private isFirebaseConfigured(): boolean {
+    return !!(environment.firebase.apiKey && environment.firebase.apiKey !== 'YOUR_FIREBASE_API_KEY');
+  }
+
+  private listenToAuthChanges() {
+    if (this.afAuth && this.isFirebaseConfigured()) {
+      user(this.afAuth).subscribe(async (fbUser) => {
+        if (fbUser) {
+          const profile = await this.fetchOrCreateFirestoreUser(fbUser);
+          this._currentUser.set(profile);
+          localStorage.setItem('gym_tracker_user', JSON.stringify(profile));
+        }
+      });
+    }
+  }
+
+  private async fetchOrCreateFirestoreUser(fbUser: any): Promise<UserProfile> {
+    if (!this.firestore) return this.createDefaultProfile(fbUser.uid, fbUser.displayName || 'Athlet', fbUser.email);
+
+    const userDocRef = doc(this.firestore, `users/${fbUser.uid}`);
+    try {
+      const snap = await getDoc(userDocRef);
+      if (snap.exists()) {
+        return snap.data() as UserProfile;
+      }
+    } catch (e) {
+      console.warn('Firestore fetch failed, using local profile', e);
+    }
+
+    const newProfile: UserProfile = {
+      uid: fbUser.uid,
+      displayName: fbUser.displayName || fbUser.email?.split('@')[0] || 'Athlet',
+      photoURL: fbUser.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(fbUser.uid)}`,
+      createdAt: new Date().toISOString(),
+      stats: {
+        level: 1,
+        xp: 0,
+        currentStreak: 0,
+        lastActive: new Date().toISOString()
+      }
+    };
+
+    try {
+      await setDoc(userDocRef, newProfile);
+    } catch (e) {
+      console.warn('Firestore user doc creation failed', e);
+    }
+
+    return newProfile;
+  }
+
+  private createDefaultProfile(uid: string, name: string, email?: string): UserProfile {
+    return {
+      uid,
+      displayName: name || 'Athlet',
+      photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}`,
+      createdAt: new Date().toISOString(),
+      stats: {
+        level: 1,
+        xp: 0,
+        currentStreak: 0,
+        lastActive: new Date().toISOString()
+      }
+    };
   }
 
   private loadSession() {
@@ -28,111 +101,111 @@ export class AuthService {
   private saveSession(user: UserProfile) {
     this._currentUser.set(user);
     localStorage.setItem('gym_tracker_user', JSON.stringify(user));
+    this.syncProfileToFirestore(user);
+  }
+
+  private async syncProfileToFirestore(user: UserProfile) {
+    if (this.firestore && this.isFirebaseConfigured() && user.uid && !user.uid.startsWith('local_')) {
+      try {
+        const userDocRef = doc(this.firestore, `users/${user.uid}`);
+        await setDoc(userDocRef, user, { merge: true });
+      } catch (e) {
+        console.warn('Sync user profile to Firestore failed', e);
+      }
+    }
   }
 
   async loginWithEmail(email: string, password: string): Promise<UserProfile> {
-    // Simulated delay for premium UX feel
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    // Basic email login simulation
-    const defaultName = email.split('@')[0];
-    const user: UserProfile = {
-      uid: 'local_user_' + btoa(email).substring(0, 10),
-      displayName: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
-      photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(defaultName)}`,
-      createdAt: new Date().toISOString(),
-      stats: {
-        level: 1,
-        xp: 0,
-        currentStreak: 0,
-        lastActive: new Date().toISOString()
-      }
-    };
-
-    // If there is existing data in localstorage, use that stats instead
-    const usersDb = this.getUsersDb();
-    const existing = usersDb[user.uid];
-    if (existing) {
-      this.saveSession(existing);
-      return existing;
+    if (this.afAuth && this.isFirebaseConfigured()) {
+      const credential = await signInWithEmailAndPassword(this.afAuth, email, password);
+      const profile = await this.fetchOrCreateFirestoreUser(credential.user);
+      this.saveSession(profile);
+      return profile;
     }
 
-    usersDb[user.uid] = user;
-    this.saveUsersDb(usersDb);
+    // Local Fallback simulation
+    await new Promise(resolve => setTimeout(resolve, 600));
+    const defaultName = email.split('@')[0];
+    const uid = 'local_user_' + btoa(email).substring(0, 10);
+    const usersDb = this.getUsersDb();
+    let user = usersDb[uid];
+
+    if (!user) {
+      user = this.createDefaultProfile(uid, defaultName.charAt(0).toUpperCase() + defaultName.slice(1), email);
+      usersDb[uid] = user;
+      this.saveUsersDb(usersDb);
+    }
+
     this.saveSession(user);
     return user;
   }
 
   async signUpWithEmail(email: string, password: string, displayName: string): Promise<UserProfile> {
-    await new Promise(resolve => setTimeout(resolve, 800));
+    if (this.afAuth && this.isFirebaseConfigured()) {
+      const credential = await createUserWithEmailAndPassword(this.afAuth, email, password);
+      const profile: UserProfile = {
+        uid: credential.user.uid,
+        displayName: displayName || email.split('@')[0],
+        photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(displayName || email)}`,
+        createdAt: new Date().toISOString(),
+        stats: { level: 1, xp: 0, currentStreak: 0, lastActive: new Date().toISOString() }
+      };
+      this.saveSession(profile);
+      return profile;
+    }
 
-    const user: UserProfile = {
-      uid: 'local_user_' + btoa(email).substring(0, 10),
-      displayName: displayName || email.split('@')[0],
-      photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(displayName || email)}`,
-      createdAt: new Date().toISOString(),
-      stats: {
-        level: 1,
-        xp: 0,
-        currentStreak: 0,
-        lastActive: new Date().toISOString()
-      }
-    };
-
+    // Local Fallback
+    await new Promise(resolve => setTimeout(resolve, 600));
+    const uid = 'local_user_' + btoa(email).substring(0, 10);
+    const user = this.createDefaultProfile(uid, displayName || email.split('@')[0], email);
     const usersDb = this.getUsersDb();
-    usersDb[user.uid] = user;
+    usersDb[uid] = user;
     this.saveUsersDb(usersDb);
     this.saveSession(user);
     return user;
   }
 
   async loginWithGoogle(): Promise<UserProfile> {
-    await new Promise(resolve => setTimeout(resolve, 800));
+    if (this.afAuth && this.isFirebaseConfigured()) {
+      const provider = new GoogleAuthProvider();
+      const credential = await signInWithPopup(this.afAuth, provider);
+      const profile = await this.fetchOrCreateFirestoreUser(credential.user);
+      this.saveSession(profile);
+      return profile;
+    }
 
+    // Local Fallback
+    await new Promise(resolve => setTimeout(resolve, 600));
     const user: UserProfile = {
       uid: 'google_user_mock_123',
       displayName: 'Alex Athlete',
       photoURL: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Alex',
       createdAt: new Date().toISOString(),
-      stats: {
-        level: 4,
-        xp: 1450,
-        currentStreak: 3,
-        lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() // active yesterday
-      }
+      stats: { level: 4, xp: 1450, currentStreak: 3, lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() }
     };
 
     const usersDb = this.getUsersDb();
-    const existing = usersDb[user.uid];
-    if (existing) {
-      this.saveSession(existing);
-      return existing;
-    }
-
-    usersDb[user.uid] = user;
+    const existing = usersDb[user.uid] || user;
+    usersDb[user.uid] = existing;
     this.saveUsersDb(usersDb);
-    this.saveSession(user);
-    return user;
+    this.saveSession(existing);
+    return existing;
   }
 
   async logout(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 300));
+    if (this.afAuth && this.isFirebaseConfigured()) {
+      await signOut(this.afAuth);
+    }
     this._currentUser.set(null);
     localStorage.removeItem('gym_tracker_user');
   }
 
-  // Update user stats after a workout log
   updateStats(xpGained: number): UserStats {
     const user = this._currentUser();
-    if (!user) throw new Error('No user is logged in');
+    if (!user) throw new Error('No user logged in');
 
     const now = new Date();
     const lastActiveDate = new Date(user.stats.lastActive);
-    
-    // Streak logic:
-    // If active today: streak remains same
-    // If active yesterday (difference between 24h and 48h): streak increments
-    // If active longer ago: streak resets to 1
     const diffTime = Math.abs(now.getTime() - lastActiveDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
@@ -145,9 +218,6 @@ export class AuthService {
       newStreak = 1;
     }
 
-    // Gamification level-up calculation
-    // Level formula: level = floor(sqrt(xp / 100)) + 1
-    // i.e., Level 1: 0-99 XP, Level 2: 100-399 XP, Level 3: 400-899 XP, Level 4: 900-1599 XP, etc.
     const newXp = user.stats.xp + xpGained;
     const newLevel = Math.floor(Math.sqrt(newXp / 100)) + 1;
     const oldLevel = user.stats.level;
@@ -159,31 +229,18 @@ export class AuthService {
       lastActive: now.toISOString()
     };
 
-    const updatedUser: UserProfile = {
-      ...user,
-      stats: updatedStats
-    };
-
+    const updatedUser: UserProfile = { ...user, stats: updatedStats };
     this.saveSession(updatedUser);
 
-    // Save to users DB as well
-    const usersDb = this.getUsersDb();
-    usersDb[user.uid] = updatedUser;
-    this.saveUsersDb(usersDb);
-
     if (newLevel > oldLevel) {
-      // Trigger level up animation hook (handled by component listening)
       setTimeout(() => {
-        try {
-          (window as any).triggerConfetti?.();
-        } catch(e) {}
+        try { (window as any).triggerConfetti?.(); } catch(e) {}
       }, 100);
     }
 
     return updatedStats;
   }
 
-  // Local Storage Database helpers
   private getUsersDb(): Record<string, UserProfile> {
     const db = localStorage.getItem('gym_tracker_users_db');
     return db ? JSON.parse(db) : {};

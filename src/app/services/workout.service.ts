@@ -1,12 +1,15 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
+import { Firestore, collection, doc, setDoc, getDocs, query, where, deleteDoc } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
-import { WorkoutPlan, WorkoutLog, Exercise, ExerciseSet, LoggedExercise, LoggedSet } from '../models/gym.models';
+import { WorkoutPlan, WorkoutLog } from '../models/gym.models';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkoutService {
   private authService = inject(AuthService);
+  private firestore = inject(Firestore, { optional: true });
 
   // Reactive signals
   private _plans = signal<WorkoutPlan[]>([]);
@@ -16,16 +19,49 @@ export class WorkoutService {
   readonly logs = computed(() => this._logs().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
 
   constructor() {
-    // Load plans and logs when user changes
-    // Signals run reactive context, but we'll load once in constructor and on login change
     this.initializeData();
   }
 
-  initializeData() {
+  private isFirebaseConfigured(): boolean {
+    return !!(environment.firebase.apiKey && environment.firebase.apiKey !== 'YOUR_FIREBASE_API_KEY');
+  }
+
+  async initializeData() {
     const user = this.authService.currentUser();
     const userId = user ? user.uid : 'local_guest';
 
-    // 1. Load plans
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      try {
+        // Fetch plans from Firestore
+        const plansRef = collection(this.firestore, 'workout_plans');
+        const qPlans = query(plansRef, where('userId', '==', userId));
+        const snapPlans = await getDocs(qPlans);
+        const fsPlans: WorkoutPlan[] = [];
+        snapPlans.forEach(docSnap => fsPlans.push(docSnap.data() as WorkoutPlan));
+        
+        if (fsPlans.length > 0) {
+          this._plans.set(fsPlans);
+          localStorage.setItem(`gym_plans_${userId}`, JSON.stringify(fsPlans));
+        } else {
+          this.setDefaultPlans(userId);
+        }
+
+        // Fetch logs from Firestore
+        const logsRef = collection(this.firestore, 'workout_logs');
+        const qLogs = query(logsRef, where('userId', '==', userId));
+        const snapLogs = await getDocs(qLogs);
+        const fsLogs: WorkoutLog[] = [];
+        snapLogs.forEach(docSnap => fsLogs.push(docSnap.data() as WorkoutLog));
+        this._logs.set(fsLogs);
+        localStorage.setItem(`gym_logs_${userId}`, JSON.stringify(fsLogs));
+
+        return;
+      } catch (e) {
+        console.warn('Firestore initialization fallback to localStorage', e);
+      }
+    }
+
+    // Local Storage Fallback
     let storedPlans = localStorage.getItem(`gym_plans_${userId}`);
     if (storedPlans) {
       try {
@@ -37,7 +73,6 @@ export class WorkoutService {
       this.setDefaultPlans(userId);
     }
 
-    // 2. Load logs
     let storedLogs = localStorage.getItem(`gym_logs_${userId}`);
     if (storedLogs) {
       try {
@@ -137,7 +172,7 @@ export class WorkoutService {
   }
 
   // --- CRUD Plans ---
-  savePlan(plan: WorkoutPlan): void {
+  async savePlan(plan: WorkoutPlan): Promise<void> {
     const user = this.authService.currentUser();
     const userId = user ? user.uid : 'local_guest';
 
@@ -154,15 +189,34 @@ export class WorkoutService {
 
     this._plans.set(currentPlans);
     this.savePlans(userId, currentPlans);
+
+    // Sync to Firestore
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      try {
+        const planDocRef = doc(this.firestore, `workout_plans/${plan.id}`);
+        await setDoc(planDocRef, plan);
+      } catch (e) {
+        console.warn('Firestore savePlan error', e);
+      }
+    }
   }
 
-  deletePlan(planId: string): void {
+  async deletePlan(planId: string): Promise<void> {
     const user = this.authService.currentUser();
     const userId = user ? user.uid : 'local_guest';
 
     const currentPlans = this._plans().filter(p => p.id !== planId);
     this._plans.set(currentPlans);
     this.savePlans(userId, currentPlans);
+
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      try {
+        const planDocRef = doc(this.firestore, `workout_plans/${planId}`);
+        await deleteDoc(planDocRef);
+      } catch (e) {
+        console.warn('Firestore deletePlan error', e);
+      }
+    }
   }
 
   private savePlans(userId: string, plans: WorkoutPlan[]): void {
@@ -174,8 +228,6 @@ export class WorkoutService {
     const user = this.authService.currentUser();
     const userId = user ? user.uid : 'local_guest';
 
-    // 1. Calculate XP Gained
-    // XP = (sets * 10) + (volume / 100)
     let totalSets = 0;
     let totalVolume = 0;
 
@@ -192,35 +244,43 @@ export class WorkoutService {
     log.userId = userId;
     log.date = log.date || new Date().toISOString();
 
-    // 2. Save log
     const currentLogs = [log, ...this._logs()];
     this._logs.set(currentLogs);
     localStorage.setItem(`gym_logs_${userId}`, JSON.stringify(currentLogs));
 
-    // 3. Update User Stats if authenticated
     if (user) {
       this.authService.updateStats(xpGained);
     }
 
-    // 4. Update Activity Feed
     this.addToActivityFeed(log, xpGained);
+
+    // Sync log to Firestore async
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      const logDocRef = doc(this.firestore, `workout_logs/${log.id}`);
+      setDoc(logDocRef, log).catch(err => console.warn('Firestore logWorkout error', err));
+    }
 
     return xpGained;
   }
 
-  // Helper to load previous logged exercise sets for reference
   getPreviousWorkoutForPlan(planId: string): WorkoutLog | null {
     const matchingLogs = this._logs().filter(log => log.planId === planId);
     return matchingLogs.length > 0 ? matchingLogs[0] : null;
   }
 
-  // Set local logs manually (used by mock data service)
   setLogs(logs: WorkoutLog[]): void {
     const user = this.authService.currentUser();
     const userId = user ? user.uid : 'local_guest';
     
     this._logs.set(logs);
     localStorage.setItem(`gym_logs_${userId}`, JSON.stringify(logs));
+
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      logs.forEach(log => {
+        const logDocRef = doc(this.firestore!, `workout_logs/${log.id}`);
+        setDoc(logDocRef, log).catch(e => {});
+      });
+    }
   }
 
   clearLogs(): void {
@@ -230,16 +290,10 @@ export class WorkoutService {
     this._logs.set([]);
     localStorage.removeItem(`gym_logs_${userId}`);
 
-    // Clean stats of local user too
     if (user) {
       const resetUser = {
         ...user,
-        stats: {
-          level: 1,
-          xp: 0,
-          currentStreak: 0,
-          lastActive: new Date().toISOString()
-        }
+        stats: { level: 1, xp: 0, currentStreak: 0, lastActive: new Date().toISOString() }
       };
       localStorage.setItem('gym_tracker_user', JSON.stringify(resetUser));
       this.authService.loginWithEmail(user.displayName + '@gym.com', 'dummy').catch(() => {});
@@ -266,6 +320,11 @@ export class WorkoutService {
       }
     };
     feed.unshift(newItem);
-    localStorage.setItem('gym_activity_feed', JSON.stringify(feed.slice(0, 50))); // Keep last 50
+    localStorage.setItem('gym_activity_feed', JSON.stringify(feed.slice(0, 50)));
+
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      const feedDocRef = doc(this.firestore, `activity_feed/${newItem.id}`);
+      setDoc(feedDocRef, newItem).catch(e => {});
+    }
   }
 }
