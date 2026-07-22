@@ -57,7 +57,7 @@ import { UserPrivacySettings } from '../../models/gym.models';
               <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">Nutzer-ID</span>
               <p class="text-xs font-mono font-semibold text-slate-300 truncate max-w-xs">{{ user.uid }}</p>
               <div class="flex items-center justify-center sm:justify-start gap-3 mt-2">
-                <span class="text-xs font-bold text-amber-400 font-mono">LVL {{ user.stats.level }}</span>
+                <span class="text-xs font-bold text-forge-amber font-mono">LVL {{ user.stats.level }}</span>
                 <span class="text-xs text-slate-500">•</span>
                 <span class="text-xs font-bold text-slate-300 font-mono">{{ user.stats.xp }} XP</span>
               </div>
@@ -105,21 +105,21 @@ import { UserPrivacySettings } from '../../models/gym.models';
               <button 
                 (click)="privacySettings.profileVisibility = 'public'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.profileVisibility === 'public' ? 'bg-amber-500/15 border-amber-500/50 text-amber-400' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.profileVisibility === 'public' ? 'bg-forge-amber/15 border-forge-amber/50 text-forge-amber' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
               >
                 Jeder
               </button>
               <button 
                 (click)="privacySettings.profileVisibility = 'friends'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.profileVisibility === 'friends' ? 'bg-amber-500/15 border-amber-500/50 text-amber-400' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.profileVisibility === 'friends' ? 'bg-forge-amber/15 border-forge-amber/50 text-forge-amber' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
               >
                 Nur Freunde
               </button>
               <button 
                 (click)="privacySettings.profileVisibility = 'private'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.profileVisibility === 'private' ? 'bg-amber-500/15 border-amber-500/50 text-amber-400' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.profileVisibility === 'private' ? 'bg-forge-amber/15 border-forge-amber/50 text-forge-amber' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
               >
                 Niemand
               </button>
@@ -133,21 +133,21 @@ import { UserPrivacySettings } from '../../models/gym.models';
               <button 
                 (click)="privacySettings.plansVisibility = 'public'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.plansVisibility === 'public' ? 'bg-cyan-500/15 border-cyan-500/50 text-cyan-400' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.plansVisibility === 'public' ? 'bg-steel-cyan/15 border-steel-cyan/50 text-steel-cyan' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
               >
                 Öffentlich
               </button>
               <button 
                 (click)="privacySettings.plansVisibility = 'friends'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.plansVisibility === 'friends' ? 'bg-cyan-500/15 border-cyan-500/50 text-cyan-400' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.plansVisibility === 'friends' ? 'bg-steel-cyan/15 border-steel-cyan/50 text-steel-cyan' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
               >
                 Nur Freunde
               </button>
               <button 
                 (click)="privacySettings.plansVisibility = 'private'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.plansVisibility === 'private' ? 'bg-cyan-500/15 border-cyan-500/50 text-cyan-400' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.plansVisibility === 'private' ? 'bg-steel-cyan/15 border-steel-cyan/50 text-steel-cyan' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
               >
                 Privat
               </button>
@@ -163,7 +163,7 @@ import { UserPrivacySettings } from '../../models/gym.models';
             <input 
               type="checkbox" 
               [(ngModel)]="privacySettings.showInSearch" 
-              class="w-5 h-5 accent-amber-500 rounded cursor-pointer"
+              class="w-5 h-5 accent-forge-amber rounded cursor-pointer"
             />
           </div>
 
