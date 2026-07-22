@@ -1,6 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, computed } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { FriendsService } from './services/friends.service';
 
 @Component({
   selector: 'app-root',
@@ -11,10 +12,12 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent implements OnInit {
   private authService = inject(AuthService);
+  private friendsService = inject(FriendsService);
   private router = inject(Router);
 
   isAuthenticated = this.authService.isAuthenticated;
   currentUser = this.authService.currentUser;
+  pendingRequestsCount = computed(() => this.friendsService.pendingRequests().length);
 
   ngOnInit() {
     // Expose triggerConfetti globally so services can call it
