@@ -15,13 +15,13 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-extrabold tracking-tight text-white font-display">Meine Trainingspläne</h1>
-          <p class="text-sm text-slate-400 mt-1">Verwalte deine Routinen oder erstelle neue Pläne.</p>
+          <h1 class="text-3xl font-extrabold tracking-tight text-white font-display uppercase">Meine Trainingspläne</h1>
+          <p class="text-sm text-slate-400 mt-1">Verwalte deine Schwerlast-Routinen oder erstelle neue Pläne.</p>
         </div>
         @if (!isEditing()) {
           <button 
             (click)="startCreateNewPlan()"
-            class="px-5 py-3 bg-gradient-accent text-slate-950 font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all text-sm flex items-center gap-2 glow-mint"
+            class="hebewerk-btn-amber px-5 py-3 rounded-xl text-sm flex items-center gap-2 shadow-lg"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -37,13 +37,13 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
         <!-- Plans Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           @for (plan of plans(); track plan.id) {
-            <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between min-h-[220px]">
+            <div class="hebewerk-card hebewerk-card-hover rounded-2xl p-6 flex flex-col justify-between min-h-[220px]">
               <div>
                 <div class="flex items-start justify-between gap-3 mb-2">
-                  <h3 class="text-xl font-bold text-white tracking-tight">{{ plan.name }}</h3>
+                  <h3 class="text-xl font-bold text-white tracking-tight font-display">{{ plan.name }}</h3>
                   <span 
-                    class="text-[9px] px-2 py-0.5 rounded-full border uppercase tracking-wider font-extrabold"
-                    [ngClass]="plan.isPublic ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-slate-800 border-slate-700 text-slate-400'"
+                    class="text-[9px] px-2 py-0.5 rounded border uppercase tracking-wider font-mono font-bold"
+                    [ngClass]="plan.isPublic ? 'bg-amber-500/15 border-amber-500/30 text-amber-400' : 'bg-iron-950 border-slate-800 text-slate-400'"
                   >
                     {{ plan.isPublic ? 'Öffentlich' : 'Privat' }}
                   </span>

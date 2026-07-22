@@ -9,22 +9,21 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-gradient-dark px-4 py-12 relative overflow-hidden">
+    <div class="min-h-screen flex items-center justify-center bg-iron-950 px-4 py-12 relative overflow-hidden">
       <!-- Ambient background glow spots -->
-      <div class="absolute top-1/4 left-1/4 w-72 h-72 bg-neon-cyan/10 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-neon-mint/10 rounded-full blur-3xl"></div>
+      <div class="absolute top-1/4 left-1/4 w-72 h-72 bg-forge-amber/5 rounded-full blur-3xl"></div>
       
-      <!-- Glassmorphic Login Card -->
-      <div class="w-full max-w-md glass-card rounded-2xl p-8 relative z-10">
+      <!-- Industrial Login Card -->
+      <div class="w-full max-w-md hebewerk-card rounded-2xl p-8 relative z-10 border-l-4 border-l-forge-amber">
         <!-- Logo -->
         <div class="text-center mb-8">
-          <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-accent glow-mint mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-forge-gold to-forge-amber glow-amber mb-4 shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-iron-950 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
           </div>
-          <h1 class="text-3xl font-extrabold tracking-tight font-display text-gradient">HEBEWERK</h1>
-          <p class="text-sm text-slate-400 mt-2">Definiere deine Ziele, verfolge deinen Fortschritt</p>
+          <h1 class="text-3xl font-black tracking-wider font-display text-gradient-amber uppercase">HEBEWERK</h1>
+          <p class="text-xs font-mono text-slate-400 mt-2">FORGE YOUR STRENGTH • TRACK YOUR PROGRESS</p>
         </div>
 
         <!-- Form error message -->

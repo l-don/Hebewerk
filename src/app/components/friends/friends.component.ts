@@ -15,8 +15,8 @@ import { UserProfile, WorkoutPlan } from '../../models/gym.models';
       <!-- Header -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 class="text-3xl font-extrabold tracking-tight text-white font-display">Hebewerk Social</h1>
-          <p class="text-sm text-slate-400 mt-1">Vernetze dich mit Freunden, vergleiche eure Fortschritte & teile Pläne.</p>
+          <h1 class="text-3xl font-extrabold tracking-tight text-white font-display uppercase">Hebewerk Social</h1>
+          <p class="text-sm text-slate-400 mt-1">Vernetze dich mit Athleten, vergleiche deine Hebedaten & teile Pläne.</p>
         </div>
       </div>
 

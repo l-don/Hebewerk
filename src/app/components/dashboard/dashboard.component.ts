@@ -21,21 +21,21 @@ Chart.register(...registerables);
       <!-- Top Header / Welcome -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 class="text-3xl font-extrabold tracking-tight text-white font-display">Willkommen zurück, <span class="text-gradient">{{ currentUser()?.displayName }}</span>!</h1>
-          <p class="text-sm text-slate-400 mt-1">Hier ist deine Trainingsübersicht für heute.</p>
+          <h1 class="text-3xl font-extrabold tracking-tight text-white font-display">WILLKOMMEN ZURÜCK, <span class="text-gradient-amber">{{ currentUser()?.displayName }}</span>!</h1>
+          <p class="text-sm text-slate-400 mt-1">Deine Maschinen & Hebedaten im Überblick.</p>
         </div>
         
-        <!-- Dev Options Glass Panel -->
-        <div class="flex items-center gap-3 p-2 bg-slate-900/60 border border-slate-800/80 rounded-2xl backdrop-blur-sm self-start md:self-center">
+        <!-- Dev Options Industrial Panel -->
+        <div class="flex items-center gap-3 p-2 bg-iron-900 border border-slate-800 rounded-xl self-start md:self-center">
           <button 
             (click)="generateMockData()"
-            class="px-4 py-2 text-xs font-bold rounded-xl bg-neon-cyan/15 hover:bg-neon-cyan/25 border border-neon-cyan/30 text-neon-cyan transition-all uppercase tracking-wide active:scale-95"
+            class="hebewerk-btn-cyan px-4 py-2 text-xs rounded-lg uppercase tracking-wide active:scale-95"
           >
             Mock-Daten laden
           </button>
           <button 
             (click)="clearAllLogs()"
-            class="px-4 py-2 text-xs font-bold rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 transition-all uppercase tracking-wide active:scale-95"
+            class="px-4 py-2 text-xs font-bold font-display rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 transition-all uppercase tracking-wide active:scale-95"
           >
             Reset
           </button>
@@ -46,130 +46,127 @@ Chart.register(...registerables);
       @if (currentUser(); as user) {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Level & XP Card -->
-          <div class="glass-card rounded-2xl p-6 md:col-span-2 flex flex-col justify-between">
+          <div class="hebewerk-card rounded-2xl p-6 md:col-span-2 flex flex-col justify-between">
             <div class="flex items-center justify-between mb-4">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Dein Level</span>
-                <h3 class="text-4xl font-extrabold text-white mt-1 glow-text-mint">Lvl {{ user.stats.level }}</h3>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 font-display">Dein Level</span>
+                <h3 class="text-4xl font-extrabold text-white mt-1 text-gradient-amber font-display">LVL {{ user.stats.level }}</h3>
               </div>
               <div class="text-right">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Erfahrungspunkte (XP)</span>
-                <p class="text-sm font-semibold text-slate-200 mt-1">{{ user.stats.xp }} XP Gesamt</p>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 font-display">Erfahrungspunkte (XP)</span>
+                <p class="text-sm font-bold text-slate-200 mt-1 font-mono">{{ user.stats.xp }} XP Gesamt</p>
               </div>
             </div>
             
             <!-- XP Progress Bar -->
-            <div>
-              <div class="flex justify-between text-xs font-bold mb-1.5 text-slate-400">
-                <span>{{ currentLevelXpStart() }} XP</span>
-                <span class="text-neon-mint">{{ xpNeededForNextLevel() }} XP bis Level {{ user.stats.level + 1 }}</span>
-                <span>{{ nextLevelXpStart() }} XP</span>
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs font-mono font-bold text-slate-300">
+                <span>Fortschritt zu Lvl {{ user.stats.level + 1 }}</span>
+                <span>{{ user.stats.xp - currentLevelXpStart() }} / {{ nextLevelXpStart() - currentLevelXpStart() }} XP</span>
               </div>
-              <div class="w-full h-3.5 bg-slate-950/80 rounded-full overflow-hidden p-0.5 border border-slate-800">
-                <div 
-                  class="h-full bg-gradient-accent rounded-full glow-mint transition-all duration-1000"
-                  [style.width.%]="levelProgressPercent()"
-                ></div>
+              <div class="w-full bg-iron-950 h-3.5 rounded-lg p-0.5 border border-slate-800">
+                <div class="bg-gradient-to-r from-forge-gold to-forge-amber h-full rounded-md transition-all duration-700 shadow-sm" [style.width.%]="levelProgressPercent()"></div>
               </div>
             </div>
           </div>
 
-          <!-- Streaks & Stats Card -->
-          <div class="glass-card rounded-2xl p-6 flex items-center gap-6">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center shadow-lg relative shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-slate-950 animate-bounce" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <!-- Spark glow -->
-              <span class="absolute -top-1 -right-1 flex h-4 w-4">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-500"></span>
-              </span>
-            </div>
+          <!-- Streak Card -->
+          <div class="hebewerk-card rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -right-4 -bottom-4 w-28 h-28 bg-forge-amber/5 rounded-full blur-xl pointer-events-none"></div>
             <div>
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-400 font-display">Aktivitäts-Streak</span>
-              <h3 class="text-3xl font-extrabold text-white mt-1">{{ user.stats.currentStreak }} {{ user.stats.currentStreak === 1 ? 'Woche' : 'Wochen' }}</h3>
-              <p class="text-xs text-slate-400 mt-1">
-                @if (user.stats.currentStreak > 0) {
-                  Halte die Flamme am Brennen!
-                } @else {
-                  Starte dein erstes Training!
-                }
-              </p>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400 font-display">Trainings-Streak</span>
+              <div class="flex items-baseline gap-2 mt-2">
+                <span class="text-4xl font-extrabold text-amber-400 font-mono">{{ user.stats.currentStreak }}</span>
+                <span class="text-sm font-bold text-slate-300 uppercase font-display">Wochen</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-2">Beständigkeit ist der Schlüssel für maximalen Kraftaufbau!</p>
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+              <span>Zuletzt aktiv</span>
+              <span class="font-mono font-bold text-slate-200">{{ lastActiveFormatted() }}</span>
             </div>
           </div>
         </div>
       }
 
-      <!-- KPI Summary -->
+      <!-- KPI Grid Overview -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="glass-card rounded-xl p-4 text-center">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Gesamte Workouts</span>
-          <p class="text-2xl font-black text-white mt-1 glow-text-cyan">{{ workoutCount() }}</p>
+        <div class="hebewerk-card rounded-xl p-4 border border-slate-800">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display block">Absolvierte Workouts</span>
+          <span class="text-2xl font-extrabold text-white font-mono block mt-1">{{ workoutCount() }}</span>
         </div>
-        <div class="glass-card rounded-xl p-4 text-center">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Gesamtvolumen (Tonnen)</span>
-          <p class="text-2xl font-black text-white mt-1">{{ totalVolumeTons() | number:'1.1-2' }} t</p>
+
+        <div class="hebewerk-card rounded-xl p-4 border border-slate-800">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display block">Gesamtvolumen</span>
+          <span class="text-2xl font-extrabold text-forge-amber font-mono block mt-1">{{ totalVolumeTons() | number:'1.1-1' }} t</span>
         </div>
-        <div class="glass-card rounded-xl p-4 text-center">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Übungen im System</span>
-          <p class="text-2xl font-black text-white mt-1">{{ exerciseCount() }}</p>
+
+        <div class="hebewerk-card rounded-xl p-4 border border-slate-800">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display block">Verfügbare Pläne</span>
+          <span class="text-2xl font-extrabold text-steel-cyan font-mono block mt-1">{{ workoutService.plans().length }}</span>
         </div>
-        <div class="glass-card rounded-xl p-4 text-center">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Letzte Aktivität</span>
-          <p class="text-sm font-bold text-white mt-2 truncate">{{ lastActiveFormatted() }}</p>
+
+        <div class="hebewerk-card rounded-xl p-4 border border-slate-800">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display block">Übungsdatenbank</span>
+          <span class="text-2xl font-extrabold text-slate-200 font-mono block mt-1">{{ exerciseCount() }}</span>
         </div>
       </div>
 
-      <!-- Quick Action / Start Workout -->
-      <div class="glass-card rounded-2xl p-6 bg-gradient-to-r from-slate-900/60 to-slate-900/40 border border-neon-cyan/20 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div>
-          <h3 class="text-lg font-bold text-white">Bereit für dein nächstes Training?</h3>
-          <p class="text-sm text-slate-400 mt-1">Wähle einen deiner erstellten Pläne und starte das Tracking deiner Sätze.</p>
+      <!-- Quick Action / Start Workout Banner -->
+      <div class="hebewerk-card rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border-l-4 border-l-forge-amber">
+        <div class="space-y-1 text-center md:text-left">
+          <span class="text-[10px] px-2.5 py-1 rounded bg-forge-amber/15 text-forge-amber font-extrabold uppercase tracking-wider font-mono">
+            BEREIT FÜR DIE NÄCHSTE EINHEIT?
+          </span>
+          <h2 class="text-2xl font-black text-white font-display mt-2">Bereit das Eisen zu bewegen?</h2>
+          <p class="text-sm text-slate-400">Starte jetzt dein geplantes Training und zeichne deine Gewichte auf.</p>
         </div>
         <a 
           routerLink="/plans"
-          class="px-6 py-3 bg-gradient-accent text-slate-950 font-extrabold rounded-xl hover:brightness-110 active:scale-95 transition-all text-sm shadow-md glow-mint"
+          class="hebewerk-btn-amber px-8 py-3.5 rounded-xl text-sm font-extrabold shadow-lg shrink-0"
         >
-          Training starten
+          Training Jetzt Starten →
         </a>
       </div>
 
-      <!-- Chart.js Analysis Section -->
-      @if (workoutCount() > 0) {
+      <!-- Analytics & Charts Section -->
+      @if (logs().length > 0) {
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          <!-- Volume Chart -->
-          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between min-h-[350px]">
-            <div>
-              <h3 class="text-base font-bold text-white font-display">Trainingsvolumen (Gesamt)</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Summe aller Gewichte x Wiederholungen pro Training</p>
+          <!-- Chart 1: Gesamtvolumen -->
+          <div class="hebewerk-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-base font-bold text-white font-display">Gesamtvolumen Entwicklung</h3>
+                <p class="text-xs text-slate-400">Summe aus (Wiederholungen × Gewicht) in kg</p>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-iron-950 border border-slate-800 text-forge-amber font-mono font-bold">Volumen</span>
             </div>
-            <div class="chart-container relative flex-1 mt-4">
-              <canvas baseChart 
-                [data]="volumeChartData()" 
-                [options]="chartOptions" 
+            <div class="h-64 relative chart-container">
+              <canvas baseChart
+                [data]="volumeChartData()"
+                [options]="chartOptions"
                 [type]="'line'">
               </canvas>
             </div>
           </div>
 
-          <!-- Strength Chart (1RM / Max weights for squat and bench) -->
-          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between min-h-[350px]">
-            <div>
-              <h3 class="text-base font-bold text-white font-display">Kraftsteigerung (Squat / Bench)</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Maximales bewegtes Gewicht in Kniebeugen und Bankdrücken</p>
+          <!-- Chart 2: Maximalgewicht (Kraftzuwachs) -->
+          <div class="hebewerk-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-base font-bold text-white font-display">Kraftzuwachs Hauptübungen</h3>
+                <p class="text-xs text-slate-400">Maximales Arbeitsgewicht in kg</p>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-iron-950 border border-slate-800 text-steel-cyan font-mono font-bold">Max Weight</span>
             </div>
-            <div class="chart-container relative flex-1 mt-4">
-              <canvas baseChart 
-                [data]="strengthChartData()" 
-                [options]="chartOptions" 
+            <div class="h-64 relative chart-container">
+              <canvas baseChart
+                [data]="strengthChartData()"
+                [options]="chartOptions"
                 [type]="'line'">
               </canvas>
             </div>
           </div>
-
         </div>
       } @else {
         <div class="glass-card rounded-2xl p-12 text-center">
@@ -233,7 +230,7 @@ Chart.register(...registerables);
 })
 export class DashboardComponent {
   private authService = inject(AuthService);
-  private workoutService = inject(WorkoutService);
+  public workoutService = inject(WorkoutService);
   private mockDataService = inject(MockDataService);
 
   currentUser = this.authService.currentUser;
@@ -384,12 +381,12 @@ export class DashboardComponent {
         {
           data: datasetVolume,
           label: 'Volumen (kg)',
-          borderColor: '#00f5b8',
-          backgroundColor: 'rgba(0, 245, 184, 0.1)',
+          borderColor: '#ff9f1c',
+          backgroundColor: 'rgba(255, 159, 28, 0.12)',
           fill: true,
           tension: 0.3,
           borderWidth: 2.5,
-          pointBackgroundColor: '#00f5b8',
+          pointBackgroundColor: '#ffbf00',
           pointHoverRadius: 6
         }
       ]
@@ -403,7 +400,6 @@ export class DashboardComponent {
       return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
     });
 
-    // Extract maximum weight for Kniebeugen and Bankdrücken
     const squatData = sorted.map(log => {
       const squatEx = log.exercises.find(ex => ex.name.toLowerCase().includes('kniebeugen') || ex.name.toLowerCase().includes('squat'));
       if (!squatEx) return null;
@@ -420,24 +416,22 @@ export class DashboardComponent {
       labels,
       datasets: [
         {
-          data: squatData as any,
-          label: 'Kniebeugen (Max kg)',
-          borderColor: '#00d2ff',
-          backgroundColor: 'transparent',
-          tension: 0.2,
-          borderWidth: 2,
-          pointBackgroundColor: '#00d2ff',
-          spanGaps: true
+          data: squatData,
+          label: 'Kniebeugen (kg)',
+          borderColor: '#ff9f1c',
+          backgroundColor: 'rgba(255, 159, 28, 0.2)',
+          tension: 0.3,
+          borderWidth: 2.5,
+          pointBackgroundColor: '#ffbf00'
         },
         {
-          data: benchData as any,
-          label: 'Bankdrücken (Max kg)',
-          borderColor: '#3b82f6',
-          backgroundColor: 'transparent',
-          tension: 0.2,
-          borderWidth: 2,
-          pointBackgroundColor: '#3b82f6',
-          spanGaps: true
+          data: benchData,
+          label: 'Bankdrücken (kg)',
+          borderColor: '#00e5ff',
+          backgroundColor: 'rgba(0, 229, 255, 0.2)',
+          tension: 0.3,
+          borderWidth: 2.5,
+          pointBackgroundColor: '#00e5ff'
         }
       ]
     };

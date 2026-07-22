@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,80 +6,94 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-50 antialiased min-h-screen overflow-x-hidden;
+    @apply bg-iron-950 text-slate-100 antialiased min-h-screen overflow-x-hidden;
     font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Chakra Petch', system-ui, sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .font-mono {
+    font-family: 'Space Mono', monospace;
   }
 }
 
 @layer components {
-  /* Glassmorphic Panel Styles */
-  .glass-card {
-    background: rgba(14, 19, 34, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(29, 38, 59, 0.5);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  /* Industrial Heavy Card */
+  .hebewerk-card {
+    background: #121722;
+    border: 1px solid #222b3d;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 159, 28, 0.08);
   }
 
-  .glass-card-hover {
-    @apply transition-all duration-300;
+  .hebewerk-card-hover {
+    @apply transition-all duration-200;
   }
-  .glass-card-hover:hover {
-    background: rgba(14, 19, 34, 0.75);
-    border-color: rgba(0, 245, 184, 0.25);
-    box-shadow: 0 10px 40px 0 rgba(0, 245, 184, 0.05);
+  .hebewerk-card-hover:hover {
+    background: #171d2b;
+    border-color: rgba(255, 159, 28, 0.4);
+    box-shadow: 0 12px 35px -5px rgba(255, 159, 28, 0.12);
     transform: translateY(-2px);
   }
 
-  .glass-card-active {
-    background: rgba(14, 19, 34, 0.85);
-    border-color: rgba(0, 245, 184, 0.4);
-    box-shadow: 0 0 20px 0 rgba(0, 245, 184, 0.15);
+  /* Industrial Action Buttons */
+  .hebewerk-btn-amber {
+    background: linear-gradient(135deg, #ffbf00 0%, #ff9f1c 100%);
+    color: #090c10;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 20px rgba(255, 159, 28, 0.35);
+    @apply transition-all duration-150 active:scale-95 hover:brightness-110;
   }
 
-  .glass-input {
-    background: rgba(7, 10, 19, 0.5);
-    border: 1px solid rgba(29, 38, 59, 0.8);
-    @apply text-white transition-all duration-200;
+  .hebewerk-btn-cyan {
+    background: rgba(0, 229, 255, 0.12);
+    border: 1px solid rgba(0, 229, 255, 0.4);
+    color: #00e5ff;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    @apply transition-all duration-150 hover:bg-steel-cyan/20 hover:border-steel-cyan;
   }
-  .glass-input:focus {
+
+  /* Industrial Inputs */
+  .hebewerk-input {
+    background: #0b0e14;
+    border: 1px solid #222b3d;
+    color: #ffffff;
+    font-family: 'Space Mono', monospace;
+    @apply transition-all duration-150;
+  }
+  .hebewerk-input:focus {
     @apply outline-none;
-    border-color: #00f5b8;
-    box-shadow: 0 0 10px 0 rgba(0, 245, 184, 0.25);
-    background: rgba(7, 10, 19, 0.8);
+    border-color: #ff9f1c;
+    box-shadow: 0 0 12px rgba(255, 159, 28, 0.25);
+    background: #0f131a;
   }
 
-  /* Glow effects */
-  .glow-mint {
-    box-shadow: 0 0 15px rgba(0, 245, 184, 0.3);
-  }
-  .glow-cyan {
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-  }
-
-  .glow-text-mint {
-    text-shadow: 0 0 8px rgba(0, 245, 184, 0.5);
-  }
-  .glow-text-cyan {
-    text-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
-  }
-
-  /* Gradients */
-  .bg-gradient-dark {
-    background: radial-gradient(circle at top right, rgba(0, 210, 255, 0.08), transparent 40%),
-                radial-gradient(circle at bottom left, rgba(0, 245, 184, 0.08), transparent 40%),
-                #070a13;
-  }
-
-  .text-gradient {
-    background: linear-gradient(135deg, #00d2ff 0%, #00f5b8 100%);
+  /* Text Gradients */
+  .text-gradient-amber {
+    background: linear-gradient(135deg, #ffbf00 0%, #ff9f1c 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .bg-gradient-accent {
-    background: linear-gradient(135deg, #00d2ff 0%, #00f5b8 100%);
+  .text-gradient-cyan {
+    background: linear-gradient(135deg, #00e5ff 0%, #00b4d8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glow Effects */
+  .glow-amber {
+    box-shadow: 0 0 20px rgba(255, 159, 28, 0.35);
   }
 }
 
@@ -90,18 +104,18 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: rgba(7, 10, 19, 0.5);
+    background: #090c10;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(29, 38, 59, 0.8);
-    border-radius: 3px;
+    background: #222b3d;
+    border-radius: 2px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #00f5b8;
+    background: #ff9f1c;
   }
 }
 
-/* Chart overlay stylings */
+/* Chart Canvas Drop Shadow */
 .chart-container canvas {
-  filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.6));
 }

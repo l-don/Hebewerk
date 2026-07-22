@@ -12,21 +12,21 @@ import { WorkoutLog } from '../../models/gym.models';
       
       <!-- Header -->
       <div>
-        <h1 class="text-3xl font-extrabold tracking-tight text-white font-display">Trainingsverlauf</h1>
-        <p class="text-sm text-slate-400 mt-1">Hier findest du all deine absolvierten Trainingseinheiten.</p>
+        <h1 class="text-3xl font-extrabold tracking-tight text-white font-display uppercase">Trainingsverlauf</h1>
+        <p class="text-sm text-slate-400 mt-1">Hier findest du all deine absolvierten Hebe-Einheiten.</p>
       </div>
 
       <!-- Logs List -->
       <div class="space-y-4">
         @for (log of logs(); track log.id; let idx = $index) {
-          <div class="glass-card rounded-2xl p-5 transition-all">
+          <div class="hebewerk-card rounded-2xl p-5 transition-all border-l-4 border-l-forge-amber">
             
             <!-- Summary Header of Log Card -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div class="flex items-center gap-2.5">
-                  <h3 class="text-lg font-bold text-white tracking-tight">{{ log.planName }}</h3>
-                  <span class="text-[10px] px-2 py-0.5 rounded bg-neon-mint/10 border border-neon-mint/20 text-neon-mint font-bold uppercase">
+                  <h3 class="text-lg font-bold text-white tracking-tight font-display">{{ log.planName }}</h3>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-forge-amber/15 border border-forge-amber/30 text-forge-amber font-mono font-bold uppercase">
                     +{{ log.xpGained || 0 }} XP
                   </span>
                 </div>

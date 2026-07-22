@@ -36,19 +36,19 @@ interface ActiveExercise {
         <!-- ACTIVE WORKOUT PANEL -->
         
         <!-- Header -->
-        <div class="glass-card rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-neon-cyan/20">
+        <div class="hebewerk-card rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-l-4 border-l-forge-amber">
           <div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-neon-cyan/10 text-neon-cyan font-extrabold uppercase tracking-wider">Laufendes Training</span>
-            <h1 class="text-2xl font-black text-white mt-1">{{ plan()?.name }}</h1>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-forge-amber/15 text-forge-amber font-mono font-bold uppercase tracking-wider">AKTIV ES LÄUFT</span>
+            <h1 class="text-2xl font-black text-white font-display mt-1">{{ plan()?.name }}</h1>
           </div>
           <div class="flex items-center gap-4">
             <div class="text-center sm:text-right">
-              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Dauer</span>
-              <span class="text-xl font-bold font-display text-white mt-0.5">{{ durationFormatted() }}</span>
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-display">Dauer</span>
+              <span class="text-xl font-bold font-mono text-forge-amber mt-0.5">{{ durationFormatted() }}</span>
             </div>
             <button 
               (click)="finishWorkout()"
-              class="px-5 py-3 bg-gradient-accent text-slate-950 font-extrabold rounded-xl hover:brightness-110 active:scale-95 transition-all text-xs tracking-wider uppercase glow-mint"
+              class="hebewerk-btn-amber px-6 py-3 rounded-xl text-xs tracking-wider uppercase shadow-lg shrink-0"
             >
               Abschliessen
             </button>
@@ -95,25 +95,25 @@ interface ActiveExercise {
 
         <!-- Active Exercise Container -->
         @if (currentExercise(); as ex) {
-          <div class="glass-card rounded-2xl p-6 space-y-6">
+          <div class="hebewerk-card rounded-2xl p-6 space-y-6">
             <!-- Exercise navigation bar -->
-            <div class="flex items-center justify-between gap-4 border-b border-slate-800/60 pb-4">
+            <div class="flex items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
               <div>
-                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Übung {{ currentExIndex() + 1 }} von {{ exercises().length }}</span>
-                <h2 class="text-xl font-bold text-white tracking-tight mt-0.5">{{ ex.name }}</h2>
+                <span class="text-[10px] font-bold text-slate-400 font-mono uppercase tracking-widest">Übung {{ currentExIndex() + 1 }} von {{ exercises().length }}</span>
+                <h2 class="text-xl font-black text-white font-display mt-0.5">{{ ex.name }}</h2>
               </div>
               <div class="flex items-center gap-2">
                 <button 
                   (click)="prevExercise()" 
                   [disabled]="currentExIndex() === 0"
-                  class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 transition-colors"
+                  class="p-2.5 rounded-xl bg-iron-950 hover:bg-iron-850 disabled:opacity-40 border border-slate-800 text-slate-300 transition-colors"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" /></svg>
                 </button>
                 <button 
                   (click)="nextExercise()" 
                   [disabled]="currentExIndex() === exercises().length - 1"
-                  class="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 transition-colors"
+                  class="p-2.5 rounded-xl bg-iron-950 hover:bg-iron-850 disabled:opacity-40 border border-slate-800 text-slate-300 transition-colors"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" /></svg>
                 </button>
@@ -122,7 +122,7 @@ interface ActiveExercise {
 
             <!-- Sets Tracker Table -->
             <div class="space-y-3">
-              <div class="grid grid-cols-12 gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2">
+              <div class="grid grid-cols-12 gap-2 text-[10px] font-bold text-slate-400 font-display uppercase tracking-widest px-2">
                 <span class="col-span-2 text-center">Satz</span>
                 <span class="col-span-3 text-center">Richtwert</span>
                 <span class="col-span-3 text-center">Gewicht (kg)</span>
@@ -132,16 +132,16 @@ interface ActiveExercise {
 
               @for (set of ex.sets; track setIdx; let setIdx = $index) {
                 <div 
-                  class="grid grid-cols-12 gap-2 items-center p-2 rounded-xl transition-all border border-transparent"
-                  [ngClass]="set.completed ? 'glass-card-active border-neon-mint/20' : 'bg-slate-950/40'"
+                  class="grid grid-cols-12 gap-2 items-center p-2 rounded-xl transition-all border"
+                  [ngClass]="set.completed ? 'bg-iron-850 border-forge-amber/50' : 'bg-iron-950/80 border-slate-800/60'"
                 >
                   <!-- Set number -->
                   <div class="col-span-2 text-center">
-                    <span class="text-xs font-extrabold text-slate-400">{{ setIdx + 1 }}</span>
+                    <span class="text-xs font-mono font-bold text-slate-300">{{ setIdx + 1 }}</span>
                   </div>
 
                   <!-- Reference target -->
-                  <div class="col-span-3 text-center text-xs text-slate-500 font-bold">
+                  <div class="col-span-3 text-center text-xs text-slate-400 font-mono font-bold">
                     {{ set.targetWeight }}kg x {{ set.targetReps }}
                   </div>
 
@@ -153,7 +153,7 @@ interface ActiveExercise {
                       [disabled]="set.completed"
                       step="0.5"
                       min="0"
-                      class="w-full text-center px-1 py-2 text-sm font-semibold rounded-lg glass-input disabled:opacity-50"
+                      class="w-full text-center px-1 py-2 text-sm font-mono font-bold rounded-lg hebewerk-input disabled:opacity-50"
                     />
                   </div>
 
@@ -164,7 +164,7 @@ interface ActiveExercise {
                       [(ngModel)]="set.reps" 
                       [disabled]="set.completed"
                       min="0"
-                      class="w-full text-center px-1 py-2 text-sm font-semibold rounded-lg glass-input disabled:opacity-50"
+                      class="w-full text-center px-1 py-2 text-sm font-mono font-bold rounded-lg hebewerk-input disabled:opacity-50"
                     />
                   </div>
 
@@ -173,7 +173,7 @@ interface ActiveExercise {
                     <button 
                       (click)="toggleSetComplete(setIdx)"
                       class="w-8 h-8 rounded-lg flex items-center justify-center border transition-all"
-                      [ngClass]="set.completed ? 'bg-neon-mint border-neon-mint text-slate-950 shadow-sm' : 'border-slate-800 hover:border-slate-700 text-transparent hover:text-slate-700'"
+                      [ngClass]="set.completed ? 'bg-forge-amber border-forge-amber text-iron-950 shadow-md' : 'border-slate-800 hover:border-slate-600 text-transparent hover:text-slate-600'"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
