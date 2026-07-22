@@ -1,11 +1,12 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: "YOUR_FIREBASE_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyAjIXYec-BdmTy15hpK67v3U8iZRPlzS1M",
+    authDomain: "hebewerk-c915b.firebaseapp.com",
+    projectId: "hebewerk-c915b",
+    storageBucket: "hebewerk-c915b.firebasestorage.app",
+    messagingSenderId: "433526504457",
+    appId: "1:433526504457:web:636da7f1a6caa7cd014cd8",
+    measurementId: "G-PR2TLZZ0GN"
   }
 };
