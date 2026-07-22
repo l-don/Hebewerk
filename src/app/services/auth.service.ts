@@ -241,6 +241,47 @@ export class AuthService {
     return updatedStats;
   }
 
+  updateDisplayName(newName: string): UserProfile {
+    const user = this._currentUser();
+    if (!user) throw new Error('No user logged in');
+
+    const updatedUser: UserProfile = { 
+      ...user, 
+      displayName: newName,
+      photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(newName)}`
+    };
+    
+    this.saveSession(updatedUser);
+    
+    const db = this.getUsersDb();
+    if (db[updatedUser.uid]) {
+      db[updatedUser.uid] = updatedUser;
+      this.saveUsersDb(db);
+    }
+
+    return updatedUser;
+  }
+
+  updatePrivacySettings(settings: any): UserProfile {
+    const user = this._currentUser();
+    if (!user) throw new Error('No user logged in');
+
+    const updatedUser: UserProfile = { 
+      ...user, 
+      privacySettings: settings 
+    };
+
+    this.saveSession(updatedUser);
+
+    const db = this.getUsersDb();
+    if (db[updatedUser.uid]) {
+      db[updatedUser.uid] = updatedUser;
+      this.saveUsersDb(db);
+    }
+
+    return updatedUser;
+  }
+
   private getUsersDb(): Record<string, UserProfile> {
     const db = localStorage.getItem('hebewerk_users_db');
     return db ? JSON.parse(db) : {};

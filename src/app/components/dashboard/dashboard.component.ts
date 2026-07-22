@@ -24,22 +24,6 @@ Chart.register(...registerables);
           <h1 class="text-3xl font-extrabold tracking-tight text-white font-display">WILLKOMMEN ZURÜCK, <span class="text-gradient-amber">{{ currentUser()?.displayName }}</span>!</h1>
           <p class="text-sm text-slate-400 mt-1">Deine Maschinen & Hebedaten im Überblick.</p>
         </div>
-        
-        <!-- Dev Options Industrial Panel -->
-        <div class="flex items-center gap-3 p-2 bg-iron-900 border border-slate-800 rounded-xl self-start md:self-center">
-          <button 
-            (click)="generateMockData()"
-            class="hebewerk-btn-cyan px-4 py-2 text-xs rounded-lg uppercase tracking-wide active:scale-95"
-          >
-            Mock-Daten laden
-          </button>
-          <button 
-            (click)="clearAllLogs()"
-            class="px-4 py-2 text-xs font-bold font-display rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 transition-all uppercase tracking-wide active:scale-95"
-          >
-            Reset
-          </button>
-        </div>
       </div>
 
       <!-- User Profile Gamification Dashboard -->

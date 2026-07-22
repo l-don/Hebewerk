@@ -5,12 +5,19 @@ export interface UserStats {
   lastActive: string; // ISO String for JSON compatibility
 }
 
+export interface UserPrivacySettings {
+  profileVisibility: 'public' | 'friends' | 'private';
+  plansVisibility: 'public' | 'friends' | 'private';
+  showInSearch: boolean;
+}
+
 export interface UserProfile {
   uid: string;
   displayName: string;
   photoURL: string;
   createdAt: string; // ISO String
   stats: UserStats;
+  privacySettings?: UserPrivacySettings;
 }
 
 export interface ExerciseSet {
