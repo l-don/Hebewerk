@@ -314,6 +314,7 @@ export class WorkoutService {
       type: 'workout_completed',
       timestamp: new Date().toISOString(),
       details: {
+        planId: log.planId,
         workoutName: log.planName,
         xpGained,
         detailsString: `${log.exercises.length} Übungen in ${log.durationMinutes} min absolviert`

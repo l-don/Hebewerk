@@ -80,6 +80,7 @@ export interface ActivityFeedItem {
   type: 'workout_completed' | 'achievement_unlocked';
   timestamp: string;
   details: {
+    planId?: string;
     workoutName: string;
     xpGained: number;
     detailsString: string;

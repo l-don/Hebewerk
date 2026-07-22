@@ -1,12 +1,15 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
+import { Component, inject, signal, computed, effect, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { Chart, registerables, ChartConfiguration } from 'chart.js';
+import { Firestore, collection, onSnapshot, query, orderBy, limit, doc, getDoc } from '@angular/fire/firestore';
 import { AuthService } from '../../services/auth.service';
 import { WorkoutService } from '../../services/workout.service';
+import { FriendsService } from '../../services/friends.service';
 import { MockDataService } from '../../services/mock-data.service';
-import { WorkoutLog } from '../../models/gym.models';
+import { WorkoutPlan, ActivityFeedItem } from '../../models/gym.models';
+import { environment } from '../../../environments/environment';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -25,6 +28,19 @@ Chart.register(...registerables);
           <p class="text-sm text-slate-400 mt-1">Deine Maschinen & Hebedaten im Überblick.</p>
         </div>
       </div>
+
+      <!-- Toast Feedback -->
+      @if (toastMessage()) {
+        <div class="p-4 rounded-xl bg-forge-amber/15 border border-forge-amber/30 text-forge-amber text-sm font-bold font-mono flex items-center justify-between shadow-lg animate-fade-in">
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>{{ toastMessage() }}</span>
+          </div>
+          <button (click)="toastMessage.set(null)" class="text-slate-400 hover:text-white text-xs">✕</button>
+        </div>
+      }
 
       <!-- User Profile Gamification Dashboard -->
       @if (currentUser(); as user) {
@@ -152,73 +168,169 @@ Chart.register(...registerables);
             </div>
           </div>
         </div>
-      } @else {
-        <div class="glass-card rounded-2xl p-12 text-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          <h3 class="text-lg font-bold text-slate-300">Keine Trainingsdaten vorhanden</h3>
-          <p class="text-sm text-slate-500 mt-1 max-w-md mx-auto">
-            Sobald du dein erstes Training absolviert hast, siehst du hier deine Leistungs- und Kraftentwicklungen.
-            Oder verwende den <span class="text-neon-cyan font-semibold">Mock-Daten laden</span>-Schalter oben, um Testdaten zu simulieren.
-          </p>
-        </div>
       }
 
-      <!-- Social Activity Feed (MVP Social Preview) -->
-      <div class="glass-card rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-6">
+      <!-- Real-Time Social Activity Feed -->
+      <div class="hebewerk-card rounded-2xl p-6 space-y-4 border-l-4 border-l-steel-cyan">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
           <div>
-            <h3 class="text-lg font-bold text-white font-display">Aktivitäts-Feed</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Aktivitäten von dir und deinen (zukünftigen) Freunden</p>
+            <h3 class="text-lg font-black text-white font-display uppercase">Aktivitäts-Feed</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Echtzeit-Aktivitäten von dir und deinen Freunden (Klicke auf Pläne zur Vorschau)</p>
           </div>
-          <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400 font-bold uppercase">Live Updates</span>
+          <span class="text-[10px] px-2.5 py-1 rounded bg-iron-950 border border-slate-800 text-steel-cyan font-mono font-bold uppercase tracking-wider animate-pulse">
+            ● Live Synchronisation
+          </span>
         </div>
 
         @if (activityFeedItems().length > 0) {
-          <div class="space-y-4 max-h-80 overflow-y-auto pr-2">
+          <div class="space-y-3 max-h-96 overflow-y-auto pr-1">
             @for (item of activityFeedItems(); track item.id) {
-              <div class="flex items-start gap-3.5 p-3 rounded-xl bg-slate-900/30 border border-slate-900/50 hover:bg-slate-900/50 transition-colors">
-                <img [src]="item.photoURL" class="w-9 h-9 rounded-full border border-neon-cyan shrink-0 bg-slate-800" alt="Avatar" />
+              <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-iron-950 border border-slate-800/80 hover:border-slate-700 transition-colors">
+                <img [src]="item.photoURL" class="w-10 h-10 rounded-xl border border-forge-amber shrink-0 bg-iron-900 shadow-md" alt="Avatar" />
                 <div class="min-w-0 flex-1">
                   <div class="flex items-baseline justify-between gap-2">
-                    <span class="text-sm font-bold text-slate-200">{{ item.displayName }}</span>
-                    <span class="text-[10px] text-slate-500 font-semibold">{{ item.timestamp | date:'dd.MM.HH:mm' }}</span>
+                    <span class="text-sm font-bold text-white font-display">{{ item.displayName }}</span>
+                    <span class="text-[10px] text-slate-400 font-mono font-bold">{{ item.timestamp | date:'dd.MM.HH:mm' }}</span>
                   </div>
-                  <p class="text-xs text-slate-400 mt-1">
-                    hat das Training <span class="text-neon-cyan font-bold">{{ item.details.workoutName }}</span> absolviert.
+                  <p class="text-xs text-slate-300 mt-1">
+                    hat das Training 
+                    <button 
+                      (click)="openPlanPreview(item)"
+                      class="text-forge-amber font-bold font-display hover:underline transition-all inline-flex items-center gap-1 text-left"
+                      title="Klicken für Plan-Vorschau"
+                    >
+                      <span>{{ item.details.workoutName }}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                      </svg>
+                    </button> 
+                    absolviert.
                   </p>
                   <div class="flex items-center gap-3 mt-2">
-                    <span class="text-[10px] font-bold text-neon-mint flex items-center gap-1">
+                    <span class="text-[10px] font-mono font-bold text-amber-400 flex items-center gap-1">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
                       </svg>
                       +{{ item.details.xpGained }} XP
                     </span>
-                    <span class="text-[10px] text-slate-500 font-medium">{{ item.details.detailsString }}</span>
+                    <span class="text-[10px] text-slate-400 font-mono">{{ item.details.detailsString }}</span>
                   </div>
                 </div>
               </div>
             }
           </div>
         } @else {
-          <div class="p-6 text-center text-slate-500 text-sm">
-            Noch keine Aktivitäten vorhanden. Absolviere ein Training, um den Feed zu füllen!
+          <div class="p-8 text-center text-slate-400 text-sm font-mono border border-dashed border-slate-800 rounded-xl">
+            Noch keine Aktivitäten von dir oder deinen Freunden vorhanden. Absolviere ein Training, um den Feed zu füllen!
           </div>
         }
       </div>
 
     </div>
+
+    <!-- PLAN PREVIEW & COPY MODAL -->
+    @if (selectedFeedItem()) {
+      <div class="fixed inset-0 bg-iron-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in">
+        <div class="hebewerk-card rounded-2xl p-6 md:p-8 w-full max-w-lg space-y-6 relative border-l-4 border-l-forge-amber shadow-2xl">
+          
+          <!-- Close button -->
+          <button 
+            (click)="closePlanPreview()"
+            class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-iron-850"
+          >
+            ✕
+          </button>
+
+          @if (isLoadingPlan()) {
+            <div class="py-12 text-center text-slate-400 font-mono text-sm">
+              Lade Plan-Details...
+            </div>
+          } @else {
+            @if (previewPlan(); as plan) {
+              <!-- Header -->
+              <div class="space-y-1 pr-6">
+                <div class="flex items-center gap-2">
+                  <span class="text-[9px] px-2 py-0.5 rounded uppercase font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                    {{ plan.isPublic ? 'Öffentlicher Plan' : 'Eigener Plan' }}
+                  </span>
+                  <span class="text-xs text-slate-400 font-mono">von {{ selectedFeedItem()?.displayName }}</span>
+                </div>
+                <h2 class="text-2xl font-black text-white font-display uppercase mt-1">{{ plan.name }}</h2>
+                @if (plan.description) {
+                  <p class="text-xs text-slate-400 mt-1 leading-relaxed">{{ plan.description }}</p>
+                }
+              </div>
+
+              <!-- Exercises List -->
+              <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display block">Enthaltene Übungen ({{ plan.exercises.length }})</span>
+                @for (ex of plan.exercises; track ex.id; let idx = $index) {
+                  <div class="p-3 rounded-xl bg-iron-950 border border-slate-800 flex items-center justify-between gap-4">
+                    <div>
+                      <span class="text-sm font-bold text-white font-display block">{{ idx + 1 }}. {{ ex.name }}</span>
+                      <span class="text-xs text-slate-400 font-mono">{{ ex.sets.length }} Sätze × {{ ex.sets[0]?.reps || 8 }} Wdh.</span>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-forge-amber shrink-0">{{ ex.sets[0]?.weight || 0 }} kg</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Copy Action Button -->
+              <div class="pt-4 border-t border-slate-800/80 flex gap-3">
+                <button 
+                  (click)="copyPlanToMyPlans(plan)"
+                  class="hebewerk-btn-amber flex-1 py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  <span>Plan zu meinen Plänen kopieren</span>
+                </button>
+              </div>
+            } @else {
+              <!-- Private Plan Info -->
+              <div class="text-center py-6 space-y-3">
+                <div class="w-14 h-14 rounded-2xl bg-iron-950 border border-slate-800 text-forge-amber flex items-center justify-center mx-auto text-2xl">
+                  🔒
+                </div>
+                <h3 class="text-lg font-bold text-white font-display uppercase">Privater Trainingsplan</h3>
+                <p class="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+                  Dieser Trainingsplan wurde von <span class="text-forge-amber font-bold">{{ selectedFeedItem()?.displayName }}</span> als <strong>PRIVAT</strong> markiert und kann nicht angezeigt oder kopiert werden.
+                </p>
+                <button 
+                  (click)="closePlanPreview()"
+                  class="hebewerk-btn-cyan px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider mt-2"
+                >
+                  Schließen
+                </button>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    }
   `,
   styles: []
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnDestroy {
   private authService = inject(AuthService);
   public workoutService = inject(WorkoutService);
+  private friendsService = inject(FriendsService);
   private mockDataService = inject(MockDataService);
+  private firestore = inject(Firestore, { optional: true });
 
   currentUser = this.authService.currentUser;
   logs = this.workoutService.logs;
+
+  // Activity Feed Signals & Modals
+  activityFeedItems = signal<ActivityFeedItem[]>([]);
+  selectedFeedItem = signal<ActivityFeedItem | null>(null);
+  previewPlan = signal<WorkoutPlan | null>(null);
+  isPlanPrivate = signal<boolean>(false);
+  isLoadingPlan = signal<boolean>(false);
+  toastMessage = signal<string | null>(null);
+
+  private unsubFeed: (() => void) | null = null;
 
   // KPIs
   workoutCount = computed(() => this.logs().length);
@@ -227,7 +339,7 @@ export class DashboardComponent {
     const plans = this.workoutService.plans();
     let count = 0;
     plans.forEach(p => count += p.exercises.length);
-    return count || 7; // fallback if no plans
+    return count || 7;
   });
 
   totalVolumeTons = computed(() => {
@@ -239,7 +351,7 @@ export class DashboardComponent {
         });
       });
     });
-    return volumeKg / 1000; // convert to metric tons
+    return volumeKg / 1000;
   });
 
   lastActiveFormatted = computed(() => {
@@ -278,9 +390,6 @@ export class DashboardComponent {
     return Math.max(0, Math.min(100, Math.round((relativeXp / range) * 100)));
   });
 
-  // Activity Feed preview
-  activityFeedItems = signal<any[]>([]);
-
   // Chart configuration options
   chartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -315,34 +424,148 @@ export class DashboardComponent {
   constructor() {
     this.loadActivityFeed();
     
-    // Auto-update feed when logs change
+    // Auto-update feed when friends or logs change
     effect(() => {
-      if (this.logs()) {
+      if (this.currentUser() || this.friendsService.friends().length >= 0) {
         this.loadActivityFeed();
       }
     });
   }
 
-  loadActivityFeed() {
-    const feed = localStorage.getItem('gym_activity_feed');
-    this.activityFeedItems.set(feed ? JSON.parse(feed) : []);
-  }
-
-  generateMockData() {
-    this.mockDataService.generateThreeMonthsMockData();
-    this.loadActivityFeed();
-  }
-
-  clearAllLogs() {
-    if (confirm('Bist du sicher, dass du deinen gesamten Verlauf und Level löschen möchtest?')) {
-      this.workoutService.clearLogs();
-      this.loadActivityFeed();
+  ngOnDestroy() {
+    if (this.unsubFeed) {
+      this.unsubFeed();
     }
+  }
+
+  private isFirebaseConfigured(): boolean {
+    return !!(environment.firebase.apiKey && environment.firebase.apiKey !== 'YOUR_FIREBASE_API_KEY');
+  }
+
+  loadActivityFeed() {
+    const user = this.currentUser();
+    const userId = user ? user.uid : 'local_guest';
+
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      if (this.unsubFeed) { this.unsubFeed(); }
+
+      const feedRef = collection(this.firestore, 'activity_feed');
+      const q = query(feedRef, orderBy('timestamp', 'desc'), limit(30));
+
+      this.unsubFeed = onSnapshot(q, (snapshot) => {
+        const items: ActivityFeedItem[] = [];
+        const friendIds = new Set(this.friendsService.friends().map(f => f.profile.uid));
+        friendIds.add(userId);
+
+        snapshot.forEach(docSnap => {
+          const item = docSnap.data() as ActivityFeedItem;
+          if (friendIds.has(item.userId)) {
+            items.push(item);
+          }
+        });
+
+        this.activityFeedItems.set(items);
+        localStorage.setItem('hebewerk_activity_feed', JSON.stringify(items));
+      }, (err) => {
+        console.warn('Firestore activity_feed listener error', err);
+        this.loadLocalFeed();
+      });
+      return;
+    }
+
+    this.loadLocalFeed();
+  }
+
+  private loadLocalFeed() {
+    const local = localStorage.getItem('hebewerk_activity_feed') || localStorage.getItem('gym_activity_feed');
+    this.activityFeedItems.set(local ? JSON.parse(local) : []);
+  }
+
+  async openPlanPreview(item: ActivityFeedItem) {
+    this.selectedFeedItem.set(item);
+    this.previewPlan.set(null);
+    this.isPlanPrivate.set(false);
+    this.isLoadingPlan.set(true);
+
+    const planId = item.details.planId;
+    if (!planId) {
+      this.isPlanPrivate.set(true);
+      this.isLoadingPlan.set(false);
+      return;
+    }
+
+    // 1. Search user's own plans
+    let found = this.workoutService.plans().find(p => p.id === planId);
+
+    // 2. Search friends' public plans
+    if (!found) {
+      for (const friend of this.friendsService.friends()) {
+        const p = friend.publicPlans.find(plan => plan.id === planId);
+        if (p) {
+          found = p;
+          break;
+        }
+      }
+    }
+
+    // 3. Try fetching from Firestore
+    if (!found && this.firestore && this.isFirebaseConfigured()) {
+      try {
+        const planDocRef = doc(this.firestore, `workout_plans/${planId}`);
+        const snap = await getDoc(planDocRef);
+        if (snap.exists()) {
+          found = snap.data() as WorkoutPlan;
+        }
+      } catch (e) {
+        console.warn('Error fetching plan from Firestore', e);
+      }
+    }
+
+    this.isLoadingPlan.set(false);
+
+    if (found) {
+      const user = this.currentUser();
+      const isMine = user && found.userId === user.uid;
+      if (isMine || found.isPublic) {
+        this.previewPlan.set(found);
+      } else {
+        this.isPlanPrivate.set(true);
+      }
+    } else {
+      this.isPlanPrivate.set(true);
+    }
+  }
+
+  closePlanPreview() {
+    this.selectedFeedItem.set(null);
+    this.previewPlan.set(null);
+    this.isPlanPrivate.set(false);
+  }
+
+  copyPlanToMyPlans(plan: WorkoutPlan) {
+    const user = this.currentUser();
+    if (!user) return;
+
+    const newPlan: WorkoutPlan = {
+      ...JSON.parse(JSON.stringify(plan)),
+      id: 'plan_' + Math.random().toString(36).substring(2, 9),
+      userId: user.uid,
+      name: plan.name + ' (Kopie)',
+      isPublic: false
+    };
+
+    this.workoutService.savePlan(newPlan);
+    this.closePlanPreview();
+    this.showToast(`Plan '${newPlan.name}' wurde zu deinen Plänen hinzugefügt! 🚀`);
+  }
+
+  private showToast(msg: string) {
+    this.toastMessage.set(msg);
+    setTimeout(() => this.toastMessage.set(null), 4000);
   }
 
   // --- Charts calculations ---
   volumeChartData = computed<ChartConfiguration['data']>(() => {
-    // Sort logs oldest to newest
     const sorted = [...this.logs()].reverse();
     const labels = sorted.map(log => {
       const d = new Date(log.date);
