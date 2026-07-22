@@ -46,7 +46,7 @@ import { UserPrivacySettings } from '../../models/gym.models';
               </svg>
             </div>
             <div>
-              <h2 class="text-xl font-bold text-white font-display">Konto & Profil</h2>
+              <h2 class="text-xl font-bold text-white font-display uppercase">Konto & Profil</h2>
               <p class="text-xs text-slate-400">Deine persönlichen Benutzerdaten verwalten</p>
             </div>
           </div>
@@ -85,15 +85,15 @@ import { UserPrivacySettings } from '../../models/gym.models';
         </div>
 
         <!-- SECTION 2: SOCIAL & PRIVACY SETTINGS -->
-        <div class="hebewerk-card rounded-2xl p-6 space-y-6 border-l-4 border-l-steel-cyan">
+        <div class="hebewerk-card rounded-2xl p-6 space-y-6 border-l-4 border-l-forge-amber">
           <div class="flex items-center gap-3 border-b border-slate-800/80 pb-4">
-            <div class="p-2.5 rounded-xl bg-iron-950 border border-slate-800 text-steel-cyan">
+            <div class="p-2.5 rounded-xl bg-iron-950 border border-slate-800 text-forge-amber">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
             <div>
-              <h2 class="text-xl font-bold text-white font-display">Social & Privatsphäre</h2>
+              <h2 class="text-xl font-bold text-white font-display uppercase">Social & Privatsphäre</h2>
               <p class="text-xs text-slate-400">Bestimme, wer deine Trainingserfolge und Pläne sehen kann</p>
             </div>
           </div>
@@ -105,21 +105,21 @@ import { UserPrivacySettings } from '../../models/gym.models';
               <button 
                 (click)="privacySettings.profileVisibility = 'public'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.profileVisibility === 'public' ? 'bg-forge-amber/15 border-forge-amber/50 text-forge-amber' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.profileVisibility === 'public' ? 'bg-forge-amber border-forge-amber text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
               >
                 Jeder
               </button>
               <button 
                 (click)="privacySettings.profileVisibility = 'friends'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.profileVisibility === 'friends' ? 'bg-forge-amber/15 border-forge-amber/50 text-forge-amber' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.profileVisibility === 'friends' ? 'bg-forge-amber border-forge-amber text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
               >
                 Nur Freunde
               </button>
               <button 
                 (click)="privacySettings.profileVisibility = 'private'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.profileVisibility === 'private' ? 'bg-forge-amber/15 border-forge-amber/50 text-forge-amber' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.profileVisibility === 'private' ? 'bg-forge-amber border-forge-amber text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
               >
                 Niemand
               </button>
@@ -133,21 +133,21 @@ import { UserPrivacySettings } from '../../models/gym.models';
               <button 
                 (click)="privacySettings.plansVisibility = 'public'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.plansVisibility === 'public' ? 'bg-steel-cyan/15 border-steel-cyan/50 text-steel-cyan' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.plansVisibility === 'public' ? 'bg-steel-cyan border-steel-cyan text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
               >
                 Öffentlich
               </button>
               <button 
                 (click)="privacySettings.plansVisibility = 'friends'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.plansVisibility === 'friends' ? 'bg-steel-cyan/15 border-steel-cyan/50 text-steel-cyan' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.plansVisibility === 'friends' ? 'bg-steel-cyan border-steel-cyan text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
               >
                 Nur Freunde
               </button>
               <button 
                 (click)="privacySettings.plansVisibility = 'private'"
                 class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.plansVisibility === 'private' ? 'bg-steel-cyan/15 border-steel-cyan/50 text-steel-cyan' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white'"
+                [ngClass]="privacySettings.plansVisibility === 'private' ? 'bg-steel-cyan border-steel-cyan text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
               >
                 Privat
               </button>
@@ -155,7 +155,7 @@ import { UserPrivacySettings } from '../../models/gym.models';
           </div>
 
           <!-- Search Visibility Checkbox -->
-          <div class="flex items-center justify-between p-3.5 rounded-xl bg-iron-950 border border-slate-800/80">
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-iron-950 border border-slate-800">
             <div>
               <span class="text-xs font-bold font-display uppercase text-white block">In Nutzersuche auffindbar</span>
               <span class="text-[11px] text-slate-400">Erlaube anderen Athleten, dich über die Suche zu finden</span>
@@ -169,22 +169,22 @@ import { UserPrivacySettings } from '../../models/gym.models';
 
           <button 
             (click)="savePrivacy()"
-            class="hebewerk-btn-cyan w-full py-3.5 rounded-xl text-xs font-extrabold uppercase tracking-wider shadow-md"
+            class="hebewerk-btn-amber w-full py-3.5 rounded-xl text-xs font-extrabold uppercase tracking-wider shadow-md"
           >
             Privatsphäre Speichern
           </button>
         </div>
 
         <!-- SECTION 3: DATA MANAGEMENT & DEV TOOLS -->
-        <div class="hebewerk-card rounded-2xl p-6 space-y-6 border-l-4 border-l-rose-500">
+        <div class="hebewerk-card rounded-2xl p-6 space-y-6 border-l-4 border-l-forge-amber">
           <div class="flex items-center gap-3 border-b border-slate-800/80 pb-4">
-            <div class="p-2.5 rounded-xl bg-iron-950 border border-slate-800 text-rose-400">
+            <div class="p-2.5 rounded-xl bg-iron-950 border border-slate-800 text-forge-amber">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </div>
             <div>
-              <h2 class="text-xl font-bold text-white font-display">Daten-Verwaltung & Entwickler-Optionen</h2>
+              <h2 class="text-xl font-bold text-white font-display uppercase">Daten-Verwaltung & Entwickler-Optionen</h2>
               <p class="text-xs text-slate-400">Testdaten generieren oder gesamten Speicher zurücksetzen</p>
             </div>
           </div>
@@ -210,7 +210,7 @@ import { UserPrivacySettings } from '../../models/gym.models';
               </div>
               <button 
                 (click)="resetAllData()"
-                class="w-full py-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-400 font-display font-extrabold text-xs uppercase tracking-wider transition-all"
+                class="w-full py-3 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/80 text-rose-400 font-display font-extrabold text-xs uppercase tracking-wider transition-all"
               >
                 Alles Zurücksetzen (Reset)
               </button>
