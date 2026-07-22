@@ -459,7 +459,7 @@ export class DashboardComponent implements OnDestroy {
 
         snapshot.forEach(docSnap => {
           const item = docSnap.data() as ActivityFeedItem;
-          if (friendIds.has(item.userId)) {
+          if (friendIds.has(item.userId) || item.userId === userId || friendIds.size <= 1) {
             items.push(item);
           }
         });
@@ -488,17 +488,14 @@ export class DashboardComponent implements OnDestroy {
     this.isLoadingPlan.set(true);
 
     const planId = item.details.planId;
-    if (!planId) {
-      this.isPlanPrivate.set(true);
-      this.isLoadingPlan.set(false);
-      return;
-    }
+    const user = this.currentUser();
+    const isMine = !!(user && (item.userId === user.uid));
 
     // 1. Search user's own plans
-    let found = this.workoutService.plans().find(p => p.id === planId);
+    let found = planId ? this.workoutService.plans().find(p => p.id === planId) : undefined;
 
     // 2. Search friends' public plans
-    if (!found) {
+    if (!found && planId) {
       for (const friend of this.friendsService.friends()) {
         const p = friend.publicPlans.find(plan => plan.id === planId);
         if (p) {
@@ -509,7 +506,7 @@ export class DashboardComponent implements OnDestroy {
     }
 
     // 3. Try fetching from Firestore
-    if (!found && this.firestore && this.isFirebaseConfigured()) {
+    if (!found && planId && this.firestore && this.isFirebaseConfigured()) {
       try {
         const planDocRef = doc(this.firestore, `workout_plans/${planId}`);
         const snap = await getDoc(planDocRef);
@@ -523,14 +520,22 @@ export class DashboardComponent implements OnDestroy {
 
     this.isLoadingPlan.set(false);
 
-    if (found) {
-      const user = this.currentUser();
-      const isMine = user && found.userId === user.uid;
-      if (isMine || found.isPublic) {
+    if (isMine) {
+      if (found) {
         this.previewPlan.set(found);
       } else {
-        this.isPlanPrivate.set(true);
+        // Fallback for user's own plan if plan object wasn't found in memory/FS
+        this.previewPlan.set({
+          id: planId || 'plan_own',
+          userId: user!.uid,
+          name: item.details.workoutName,
+          description: 'Absolviertes Training aus deiner Historie',
+          isPublic: true,
+          exercises: []
+        });
       }
+    } else if (found && (found.isPublic || (user && found.userId === user.uid))) {
+      this.previewPlan.set(found);
     } else {
       this.isPlanPrivate.set(true);
     }

@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { Firestore, collection, doc, setDoc, getDocs, query, where, deleteDoc } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import { WorkoutPlan, WorkoutLog } from '../models/gym.models';
@@ -20,6 +20,12 @@ export class WorkoutService {
 
   constructor() {
     this.initializeData();
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user && !user.uid.startsWith('local_')) {
+        this.initializeData();
+      }
+    });
   }
 
   private isFirebaseConfigured(): boolean {
