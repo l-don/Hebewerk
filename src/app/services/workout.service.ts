@@ -41,7 +41,7 @@ export class WorkoutService {
         
         if (fsPlans.length > 0) {
           this._plans.set(fsPlans);
-          localStorage.setItem(`gym_plans_${userId}`, JSON.stringify(fsPlans));
+          localStorage.setItem(`hebewerk_plans_${userId}`, JSON.stringify(fsPlans));
         } else {
           this.setDefaultPlans(userId);
         }
@@ -53,7 +53,7 @@ export class WorkoutService {
         const fsLogs: WorkoutLog[] = [];
         snapLogs.forEach(docSnap => fsLogs.push(docSnap.data() as WorkoutLog));
         this._logs.set(fsLogs);
-        localStorage.setItem(`gym_logs_${userId}`, JSON.stringify(fsLogs));
+        localStorage.setItem(`hebewerk_logs_${userId}`, JSON.stringify(fsLogs));
 
         return;
       } catch (e) {
@@ -62,7 +62,7 @@ export class WorkoutService {
     }
 
     // Local Storage Fallback
-    let storedPlans = localStorage.getItem(`gym_plans_${userId}`);
+    let storedPlans = localStorage.getItem(`hebewerk_plans_${userId}`);
     if (storedPlans) {
       try {
         this._plans.set(JSON.parse(storedPlans));
@@ -73,7 +73,7 @@ export class WorkoutService {
       this.setDefaultPlans(userId);
     }
 
-    let storedLogs = localStorage.getItem(`gym_logs_${userId}`);
+    let storedLogs = localStorage.getItem(`hebewerk_logs_${userId}`);
     if (storedLogs) {
       try {
         this._logs.set(JSON.parse(storedLogs));
@@ -220,7 +220,7 @@ export class WorkoutService {
   }
 
   private savePlans(userId: string, plans: WorkoutPlan[]): void {
-    localStorage.setItem(`gym_plans_${userId}`, JSON.stringify(plans));
+    localStorage.setItem(`hebewerk_plans_${userId}`, JSON.stringify(plans));
   }
 
   // --- CRUD Logs ---
@@ -246,7 +246,7 @@ export class WorkoutService {
 
     const currentLogs = [log, ...this._logs()];
     this._logs.set(currentLogs);
-    localStorage.setItem(`gym_logs_${userId}`, JSON.stringify(currentLogs));
+    localStorage.setItem(`hebewerk_logs_${userId}`, JSON.stringify(currentLogs));
 
     if (user) {
       this.authService.updateStats(xpGained);
@@ -273,7 +273,7 @@ export class WorkoutService {
     const userId = user ? user.uid : 'local_guest';
     
     this._logs.set(logs);
-    localStorage.setItem(`gym_logs_${userId}`, JSON.stringify(logs));
+    localStorage.setItem(`hebewerk_logs_${userId}`, JSON.stringify(logs));
 
     if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
       logs.forEach(log => {
@@ -288,15 +288,15 @@ export class WorkoutService {
     const userId = user ? user.uid : 'local_guest';
     
     this._logs.set([]);
-    localStorage.removeItem(`gym_logs_${userId}`);
+    localStorage.removeItem(`hebewerk_logs_${userId}`);
 
     if (user) {
       const resetUser = {
         ...user,
         stats: { level: 1, xp: 0, currentStreak: 0, lastActive: new Date().toISOString() }
       };
-      localStorage.setItem('gym_tracker_user', JSON.stringify(resetUser));
-      this.authService.loginWithEmail(user.displayName + '@gym.com', 'dummy').catch(() => {});
+      localStorage.setItem('hebewerk_user', JSON.stringify(resetUser));
+      this.authService.loginWithEmail(user.displayName + '@hebewerk.de', 'dummy').catch(() => {});
     }
   }
 
@@ -305,7 +305,7 @@ export class WorkoutService {
     const displayName = user ? user.displayName : 'Gast Athlet';
     const photoURL = user ? user.photoURL : 'https://api.dicebear.com/7.x/adventurer/svg?seed=Guest';
 
-    const feed: any[] = JSON.parse(localStorage.getItem('gym_activity_feed') || '[]');
+    const feed: any[] = JSON.parse(localStorage.getItem('hebewerk_activity_feed') || '[]');
     const newItem = {
       id: 'feed_' + Math.random().toString(36).substring(2, 9),
       userId: user ? user.uid : 'guest',
@@ -320,7 +320,7 @@ export class WorkoutService {
       }
     };
     feed.unshift(newItem);
-    localStorage.setItem('gym_activity_feed', JSON.stringify(feed.slice(0, 50)));
+    localStorage.setItem('hebewerk_activity_feed', JSON.stringify(feed.slice(0, 50)));
 
     if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
       const feedDocRef = doc(this.firestore, `activity_feed/${newItem.id}`);

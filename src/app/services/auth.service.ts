@@ -31,7 +31,7 @@ export class AuthService {
         if (fbUser) {
           const profile = await this.fetchOrCreateFirestoreUser(fbUser);
           this._currentUser.set(profile);
-          localStorage.setItem('gym_tracker_user', JSON.stringify(profile));
+          localStorage.setItem('hebewerk_user', JSON.stringify(profile));
         }
       });
     }
@@ -88,19 +88,19 @@ export class AuthService {
   }
 
   private loadSession() {
-    const savedUser = localStorage.getItem('gym_tracker_user');
+    const savedUser = localStorage.getItem('hebewerk_user');
     if (savedUser) {
       try {
         this._currentUser.set(JSON.parse(savedUser));
       } catch (e) {
-        localStorage.removeItem('gym_tracker_user');
+        localStorage.removeItem('hebewerk_user');
       }
     }
   }
 
   private saveSession(user: UserProfile) {
     this._currentUser.set(user);
-    localStorage.setItem('gym_tracker_user', JSON.stringify(user));
+    localStorage.setItem('hebewerk_user', JSON.stringify(user));
     this.syncProfileToFirestore(user);
   }
 
@@ -197,7 +197,7 @@ export class AuthService {
       await signOut(this.afAuth);
     }
     this._currentUser.set(null);
-    localStorage.removeItem('gym_tracker_user');
+    localStorage.removeItem('hebewerk_user');
   }
 
   updateStats(xpGained: number): UserStats {
@@ -242,11 +242,11 @@ export class AuthService {
   }
 
   private getUsersDb(): Record<string, UserProfile> {
-    const db = localStorage.getItem('gym_tracker_users_db');
+    const db = localStorage.getItem('hebewerk_users_db');
     return db ? JSON.parse(db) : {};
   }
 
   private saveUsersDb(db: Record<string, UserProfile>) {
-    localStorage.setItem('gym_tracker_users_db', JSON.stringify(db));
+    localStorage.setItem('hebewerk_users_db', JSON.stringify(db));
   }
 }

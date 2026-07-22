@@ -155,11 +155,11 @@ export class MockDataService {
       }
     };
 
-    localStorage.setItem('gym_tracker_user', JSON.stringify(updatedProfile));
+    localStorage.setItem('hebewerk_user', JSON.stringify(updatedProfile));
     
     // Quick reload session in Auth Service
     this.workoutService.initializeData();
-    this.authService.loginWithEmail(user.displayName + '@gym.com', 'dummy').catch(() => {});
+    this.authService.loginWithEmail(user.displayName + '@hebewerk.de', 'dummy').catch(() => {});
   }
 
   private generateMockSets(setCount: number, targetReps: number, weight: number, progression: number): any[] {

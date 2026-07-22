@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "gym-tracker": {
+    "hebewerk": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/gym-tracker",
+            "outputPath": "dist/hebewerk",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -57,10 +57,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gym-tracker:build:production"
+              "buildTarget": "hebewerk:build:production"
             },
             "development": {
-              "buildTarget": "gym-tracker:build:development"
+              "buildTarget": "hebewerk:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -68,7 +68,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "gym-tracker:build"
+            "buildTarget": "hebewerk:build"
           }
         },
         "test": {

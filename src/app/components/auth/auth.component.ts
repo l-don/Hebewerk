@@ -23,7 +23,7 @@ import { AuthService } from '../../services/auth.service';
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h1 class="text-3xl font-extrabold tracking-tight font-display text-gradient">GYM TRACKER</h1>
+          <h1 class="text-3xl font-extrabold tracking-tight font-display text-gradient">HEBEWERK</h1>
           <p class="text-sm text-slate-400 mt-2">Definiere deine Ziele, verfolge deinen Fortschritt</p>
         </div>
 
@@ -120,7 +120,7 @@ import { AuthService } from '../../services/auth.service';
 
         <!-- Toggle Auth Mode -->
         <p class="text-center text-sm text-slate-400 mt-8">
-          {{ isRegisterMode() ? 'Bereits registriert?' : 'Neu beim Gym Tracker?' }}
+          {{ isRegisterMode() ? 'Bereits registriert?' : 'Neu bei Hebewerk?' }}
           <a 
             href="javascript:void(0)" 
             (click)="toggleAuthMode()"

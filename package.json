@@ -1,5 +1,5 @@
 {
-  "name": "gym-tracker",
+  "name": "hebewerk",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "ng build --configuration production --base-href /gym_tracker/ && npx angular-cli-ghpages --dir=dist/gym-tracker/browser"
+    "deploy": "ng build --configuration production --base-href /hebewerk/ && npx angular-cli-ghpages --dir=dist/hebewerk/browser"
   },
   "private": true,
   "dependencies": {
