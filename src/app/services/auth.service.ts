@@ -200,6 +200,15 @@ export class AuthService {
     localStorage.removeItem('hebewerk_user');
   }
 
+  resetUserStats(resetUser: UserProfile) {
+    this.saveSession(resetUser);
+    const db = this.getUsersDb();
+    if (db[resetUser.uid]) {
+      db[resetUser.uid] = resetUser;
+      this.saveUsersDb(db);
+    }
+  }
+
   updateStats(xpGained: number): UserStats {
     const user = this._currentUser();
     if (!user) throw new Error('No user logged in');

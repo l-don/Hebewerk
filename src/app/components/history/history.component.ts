@@ -8,40 +8,39 @@ import { WorkoutLog } from '../../models/gym.models';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
+    <div class="p-3 sm:p-5 md:p-6 max-w-4xl mx-auto space-y-5 animate-fade-in font-body">
       
       <!-- Header -->
-      <div>
-        <h1 class="text-3xl font-extrabold tracking-tight text-white font-display uppercase">Trainingsverlauf</h1>
-        <p class="text-sm text-slate-400 mt-1">Hier findest du all deine absolvierten Hebe-Einheiten.</p>
+      <div class="pb-2 border-b border-[#2D3748]/20 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold font-heading text-[#1A1A1A]">
+            <span class="highlighter-line inline-block px-1">TRAININGSVERLAUF</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-[#718096] font-body mt-0.5">Hier findest du all deine absolvierten Notizbuch-Einheiten.</p>
+        </div>
       </div>
 
       <!-- Logs List -->
       <div class="space-y-4">
         @for (log of logs(); track log.id; let idx = $index) {
-          <div class="hebewerk-card rounded-2xl p-5 transition-all border-l-4 border-l-forge-amber">
+          <div class="notebook-card rounded-2xl p-5 transition-all">
             
             <!-- Summary Header of Log Card -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div class="flex items-center gap-2.5">
-                  <h3 class="text-lg font-bold text-white tracking-tight font-display">{{ log.planName }}</h3>
-                  <span class="text-[10px] px-2 py-0.5 rounded bg-forge-amber/15 border border-forge-amber/30 text-forge-amber font-mono font-bold uppercase">
+                  <h3 class="text-xl font-bold text-[#1A1A1A] font-heading">{{ log.planName }}</h3>
+                  <span class="highlighter-yellow text-[11px] font-bold font-heading uppercase">
                     +{{ log.xpGained || 0 }} XP
                   </span>
                 </div>
-                <div class="flex items-center gap-4 text-xs text-slate-400 mt-1">
+                <div class="flex items-center gap-3 text-xs text-[#718096] font-body mt-1">
                   <span class="flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    {{ log.date | date:'dd. MMMM yyyy, HH:mm':'':'de-DE' }}
+                    📅 {{ log.date | date:'dd. MMMM yyyy, HH:mm':'':'de-DE' }}
                   </span>
-                  <span class="flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {{ log.durationMinutes }} Min.
+                  <span>•</span>
+                  <span class="flex items-center gap-1 font-bold text-[#1A1A1A]">
+                    ⏱️ {{ log.durationMinutes }} Min.
                   </span>
                 </div>
               </div>
@@ -49,43 +48,34 @@ import { WorkoutLog } from '../../models/gym.models';
               <!-- Action button: Toggle details -->
               <button 
                 (click)="toggleLogDetails(log.id)"
-                class="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs font-bold text-slate-300 transition-colors flex items-center gap-1.5 self-start sm:self-center"
+                class="notebook-btn-outline px-4 py-2 rounded-xl text-xs font-heading flex items-center gap-1.5 self-start sm:self-center border border-[#2D3748]"
               >
                 <span>{{ isExpanded(log.id) ? 'Details ausblenden' : 'Details anzeigen' }}</span>
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  class="h-4 w-4 transform transition-transform" 
-                  [ngClass]="isExpanded(log.id) ? 'rotate-180' : ''" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
+                <span [ngClass]="isExpanded(log.id) ? 'rotate-180' : ''" class="inline-block transition-transform">▼</span>
               </button>
             </div>
 
             <!-- Details Section (Accordion style) -->
             @if (isExpanded(log.id)) {
-              <div class="mt-5 border-t border-slate-800/80 pt-5 space-y-4 animate-slide-down">
+              <div class="mt-4 border-t border-[#2D3748]/15 pt-4 space-y-3">
                 @for (ex of log.exercises; track $index) {
-                  <div class="p-3.5 rounded-xl bg-slate-950/40 border border-slate-900/60 space-y-2">
-                    <h4 class="text-sm font-extrabold text-white tracking-tight">{{ ex.name }}</h4>
+                  <div class="p-3 rounded-xl bg-[#FAF8F2] border border-[#2D3748]/15 space-y-2">
+                    <h4 class="text-sm font-bold text-[#1A1A1A] font-heading">{{ ex.name }}</h4>
                     
                     <!-- Sets subtable -->
-                    <div class="grid grid-cols-4 gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">
+                    <div class="grid grid-cols-4 gap-2 text-[11px] font-bold text-[#718096] font-heading uppercase tracking-wider px-1">
                       <span>Satz</span>
                       <span class="text-center">Gewicht</span>
-                      <span class="text-center">Wiederholungen</span>
+                      <span class="text-center">Wdh.</span>
                       <span class="text-right">Richtwert</span>
                     </div>
 
                     @for (set of ex.sets; track setIdx; let setIdx = $index) {
-                      <div class="grid grid-cols-4 gap-2 items-center text-xs text-slate-300 font-medium px-1">
-                        <span class="text-slate-500 font-bold">#{{ setIdx + 1 }}</span>
-                        <span class="text-center font-bold text-slate-200">{{ set.weight }} kg</span>
-                        <span class="text-center font-bold text-slate-200">{{ set.reps }}</span>
-                        <span class="text-right text-slate-500">{{ set.targetWeight }}kg x {{ set.targetReps }}</span>
+                      <div class="grid grid-cols-4 gap-2 items-center text-xs text-[#1A1A1A] font-body px-1">
+                        <span class="text-[#718096] font-bold">#{{ setIdx + 1 }}</span>
+                        <span class="text-center font-bold text-[#0284c7]">{{ set.weight }} kg</span>
+                        <span class="text-center font-bold text-[#1A1A1A]">{{ set.reps }}</span>
+                        <span class="text-right text-[#718096]">{{ set.targetWeight }}kg x {{ set.targetReps }}</span>
                       </div>
                     }
                   </div>
@@ -95,12 +85,10 @@ import { WorkoutLog } from '../../models/gym.models';
 
           </div>
         } @empty {
-          <div class="glass-card rounded-2xl p-12 text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h3 class="text-lg font-bold text-slate-300">Keine Trainings einträge</h3>
-            <p class="text-sm text-slate-500 mt-1 max-w-sm mx-auto">Du hast noch keine Trainingseinheiten in deinem Verlauf. Starte ein Workout, um Einträge zu erstellen.</p>
+          <div class="notebook-card rounded-2xl p-10 text-center bg-[#FAF8F2]">
+            <img src="assets/icons/Analytics-Graph-Bar-Line--Streamline-Freehand.png" class="w-12 h-12 mx-auto mb-3 opacity-60 object-contain" alt="Verlauf" />
+            <h3 class="text-lg font-bold font-heading text-[#1A1A1A]">Keine Trainingseinträge</h3>
+            <p class="text-xs text-[#718096] font-body mt-1 max-w-sm mx-auto">Du hast noch keine Trainingseinheiten in deinem Notizbuch. Starte ein Workout, um Einträge zu erstellen.</p>
           </div>
         }
       </div>

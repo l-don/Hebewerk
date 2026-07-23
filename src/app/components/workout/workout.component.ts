@@ -26,67 +26,54 @@ interface ActiveExercise {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <div class="p-4 md:p-8 max-w-3xl mx-auto space-y-6 relative min-h-screen">
-      
-      <!-- Ambient background glows -->
-      <div class="absolute top-10 left-10 w-60 h-60 bg-neon-cyan/5 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute bottom-20 right-10 w-60 h-60 bg-neon-mint/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="p-3 sm:p-5 md:p-6 max-w-3xl mx-auto space-y-5 relative min-h-screen font-body">
 
       @if (!workoutCompleted()) {
         <!-- ACTIVE WORKOUT PANEL -->
         
         <!-- Header -->
-        <div class="hebewerk-card rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-l-4 border-l-forge-amber">
+        <div class="notebook-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-2 border-[#2D3748]">
           <div>
-            <span class="text-[10px] px-2 py-0.5 rounded bg-forge-amber/15 text-forge-amber font-mono font-bold uppercase tracking-wider">AKTIV ES LÄUFT</span>
-            <h1 class="text-2xl font-black text-white font-display mt-1">{{ plan()?.name }}</h1>
+            <span class="highlighter-yellow text-[10px] font-bold font-heading uppercase tracking-wider">AKTIV ES LÄUFT</span>
+            <h1 class="text-2xl sm:text-3xl font-bold font-heading text-[#1A1A1A] mt-1">{{ plan()?.name }}</h1>
           </div>
           <div class="flex items-center gap-4">
             <div class="text-center sm:text-right">
-              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-display">Dauer</span>
-              <span class="text-xl font-bold font-mono text-forge-amber mt-0.5">{{ durationFormatted() }}</span>
+              <span class="text-[10px] font-bold text-[#718096] uppercase font-heading block">Dauer</span>
+              <span class="text-xl font-bold font-heading text-[#1A1A1A] mt-0.5">{{ durationFormatted() }}</span>
             </div>
             <button 
               (click)="finishWorkout()"
-              class="hebewerk-btn-amber px-6 py-3 rounded-xl text-xs tracking-wider uppercase shadow-lg shrink-0"
+              class="notebook-btn-primary px-6 py-2.5 rounded-xl text-base font-heading shadow-sm shrink-0"
             >
-              Abschliessen
+              Abschließen
             </button>
           </div>
         </div>
 
-        <!-- Timer Panel (Always floating or inline when active) -->
+        <!-- Timer Panel -->
         @if (timerService.isActive() || timerService.isCompleted()) {
-          <div class="glass-card rounded-2xl p-4 border border-neon-mint/30 flex items-center justify-between gap-6 animate-pulse-slow">
-            <div class="flex items-center gap-4">
-              <!-- Radial Progress Ring -->
-              <div class="relative w-14 h-14 flex items-center justify-center">
-                <svg class="w-full h-full transform -rotate-90">
-                  <circle cx="28" cy="28" r="24" stroke="rgba(29,38,59,0.5)" stroke-width="4" fill="transparent" />
-                  <circle cx="28" cy="28" r="24" stroke="#00f5b8" stroke-width="4" fill="transparent"
-                    [attr.stroke-dasharray]="150"
-                    [attr.stroke-dashoffset]="150 - (150 * timerService.progressPercent()) / 100"
-                    class="transition-all duration-300"
-                  />
-                </svg>
-                <span class="absolute text-xs font-black font-display text-white">{{ timerService.timeLeft() }}s</span>
+          <div class="notebook-card rounded-2xl p-4 border-2 border-[#FEF08A] bg-[#FEF08A]/40 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full bg-[#FEF08A] border border-[#2D3748]/30 flex items-center justify-center font-heading font-bold text-[#1A1A1A] text-lg shrink-0">
+                ⏱️ {{ timerService.timeLeft() }}s
               </div>
               <div>
-                <h4 class="text-sm font-bold text-white">Satzpause</h4>
-                <p class="text-xs text-slate-400">Atme tief durch und trinke einen Schluck.</p>
+                <h4 class="text-sm font-bold font-heading text-[#1A1A1A]">Satzpause</h4>
+                <p class="text-xs text-[#718096] font-body">Atme tief durch und trinke einen Schluck.</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
               @if (timerService.isActive()) {
-                <button (click)="timerService.pauseTimer()" class="p-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 9v6m4-6v6" /></svg>
+                <button (click)="timerService.pauseTimer()" class="px-3 py-1.5 notebook-btn-outline text-xs font-heading">
+                  Pause
                 </button>
               } @else {
-                <button (click)="timerService.resumeTimer()" class="p-2 bg-slate-900 border border-slate-800 rounded-lg text-neon-mint hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>
+                <button (click)="timerService.resumeTimer()" class="px-3 py-1.5 notebook-btn-primary text-xs font-heading">
+                  Weiter
                 </button>
               }
-              <button (click)="skipTimer()" class="px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-colors">
+              <button (click)="skipTimer()" class="px-3 py-1.5 notebook-btn-outline text-xs font-heading">
                 Überspringen
               </button>
             </div>
@@ -95,34 +82,34 @@ interface ActiveExercise {
 
         <!-- Active Exercise Container -->
         @if (currentExercise(); as ex) {
-          <div class="hebewerk-card rounded-2xl p-6 space-y-6">
+          <div class="notebook-card rounded-2xl p-5 space-y-5">
             <!-- Exercise navigation bar -->
-            <div class="flex items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center justify-between gap-4 border-b border-[#2D3748]/15 pb-3">
               <div>
-                <span class="text-[10px] font-bold text-slate-400 font-mono uppercase tracking-widest">Übung {{ currentExIndex() + 1 }} von {{ exercises().length }}</span>
-                <h2 class="text-xl font-black text-white font-display mt-0.5">{{ ex.name }}</h2>
+                <span class="text-xs font-bold text-[#718096] font-heading uppercase">Übung {{ currentExIndex() + 1 }} von {{ exercises().length }}</span>
+                <h2 class="text-2xl font-bold text-[#1A1A1A] font-heading mt-0.5">{{ ex.name }}</h2>
               </div>
               <div class="flex items-center gap-2">
                 <button 
                   (click)="prevExercise()" 
                   [disabled]="currentExIndex() === 0"
-                  class="p-2.5 rounded-xl bg-iron-950 hover:bg-iron-850 disabled:opacity-40 border border-slate-800 text-slate-300 transition-colors"
+                  class="p-2 rounded-xl bg-[#FAF8F2] hover:bg-[#FEF08A]/50 disabled:opacity-30 border border-[#2D3748]/30 text-[#1A1A1A] transition-colors"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" /></svg>
+                  ◀
                 </button>
                 <button 
                   (click)="nextExercise()" 
                   [disabled]="currentExIndex() === exercises().length - 1"
-                  class="p-2.5 rounded-xl bg-iron-950 hover:bg-iron-850 disabled:opacity-40 border border-slate-800 text-slate-300 transition-colors"
+                  class="p-2 rounded-xl bg-[#FAF8F2] hover:bg-[#FEF08A]/50 disabled:opacity-30 border border-[#2D3748]/30 text-[#1A1A1A] transition-colors"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" /></svg>
+                  ▶
                 </button>
               </div>
             </div>
 
             <!-- Sets Tracker Table -->
-            <div class="space-y-3">
-              <div class="grid grid-cols-12 gap-2 text-[10px] font-bold text-slate-400 font-display uppercase tracking-widest px-2">
+            <div class="space-y-2.5">
+              <div class="grid grid-cols-12 gap-2 text-[11px] font-bold text-[#718096] font-heading uppercase tracking-wider px-2">
                 <span class="col-span-2 text-center">Satz</span>
                 <span class="col-span-3 text-center">Richtwert</span>
                 <span class="col-span-3 text-center">Gewicht (kg)</span>
@@ -133,15 +120,15 @@ interface ActiveExercise {
               @for (set of ex.sets; track setIdx; let setIdx = $index) {
                 <div 
                   class="grid grid-cols-12 gap-2 items-center p-2 rounded-xl transition-all border"
-                  [ngClass]="set.completed ? 'bg-iron-850 border-forge-amber/50' : 'bg-iron-950/80 border-slate-800/60'"
+                  [ngClass]="set.completed ? 'bg-[#FEF08A]/50 border-[#2D3748]' : 'bg-[#FAF8F2] border-[#2D3748]/20'"
                 >
                   <!-- Set number -->
                   <div class="col-span-2 text-center">
-                    <span class="text-xs font-mono font-bold text-slate-300">{{ setIdx + 1 }}</span>
+                    <span class="text-xs font-body font-bold text-[#1A1A1A]">{{ setIdx + 1 }}</span>
                   </div>
 
                   <!-- Reference target -->
-                  <div class="col-span-3 text-center text-xs text-slate-400 font-mono font-bold">
+                  <div class="col-span-3 text-center text-xs text-[#718096] font-body font-bold">
                     {{ set.targetWeight }}kg x {{ set.targetReps }}
                   </div>
 
@@ -153,7 +140,7 @@ interface ActiveExercise {
                       [disabled]="set.completed"
                       step="0.5"
                       min="0"
-                      class="w-full text-center px-1 py-2 text-sm font-mono font-bold rounded-lg hebewerk-input disabled:opacity-50"
+                      class="w-full text-center px-1 py-1.5 text-sm font-body font-bold rounded-lg notebook-input border border-[#2D3748]/20 disabled:opacity-60"
                     />
                   </div>
 
@@ -164,7 +151,7 @@ interface ActiveExercise {
                       [(ngModel)]="set.reps" 
                       [disabled]="set.completed"
                       min="0"
-                      class="w-full text-center px-1 py-2 text-sm font-mono font-bold rounded-lg hebewerk-input disabled:opacity-50"
+                      class="w-full text-center px-1 py-1.5 text-sm font-body font-bold rounded-lg notebook-input border border-[#2D3748]/20 disabled:opacity-60"
                     />
                   </div>
 
@@ -172,12 +159,10 @@ interface ActiveExercise {
                   <div class="col-span-2 flex justify-center">
                     <button 
                       (click)="toggleSetComplete(setIdx)"
-                      class="w-8 h-8 rounded-lg flex items-center justify-center border transition-all"
-                      [ngClass]="set.completed ? 'bg-forge-amber border-forge-amber text-iron-950 shadow-md' : 'border-slate-800 hover:border-slate-600 text-transparent hover:text-slate-600'"
+                      class="w-8 h-8 rounded-lg flex items-center justify-center border font-bold text-sm transition-all"
+                      [ngClass]="set.completed ? 'bg-[#FEF08A] border-[#2D3748] text-[#1A1A1A] shadow-sm' : 'bg-white border-[#2D3748]/30 text-transparent hover:text-gray-400'"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
+                      ✓
                     </button>
                   </div>
                 </div>
@@ -185,18 +170,18 @@ interface ActiveExercise {
             </div>
 
             <!-- Complete Exercise / Next actions -->
-            <div class="flex gap-4 border-t border-slate-800/60 pt-5">
+            <div class="flex gap-3 border-t border-[#2D3748]/15 pt-4">
               @if (currentExIndex() < exercises().length - 1) {
                 <button 
                   (click)="nextExercise()"
-                  class="flex-1 py-3 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-neon-cyan font-bold rounded-xl text-xs tracking-wider uppercase transition-colors"
+                  class="notebook-btn-outline flex-1 py-2.5 rounded-xl text-base font-heading border border-[#2D3748]"
                 >
-                  Nächste Übung
+                  Nächste Übung →
                 </button>
               } @else {
                 <button 
                   (click)="finishWorkout()"
-                  class="flex-1 py-3 bg-gradient-accent text-slate-950 font-black rounded-xl text-xs tracking-wider uppercase hover:brightness-110 transition-all glow-mint"
+                  class="notebook-btn-primary flex-1 py-3 rounded-xl text-base font-heading shadow-sm"
                 >
                   Training beenden
                 </button>
@@ -207,11 +192,11 @@ interface ActiveExercise {
         }
         
         <!-- Cancel Workout link -->
-        <div class="text-center">
+        <div class="text-center pt-2">
           <a 
             routerLink="/plans"
             (click)="cancelWorkout()"
-            class="text-xs text-red-400 hover:text-red-300 font-bold transition-colors cursor-pointer"
+            class="text-xs text-rose-700 hover:underline font-body cursor-pointer"
           >
             Training abbrechen (Verwirft alle Daten)
           </a>
@@ -219,51 +204,41 @@ interface ActiveExercise {
 
       } @else {
         <!-- SUMMARY PANEL ON FINISH -->
-        <div class="glass-card rounded-2xl p-8 border border-neon-mint/30 text-center space-y-8 animate-scale-up relative overflow-hidden">
+        <div class="notebook-card rounded-2xl p-6 sm:p-8 border-2 border-[#2D3748] text-center space-y-6 animate-scale-up relative bg-white shadow-xl">
           
-          <!-- Radial light glow -->
-          <div class="absolute -top-20 -left-20 w-60 h-60 bg-neon-mint/10 rounded-full blur-3xl pointer-events-none"></div>
-          <div class="absolute -bottom-20 -right-20 w-60 h-60 bg-neon-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
-
           <!-- Confetti badge -->
-          <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-neon-mint/10 border border-neon-mint/20 text-neon-mint mb-2">
-            <!-- Trophy -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-            </svg>
+          <div class="w-16 h-16 rounded-2xl bg-[#FEF08A] border border-[#2D3748] flex items-center justify-center mx-auto text-3xl shadow-sm">
+            🏆
           </div>
 
           <div>
-            <h1 class="text-3xl font-black text-white font-display">Training abgeschlossen!</h1>
-            <p class="text-sm text-slate-400 mt-2">Hervorragende Arbeit. Du hast dein Training erfolgreich eingetragen.</p>
+            <h1 class="text-3xl font-bold text-[#1A1A1A] font-heading">Training abgeschlossen!</h1>
+            <p class="text-xs sm:text-sm text-[#718096] font-body mt-1">Hervorragende Arbeit. Dein Training wurde ins Notizbuch eingetragen.</p>
           </div>
 
           <!-- Key stats dashboard -->
-          <div class="grid grid-cols-3 gap-4">
-            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80">
-              <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Dauer</span>
-              <span class="text-lg font-black text-white mt-1 block">{{ summaryMinutes() }} Min</span>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-[#FAF8F2] border border-[#2D3748]/20">
+              <span class="text-[10px] font-bold text-[#718096] font-heading uppercase block">Dauer</span>
+              <span class="text-lg font-bold text-[#1A1A1A] font-heading mt-0.5 block">{{ summaryMinutes() }} Min</span>
             </div>
-            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80">
-              <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Volumen</span>
-              <span class="text-lg font-black text-white mt-1 block">{{ summaryVolume() }} kg</span>
+            <div class="p-3.5 rounded-xl bg-[#FAF8F2] border border-[#2D3748]/20">
+              <span class="text-[10px] font-bold text-[#718096] font-heading uppercase block">Volumen</span>
+              <span class="text-lg font-bold text-[#1A1A1A] font-heading mt-0.5 block">{{ summaryVolume() }} kg</span>
             </div>
-            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80">
-              <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Belohnung</span>
-              <span class="text-lg font-black text-neon-mint mt-1 block">+{{ summaryXp() }} XP</span>
+            <div class="p-3.5 rounded-xl bg-[#FEF08A]/60 border border-[#2D3748]/30">
+              <span class="text-[10px] font-bold text-[#1A1A1A] font-heading uppercase block">Belohnung</span>
+              <span class="text-lg font-bold text-[#1A1A1A] font-heading mt-0.5 block">+{{ summaryXp() }} XP</span>
             </div>
           </div>
 
           <!-- Personal records alert -->
           @if (personalRecords().length > 0) {
-            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-left">
-              <div class="flex items-center gap-1.5 font-bold uppercase tracking-wider mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                <span>Neue Bestleistungen!</span>
+            <div class="p-4 rounded-xl bg-[#FEF08A] border border-[#2D3748] text-[#1A1A1A] text-xs text-left shadow-sm">
+              <div class="flex items-center gap-1.5 font-heading font-bold text-sm uppercase mb-1">
+                <span>⭐ Neue Bestleistungen!</span>
               </div>
-              <ul class="list-disc list-inside space-y-1 font-medium">
+              <ul class="list-disc list-inside space-y-1 font-body">
                 @for (pr of personalRecords(); track $index) {
                   <li>{{ pr.exerciseName }}: {{ pr.weight }}kg</li>
                 }
@@ -271,19 +246,17 @@ interface ActiveExercise {
             </div>
           }
 
-          <div class="pt-4">
+          <div class="pt-2">
             <button 
               routerLink="/dashboard"
-              class="w-full py-3.5 bg-gradient-accent text-slate-950 font-extrabold rounded-xl hover:brightness-110 active:scale-95 transition-all text-sm shadow-md glow-mint"
+              class="notebook-btn-primary w-full py-3 rounded-xl text-lg font-heading shadow-sm"
             >
               Zum Dashboard
             </button>
           </div>
-
         </div>
       }
 
-    </div>
   `,
   styles: []
 })

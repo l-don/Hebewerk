@@ -9,50 +9,49 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-iron-950 px-4 py-12 relative overflow-hidden">
-      <!-- Ambient background glow spots -->
-      <div class="absolute top-1/4 left-1/4 w-72 h-72 bg-forge-amber/5 rounded-full blur-3xl"></div>
+    <div class="min-h-screen flex items-center justify-center bg-[#F6F4EB] px-4 py-10 relative overflow-hidden font-body">
       
-      <!-- Industrial Login Card -->
-      <div class="w-full max-w-md hebewerk-card rounded-2xl p-8 relative z-10 border-l-4 border-l-forge-amber">
-        <!-- Logo -->
-        <div class="text-center mb-8">
-          <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-forge-gold to-forge-amber glow-amber mb-4 shadow-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-iron-950 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
+      <!-- Notebook Login Card -->
+      <div class="w-full max-w-md notebook-card rounded-2xl p-6 sm:p-8 relative z-10 shadow-xl bg-white border-2 border-[#2D3748]">
+        
+        <!-- Notebook Logo -->
+        <div class="text-center mb-6">
+          <img 
+            src="assets/logo/notebook_with_dumbell.png" 
+            class="w-24 h-24 sm:w-28 sm:h-28 mx-auto object-contain drop-shadow-md mb-2" 
+            alt="Hebewerk Notebook Logo" 
+          />
+          <h1 class="text-3xl sm:text-4xl font-bold tracking-wide font-heading text-[#1A1A1A]">HEBEWERK</h1>
+          <div class="mt-1">
+            <span class="highlighter-yellow font-heading text-xs font-bold uppercase tracking-wider text-[#1A1A1A]">DEIN TRAININGS-NOTIZBUCH</span>
           </div>
-          <h1 class="text-3xl font-black tracking-wider font-display text-gradient-amber uppercase">HEBEWERK</h1>
-          <p class="text-xs font-mono text-slate-400 mt-2">FORGE YOUR STRENGTH • TRACK YOUR PROGRESS</p>
         </div>
 
         <!-- Form error message -->
         @if (errorMessage()) {
-          <div class="p-3 mb-4 rounded-lg bg-red-950/60 border border-red-800 text-red-300 text-sm flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+          <div class="p-3 mb-4 rounded-xl bg-rose-50 border border-rose-300 text-rose-800 text-xs font-body flex items-center gap-2">
+            <span>⚠️</span>
             <span>{{ errorMessage() }}</span>
           </div>
         }
 
-        <form (ngSubmit)="onSubmit()" #authForm="ngForm" class="space-y-5">
+        <form (ngSubmit)="onSubmit()" #authForm="ngForm" class="space-y-4">
           @if (isRegisterMode()) {
             <div>
-              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Name</label>
+              <label class="block text-xs font-bold text-[#2D3748] uppercase font-heading mb-1">Name</label>
               <input 
                 type="text" 
                 name="displayName"
                 [(ngModel)]="displayName"
                 required
                 placeholder="Dein Trainingspartner Name" 
-                class="w-full px-4 py-3 rounded-xl glass-input placeholder-slate-500 font-medium"
+                class="w-full px-3.5 py-2.5 rounded-xl notebook-input placeholder-[#A0AEC0] font-body text-[#1A1A1A] text-sm border border-[#2D3748]/30"
               />
             </div>
           }
 
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">E-Mail Adresse</label>
+            <label class="block text-xs font-bold text-[#2D3748] uppercase font-heading mb-1">E-Mail Adresse</label>
             <input 
               type="email" 
               name="email"
@@ -60,15 +59,15 @@ import { AuthService } from '../../services/auth.service';
               required
               email
               placeholder="name@beispiel.de" 
-              class="w-full px-4 py-3 rounded-xl glass-input placeholder-slate-500 font-medium"
+              class="w-full px-3.5 py-2.5 rounded-xl notebook-input placeholder-[#A0AEC0] font-body text-[#1A1A1A] text-sm border border-[#2D3748]/30"
             />
           </div>
 
           <div>
-            <div class="flex justify-between items-center mb-2">
-              <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Passwort</label>
+            <div class="flex justify-between items-center mb-1">
+              <label class="block text-xs font-bold text-[#2D3748] uppercase font-heading">Passwort</label>
               @if (!isRegisterMode()) {
-                <a href="javascript:void(0)" class="text-xs text-neon-cyan hover:text-neon-mint transition-colors">Vergessen?</a>
+                <a href="javascript:void(0)" class="text-xs text-[#718096] hover:text-black font-body">Vergessen?</a>
               }
             </div>
             <input 
@@ -78,17 +77,17 @@ import { AuthService } from '../../services/auth.service';
               required
               minlength="6"
               placeholder="••••••••" 
-              class="w-full px-4 py-3 rounded-xl glass-input placeholder-slate-500 font-medium"
+              class="w-full px-3.5 py-2.5 rounded-xl notebook-input placeholder-[#A0AEC0] font-body text-[#1A1A1A] text-sm border border-[#2D3748]/30"
             />
           </div>
 
           <button 
             type="submit" 
             [disabled]="authForm.invalid || isLoading()"
-            class="w-full py-3.5 rounded-xl bg-gradient-accent text-slate-950 font-bold hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none glow-mint mt-6 flex items-center justify-center gap-2"
+            class="notebook-btn-primary w-full py-3 rounded-xl disabled:opacity-50 disabled:pointer-events-none mt-4 flex items-center justify-center gap-2 text-lg font-heading"
           >
             @if (isLoading()) {
-              <div class="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
+              <div class="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin"></div>
               <span>Lade...</span>
             } @else {
               <span>{{ isRegisterMode() ? 'Konto erstellen' : 'Anmelden' }}</span>
@@ -96,9 +95,9 @@ import { AuthService } from '../../services/auth.service';
           </button>
         </form>
 
-        <div class="relative my-8">
-          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-800"></div></div>
-          <div class="relative flex justify-center text-xs uppercase"><span class="px-3 bg-slate-900 text-slate-400 font-semibold tracking-wide">Oder</span></div>
+        <div class="relative my-6">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-[#2D3748]/20"></div></div>
+          <div class="relative flex justify-center text-xs uppercase"><span class="px-3 bg-white text-[#718096] font-heading font-bold">Oder</span></div>
         </div>
 
         <!-- Google Login -->
@@ -106,9 +105,9 @@ import { AuthService } from '../../services/auth.service';
           type="button"
           (click)="loginWithGoogle()"
           [disabled]="isLoading()"
-          class="w-full py-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-semibold hover:bg-slate-800 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+          class="notebook-btn-outline w-full py-2.5 rounded-xl text-base font-heading flex items-center justify-center gap-3 border border-[#2D3748]"
         >
-          <svg class="h-5 w-5" viewBox="0 0 24 24">
+          <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24">
             <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.54 14.98 1 12 1 7.35 1 3.37 3.65 1.4 7.56l3.85 2.99c.9-2.7 3.42-4.51 6.75-4.51z"/>
             <path fill="#4285F4" d="M23.49 12.27c0-.82-.07-1.61-.21-2.38H12v4.51h6.44c-.28 1.48-1.12 2.73-2.38 3.58l3.7 2.87c2.16-1.99 3.73-4.92 3.73-8.58z"/>
             <path fill="#FBBC05" d="M5.25 10.55c-.24-.72-.37-1.49-.37-2.28 0-.79.13-1.56.37-2.28L1.4 2.99C.5 4.8 0 6.84 0 9s.5 4.2 1.4 6.01l3.85-3.46z"/>
@@ -118,12 +117,12 @@ import { AuthService } from '../../services/auth.service';
         </button>
 
         <!-- Toggle Auth Mode -->
-        <p class="text-center text-sm text-slate-400 mt-8">
+        <p class="text-center text-xs font-body text-[#718096] mt-6">
           {{ isRegisterMode() ? 'Bereits registriert?' : 'Neu bei Hebewerk?' }}
           <a 
             href="javascript:void(0)" 
             (click)="toggleAuthMode()"
-            class="text-neon-cyan hover:text-neon-mint font-semibold underline transition-colors ml-1"
+            class="highlighter-yellow font-heading font-bold text-[#1A1A1A] ml-1 px-1.5 py-0.5 rounded"
           >
             {{ isRegisterMode() ? 'Hier anmelden' : 'Konto erstellen' }}
           </a>

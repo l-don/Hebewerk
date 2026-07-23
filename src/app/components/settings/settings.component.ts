@@ -12,71 +12,69 @@ import { UserPrivacySettings } from '../../models/gym.models';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="p-4 md:p-8 max-w-4xl mx-auto space-y-8 animate-fade-in">
+    <div class="p-3 sm:p-5 md:p-6 max-w-4xl mx-auto space-y-5 animate-fade-in font-body">
       
       <!-- Header -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="pb-2 border-b border-[#2D3748]/20 flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-black tracking-wider text-white font-display uppercase">Einstellungen</h1>
-          <p class="text-sm text-slate-400 mt-1">Verwalte dein Konto, Privatsphäre & Daten-Optionen.</p>
+          <h1 class="text-2xl sm:text-3xl font-bold font-heading text-[#1A1A1A]">
+            <span class="highlighter-line inline-block px-1">EINSTELLUNGEN & OPTIONEN</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-[#718096] font-body mt-0.5">Verwalte dein Konto, Privatsphäre & Speicher-Optionen.</p>
         </div>
       </div>
 
       <!-- Toast Feedback -->
       @if (toastMessage()) {
-        <div class="p-4 rounded-xl bg-forge-amber/15 border border-forge-amber/30 text-forge-amber text-sm font-bold font-mono flex items-center justify-between shadow-lg animate-fade-in">
+        <div class="p-3 rounded-xl bg-[#FEF08A] border border-[#2D3748] text-[#1A1A1A] text-sm font-bold font-heading flex items-center justify-between shadow-sm animate-fade-in">
           <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
+            <img src="assets/icons/Form-Validation-Check-Circle--Streamline-Freehand.png" class="w-5 h-5 object-contain" alt="OK" />
             <span>{{ toastMessage() }}</span>
           </div>
-          <button (click)="toastMessage.set(null)" class="text-slate-400 hover:text-white text-xs">✕</button>
+          <button (click)="toastMessage.set(null)" class="text-[#2D3748] hover:text-black text-xs font-bold">✕</button>
         </div>
       }
 
       @if (currentUser(); as user) {
         
-        <!-- SECTION 1: ACCOUNT SETTINGS -->
-        <div class="hebewerk-card rounded-2xl p-6 space-y-6 border-l-4 border-l-forge-amber">
-          <div class="flex items-center gap-3 border-b border-slate-800/80 pb-4">
-            <div class="p-2.5 rounded-xl bg-iron-950 border border-slate-800 text-forge-amber">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
+        <!-- SECTION 1: KONTO & PROFIL -->
+        <div class="notebook-card p-5 sm:p-6 rounded-2xl space-y-4">
+          <div class="flex items-center gap-3 border-b border-[#2D3748]/15 pb-3">
+            <div class="p-2 rounded-xl bg-[#FEF08A] border border-[#2D3748]/30">
+              <img src="assets/icons/Settings-Cog--Streamline-Freehand.png" class="w-6 h-6 object-contain" alt="Konto" />
             </div>
             <div>
-              <h2 class="text-xl font-bold text-white font-display uppercase">Konto & Profil</h2>
-              <p class="text-xs text-slate-400">Deine persönlichen Benutzerdaten verwalten</p>
+              <h2 class="text-xl font-bold font-heading text-[#1A1A1A]">KONTO & PROFIL</h2>
+              <p class="text-xs text-[#718096]">Deine persönlichen Benutzerdaten verwalten</p>
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row items-center gap-6">
-            <img [src]="user.photoURL" class="w-20 h-20 rounded-2xl border-2 border-forge-amber bg-iron-950 shadow-md shrink-0" alt="Avatar" />
-            <div class="space-y-1 text-center sm:text-left flex-1">
-              <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">Nutzer-ID</span>
-              <p class="text-xs font-mono font-semibold text-slate-300 truncate max-w-xs">{{ user.uid }}</p>
-              <div class="flex items-center justify-center sm:justify-start gap-3 mt-2">
-                <span class="text-xs font-bold text-forge-amber font-mono">LVL {{ user.stats.level }}</span>
-                <span class="text-xs text-slate-500">•</span>
-                <span class="text-xs font-bold text-slate-300 font-mono">{{ user.stats.xp }} XP</span>
+          <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 bg-[#FAF8F2] p-4 rounded-xl border border-[#2D3748]/15">
+            <img [src]="user.photoURL" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-2 border-[#FEF08A] bg-white object-cover shadow-sm shrink-0" alt="Avatar" />
+            <div class="space-y-1 text-center sm:text-left flex-1 min-w-0">
+              <span class="text-[10px] font-heading font-bold uppercase tracking-wider text-[#718096]">Nutzer-ID</span>
+              <p class="text-xs font-body font-bold text-[#1A1A1A] truncate max-w-xs">{{ user.uid }}</p>
+              <div class="flex items-center justify-center sm:justify-start gap-2 mt-1">
+                <span class="highlighter-yellow text-xs font-bold font-heading text-[#1A1A1A]">LVL {{ user.stats.level }}</span>
+                <span class="text-xs text-[#718096]">•</span>
+                <span class="text-xs font-bold text-[#2D3748] font-body">{{ user.stats.xp }} XP Gesamt</span>
               </div>
             </div>
           </div>
 
           <!-- Edit Display Name -->
-          <div class="space-y-2 pt-2">
-            <label class="text-xs font-bold font-display uppercase tracking-wider text-slate-300">Anzeigename</label>
-            <div class="flex gap-3">
+          <div class="space-y-1.5 pt-1">
+            <label class="text-xs font-bold font-heading text-[#1A1A1A]">Anzeigename</label>
+            <div class="flex flex-col sm:flex-row gap-2.5">
               <input 
                 type="text" 
                 [(ngModel)]="editName" 
-                class="flex-1 px-4 py-3 rounded-xl hebewerk-input font-bold text-white text-sm"
+                class="flex-1 px-3.5 py-2.5 rounded-xl notebook-input font-body text-[#1A1A1A] text-sm border border-[#2D3748]/30"
                 placeholder="Dein Anzeigename"
               />
               <button 
                 (click)="saveName()"
-                class="hebewerk-btn-amber px-6 py-3 rounded-xl text-xs font-extrabold uppercase tracking-wider shadow-md shrink-0"
+                class="notebook-btn-primary px-6 py-2.5 rounded-xl text-base font-heading shadow-sm shrink-0"
               >
                 Speichern
               </button>
@@ -84,42 +82,40 @@ import { UserPrivacySettings } from '../../models/gym.models';
           </div>
         </div>
 
-        <!-- SECTION 2: SOCIAL & PRIVACY SETTINGS -->
-        <div class="hebewerk-card rounded-2xl p-6 space-y-6 border-l-4 border-l-forge-amber">
-          <div class="flex items-center gap-3 border-b border-slate-800/80 pb-4">
-            <div class="p-2.5 rounded-xl bg-iron-950 border border-slate-800 text-forge-amber">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
+        <!-- SECTION 2: SOCIAL & PRIVATSPHÄRE -->
+        <div class="notebook-card p-5 sm:p-6 rounded-2xl space-y-4">
+          <div class="flex items-center gap-3 border-b border-[#2D3748]/15 pb-3">
+            <div class="p-2 rounded-xl bg-[#FEF08A] border border-[#2D3748]/30">
+              <img src="assets/icons/Multiple-Man-Woman--Streamline-Freehand.png" class="w-6 h-6 object-contain" alt="Privatsphäre" />
             </div>
             <div>
-              <h2 class="text-xl font-bold text-white font-display uppercase">Social & Privatsphäre</h2>
-              <p class="text-xs text-slate-400">Bestimme, wer deine Trainingserfolge und Pläne sehen kann</p>
+              <h2 class="text-xl font-bold font-heading text-[#1A1A1A]">SOCIAL & PRIVATSPHÄRE</h2>
+              <p class="text-xs text-[#718096]">Bestimme, wer deine Trainingserfolge und Pläne sehen kann</p>
             </div>
           </div>
 
           <!-- Profile Visibility -->
-          <div class="space-y-3">
-            <label class="text-xs font-bold font-display uppercase tracking-wider text-slate-300 block">Profil-Sichtbarkeit</label>
-            <div class="grid grid-cols-3 gap-3">
+          <div class="space-y-2">
+            <label class="text-xs font-bold font-heading text-[#1A1A1A] block">Profil-Sichtbarkeit</label>
+            <div class="grid grid-cols-3 gap-2.5">
               <button 
                 (click)="privacySettings.profileVisibility = 'public'"
-                class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.profileVisibility === 'public' ? 'bg-forge-amber border-forge-amber text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
+                class="p-2.5 rounded-xl border text-xs sm:text-sm font-bold font-heading transition-all text-center"
+                [ngClass]="privacySettings.profileVisibility === 'public' ? 'bg-[#FEF08A] border-2 border-[#2D3748] text-[#1A1A1A] shadow-sm' : 'bg-[#FAF8F2] border-[#2D3748]/20 text-[#718096] hover:text-[#1A1A1A]'"
               >
                 Jeder
               </button>
               <button 
                 (click)="privacySettings.profileVisibility = 'friends'"
-                class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.profileVisibility === 'friends' ? 'bg-forge-amber border-forge-amber text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
+                class="p-2.5 rounded-xl border text-xs sm:text-sm font-bold font-heading transition-all text-center"
+                [ngClass]="privacySettings.profileVisibility === 'friends' ? 'bg-[#FEF08A] border-2 border-[#2D3748] text-[#1A1A1A] shadow-sm' : 'bg-[#FAF8F2] border-[#2D3748]/20 text-[#718096] hover:text-[#1A1A1A]'"
               >
                 Nur Freunde
               </button>
               <button 
                 (click)="privacySettings.profileVisibility = 'private'"
-                class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.profileVisibility === 'private' ? 'bg-forge-amber border-forge-amber text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
+                class="p-2.5 rounded-xl border text-xs sm:text-sm font-bold font-heading transition-all text-center"
+                [ngClass]="privacySettings.profileVisibility === 'private' ? 'bg-[#FEF08A] border-2 border-[#2D3748] text-[#1A1A1A] shadow-sm' : 'bg-[#FAF8F2] border-[#2D3748]/20 text-[#718096] hover:text-[#1A1A1A]'"
               >
                 Niemand
               </button>
@@ -127,27 +123,27 @@ import { UserPrivacySettings } from '../../models/gym.models';
           </div>
 
           <!-- Plan Visibility -->
-          <div class="space-y-3 pt-2">
-            <label class="text-xs font-bold font-display uppercase tracking-wider text-slate-300 block">Standard-Sichtbarkeit neuer Pläne</label>
-            <div class="grid grid-cols-3 gap-3">
+          <div class="space-y-2 pt-1">
+            <label class="text-xs font-bold font-heading text-[#1A1A1A] block">Standard-Sichtbarkeit neuer Pläne</label>
+            <div class="grid grid-cols-3 gap-2.5">
               <button 
                 (click)="privacySettings.plansVisibility = 'public'"
-                class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.plansVisibility === 'public' ? 'bg-steel-cyan border-steel-cyan text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
+                class="p-2.5 rounded-xl border text-xs sm:text-sm font-bold font-heading transition-all text-center"
+                [ngClass]="privacySettings.plansVisibility === 'public' ? 'bg-sky-200 border-2 border-[#2D3748] text-[#1A1A1A] shadow-sm' : 'bg-[#FAF8F2] border-[#2D3748]/20 text-[#718096] hover:text-[#1A1A1A]'"
               >
                 Öffentlich
               </button>
               <button 
                 (click)="privacySettings.plansVisibility = 'friends'"
-                class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.plansVisibility === 'friends' ? 'bg-steel-cyan border-steel-cyan text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
+                class="p-2.5 rounded-xl border text-xs sm:text-sm font-bold font-heading transition-all text-center"
+                [ngClass]="privacySettings.plansVisibility === 'friends' ? 'bg-sky-200 border-2 border-[#2D3748] text-[#1A1A1A] shadow-sm' : 'bg-[#FAF8F2] border-[#2D3748]/20 text-[#718096] hover:text-[#1A1A1A]'"
               >
                 Nur Freunde
               </button>
               <button 
                 (click)="privacySettings.plansVisibility = 'private'"
-                class="p-3 rounded-xl border text-xs font-bold font-display uppercase transition-all text-center"
-                [ngClass]="privacySettings.plansVisibility === 'private' ? 'bg-steel-cyan border-steel-cyan text-iron-950 shadow-md font-extrabold' : 'bg-iron-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'"
+                class="p-2.5 rounded-xl border text-xs sm:text-sm font-bold font-heading transition-all text-center"
+                [ngClass]="privacySettings.plansVisibility === 'private' ? 'bg-sky-200 border-2 border-[#2D3748] text-[#1A1A1A] shadow-sm' : 'bg-[#FAF8F2] border-[#2D3748]/20 text-[#718096] hover:text-[#1A1A1A]'"
               >
                 Privat
               </button>
@@ -155,62 +151,60 @@ import { UserPrivacySettings } from '../../models/gym.models';
           </div>
 
           <!-- Search Visibility Checkbox -->
-          <div class="flex items-center justify-between p-3.5 rounded-xl bg-iron-950 border border-slate-800">
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#FAF8F2] border border-[#2D3748]/15">
             <div>
-              <span class="text-xs font-bold font-display uppercase text-white block">In Nutzersuche auffindbar</span>
-              <span class="text-[11px] text-slate-400">Erlaube anderen Athleten, dich über die Suche zu finden</span>
+              <span class="text-sm font-bold font-heading text-[#1A1A1A] block">In Nutzersuche auffindbar</span>
+              <span class="text-xs text-[#718096] font-body">Erlaube anderen Athleten, dich über die Suche zu finden</span>
             </div>
             <input 
               type="checkbox" 
               [(ngModel)]="privacySettings.showInSearch" 
-              class="w-5 h-5 accent-forge-amber rounded cursor-pointer"
+              class="w-5 h-5 accent-[#FEF08A] rounded cursor-pointer"
             />
           </div>
 
           <button 
             (click)="savePrivacy()"
-            class="hebewerk-btn-amber w-full py-3.5 rounded-xl text-xs font-extrabold uppercase tracking-wider shadow-md"
+            class="notebook-btn-primary w-full py-3 rounded-xl text-base font-heading shadow-sm"
           >
             Privatsphäre Speichern
           </button>
         </div>
 
-        <!-- SECTION 3: DATA MANAGEMENT & DEV TOOLS -->
-        <div class="hebewerk-card rounded-2xl p-6 space-y-6 border-l-4 border-l-forge-amber">
-          <div class="flex items-center gap-3 border-b border-slate-800/80 pb-4">
-            <div class="p-2.5 rounded-xl bg-iron-950 border border-slate-800 text-forge-amber">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
+        <!-- SECTION 3: DATEN-VERWALTUNG & DEV TOOLS -->
+        <div class="notebook-card p-5 sm:p-6 rounded-2xl space-y-4">
+          <div class="flex items-center gap-3 border-b border-[#2D3748]/15 pb-3">
+            <div class="p-2 rounded-xl bg-[#FEF08A] border border-[#2D3748]/30">
+              <img src="assets/icons/Copy-Paste-Clipboard--Streamline-Freehand.png" class="w-6 h-6 object-contain" alt="Daten" />
             </div>
             <div>
-              <h2 class="text-xl font-bold text-white font-display uppercase">Daten-Verwaltung & Entwickler-Optionen</h2>
-              <p class="text-xs text-slate-400">Testdaten generieren oder gesamten Speicher zurücksetzen</p>
+              <h2 class="text-xl font-bold font-heading text-[#1A1A1A]">DATEN-VERWALTUNG & MOCK DATEN</h2>
+              <p class="text-xs text-[#718096]">Testdaten generieren oder Speicher zurücksetzen</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="p-4 rounded-xl bg-iron-950 border border-slate-800 flex flex-col justify-between space-y-4">
+            <div class="p-4 rounded-xl bg-[#FAF8F2] border border-[#2D3748]/15 flex flex-col justify-between space-y-3">
               <div>
-                <h3 class="text-sm font-bold text-white font-display uppercase">Mock-Daten Generieren</h3>
-                <p class="text-xs text-slate-400 mt-1">Lädt 3 Monate realistische Test-Logs in dein Konto, um die Statistiken & Diagramme auszuprobieren.</p>
+                <h3 class="text-sm font-bold text-[#1A1A1A] font-heading">Mock-Daten Generieren</h3>
+                <p class="text-xs text-[#718096] font-body mt-1">Lädt 3 Monate realistische Test-Logs in dein Konto, um Diagramme & Notizbuch-Statistiken zu füllen.</p>
               </div>
               <button 
                 (click)="generateMockData()"
-                class="hebewerk-btn-cyan w-full py-3 rounded-xl text-xs uppercase tracking-wider"
+                class="notebook-btn-outline w-full py-2.5 rounded-xl text-sm font-heading border border-[#2D3748]"
               >
                 Mock-Daten Laden
               </button>
             </div>
 
-            <div class="p-4 rounded-xl bg-iron-950 border border-slate-800 flex flex-col justify-between space-y-4">
+            <div class="p-4 rounded-xl bg-[#FAF8F2] border border-rose-200 flex flex-col justify-between space-y-3">
               <div>
-                <h3 class="text-sm font-bold text-rose-400 font-display uppercase">Konto Zurücksetzen</h3>
-                <p class="text-xs text-slate-400 mt-1">Löscht sämtliche absolvierten Einheiten, Statistiken und setzt dein Level auf LVL 1 zurück.</p>
+                <h3 class="text-sm font-bold text-rose-700 font-heading">Konto Zurücksetzen</h3>
+                <p class="text-xs text-[#718096] font-body mt-1">Löscht sämtliche absolvierten Einheiten und setzt dein Notizbuch auf LVL 1 zurück.</p>
               </div>
               <button 
                 (click)="resetAllData()"
-                class="w-full py-3 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/80 text-rose-400 font-display font-extrabold text-xs uppercase tracking-wider transition-all"
+                class="w-full py-2.5 rounded-xl bg-rose-100 hover:bg-rose-200 border border-rose-300 text-rose-800 font-heading font-bold text-sm transition-all"
               >
                 Alles Zurücksetzen (Reset)
               </button>
@@ -220,6 +214,22 @@ import { UserPrivacySettings } from '../../models/gym.models';
 
       }
 
+      <!-- Logout Card (Mobile & Desktop) -->
+      <div class="notebook-card rounded-2xl p-5 border-2 border-rose-300 bg-rose-50/50 space-y-3">
+        <div class="flex items-center gap-2">
+          <img src="assets/icons/Logout-Door--Streamline-Freehand.png" class="w-6 h-6 object-contain" alt="Abmelden" />
+          <h2 class="text-[#1A1A1A] font-bold font-heading text-lg">Abmelden</h2>
+        </div>
+        <p class="text-xs text-[#718096] font-body">Melde dich aus deinem Notizbuch-Konto ab, um zum Login-Bildschirm zurückzukehren.</p>
+        <button 
+          (click)="logout()"
+          class="w-full py-3 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-98 text-white font-heading font-bold text-base transition-all shadow-sm flex items-center justify-center gap-2"
+        >
+          <img src="assets/icons/Logout-Door--Streamline-Freehand.png" class="w-5 h-5 object-contain invert brightness-200" alt="Abmelden" />
+          <span>Jetzt Abmelden</span>
+        </button>
+      </div>
+
     </div>
   `,
   styles: []
@@ -228,6 +238,7 @@ export class SettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private workoutService = inject(WorkoutService);
   private mockDataService = inject(MockDataService);
+  private router = inject(Router);
 
   currentUser = this.authService.currentUser;
   toastMessage = signal<string | null>(null);
@@ -265,11 +276,16 @@ export class SettingsComponent implements OnInit {
     this.showToast('3 Monate Test-Trainingsdaten geladen!');
   }
 
-  resetAllData() {
+  async resetAllData() {
     if (confirm('Bist du sicher, dass du alle absolvierten Workouts und Statistiken zurücksetzen möchtest?')) {
-      this.workoutService.clearLogs();
-      this.showToast('Sämtliche Daten wurden zurückgesetzt.');
+      await this.workoutService.clearLogs();
+      this.showToast('Sämtliche Daten wurden dauerhaft zurückgesetzt.');
     }
+  }
+
+  async logout() {
+    await this.authService.logout();
+    await this.router.navigateByUrl('/auth');
   }
 
   private showToast(msg: string) {

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Patrick+Hand&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,116 +6,225 @@
 
 @layer base {
   body {
-    @apply bg-iron-950 text-slate-100 antialiased min-h-screen overflow-x-hidden;
-    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #F6F4EB;
+    background-image: 
+      linear-gradient(rgba(45, 55, 72, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45, 55, 72, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: #1A1A1A;
+    font-family: 'Kalam', cursive, sans-serif;
+    @apply antialiased min-h-screen overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Chakra Petch', system-ui, sans-serif;
-    letter-spacing: 0.02em;
+    font-family: 'Patrick Hand', cursive, sans-serif;
+    color: #1A1A1A;
+    letter-spacing: 0.03em;
+  }
+
+  .font-heading {
+    font-family: 'Patrick Hand', cursive, sans-serif;
+  }
+
+  .font-body {
+    font-family: 'Kalam', cursive, sans-serif;
   }
 
   .font-mono {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Kalam', cursive, monospace;
+  }
+
+  .font-display {
+    font-family: 'Patrick Hand', cursive, sans-serif;
   }
 }
 
 @layer components {
-  /* Industrial Heavy Card */
+  /* Notebook Light Paper Card */
+  .notebook-card {
+    background: #FFFFFF;
+    border: 1.5px solid rgba(45, 55, 72, 0.25);
+    border-radius: 1rem;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+    @apply transition-all duration-200;
+  }
+
+  .notebook-card-hover:hover {
+    box-shadow: 4px 8px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+    border-color: rgba(45, 55, 72, 0.4);
+  }
+
+  /* Sticky Post-it Note (CTA Training Starten) */
+  .notebook-postit {
+    background-color: #FEF08A;
+    background-image: linear-gradient(135deg, #FEF08A 0%, #FDE047 100%);
+    border: 1.5px solid rgba(45, 55, 72, 0.25);
+    border-radius: 1rem;
+    box-shadow: 3px 6px 16px rgba(253, 224, 71, 0.35), 0 2px 6px rgba(0, 0, 0, 0.06);
+    position: relative;
+  }
+
+  /* Tape effect on corners */
+  .notebook-tape-left {
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    width: 60px;
+    height: 22px;
+    background: rgba(245, 240, 220, 0.85);
+    border: 1px solid rgba(45, 55, 72, 0.15);
+    transform: rotate(-6deg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+
+  .notebook-tape-right {
+    position: absolute;
+    top: -10px;
+    right: 24px;
+    width: 60px;
+    height: 22px;
+    background: rgba(245, 240, 220, 0.85);
+    border: 1px solid rgba(45, 55, 72, 0.15);
+    transform: rotate(5deg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+
+  /* Yellow Highlighter Text & Badge Effects */
+  .highlighter-yellow {
+    background-color: #FEF08A;
+    border-radius: 0.375rem;
+    padding: 0.1rem 0.5rem;
+    display: inline-block;
+    color: #1A1A1A;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  }
+
+  .highlighter-line {
+    background-image: linear-gradient(120deg, #FEF08A 0%, #FEF08A 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 40%;
+    background-position: 0 88%;
+  }
+
+  /* Hand-drawn Outline Button */
+  .notebook-btn-outline {
+    background: #FFFFFF;
+    border: 1.5px solid #2D3748;
+    color: #1A1A1A;
+    font-family: 'Patrick Hand', cursive, sans-serif;
+    font-size: 1.05rem;
+    border-radius: 0.75rem;
+    @apply transition-all duration-150 active:scale-95 hover:bg-amber-50/50 hover:border-amber-600;
+  }
+
+  .notebook-btn-primary {
+    background: #FEF08A;
+    border: 1.5px solid #2D3748;
+    color: #1A1A1A;
+    font-family: 'Patrick Hand', cursive, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-radius: 0.75rem;
+    box-shadow: 2px 3px 0px #2D3748;
+    @apply transition-all duration-150 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:bg-yellow-300;
+  }
+
+  /* Legacy Hebewerk mappings for seamless compatibility */
   .hebewerk-card {
-    background: #121722;
-    border: 1px solid #222b3d;
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 159, 28, 0.08);
+    background: #FFFFFF;
+    border: 1.5px solid rgba(45, 55, 72, 0.2);
+    border-radius: 1rem;
+    color: #1A1A1A;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   }
 
   .hebewerk-card-hover {
     @apply transition-all duration-200;
   }
   .hebewerk-card-hover:hover {
-    background: #171d2b;
-    border-color: rgba(255, 159, 28, 0.4);
-    box-shadow: 0 12px 35px -5px rgba(255, 159, 28, 0.12);
+    background: #FAF8F2;
+    border-color: rgba(45, 55, 72, 0.4);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
     transform: translateY(-2px);
   }
 
-  /* Industrial Action Buttons */
   .hebewerk-btn-amber {
-    background: linear-gradient(135deg, #ffbf00 0%, #ff9f1c 100%);
-    color: #090c10;
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    box-shadow: 0 4px 20px rgba(255, 159, 28, 0.35);
-    @apply transition-all duration-150 active:scale-95 hover:brightness-110;
+    background: #FEF08A;
+    border: 1.5px solid #2D3748;
+    color: #1A1A1A;
+    font-family: 'Patrick Hand', cursive, sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    border-radius: 0.75rem;
+    box-shadow: 2px 3px 0px #2D3748;
+    @apply transition-all duration-150 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:bg-yellow-300;
   }
 
   .hebewerk-btn-cyan {
-    background: rgba(0, 229, 255, 0.12);
-    border: 1px solid rgba(0, 229, 255, 0.4);
-    color: #00e5ff;
-    font-family: 'Chakra Petch', sans-serif;
+    background: #FAF8F2;
+    border: 1.5px solid #2D3748;
+    color: #1A1A1A;
+    font-family: 'Patrick Hand', cursive, sans-serif;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    @apply transition-all duration-150 hover:bg-steel-cyan/20 hover:border-steel-cyan;
+    font-size: 1.05rem;
+    border-radius: 0.75rem;
+    @apply transition-all duration-150 hover:bg-amber-50;
   }
 
-  /* Industrial Inputs */
   .hebewerk-input {
-    background: #0b0e14;
-    border: 1px solid #222b3d;
-    color: #ffffff;
-    font-family: 'Space Mono', monospace;
+    background: #FFFFFF;
+    border: 1.5px solid rgba(45, 55, 72, 0.3);
+    color: #1A1A1A;
+    font-family: 'Kalam', cursive, sans-serif;
+    border-radius: 0.75rem;
     @apply transition-all duration-150;
   }
   .hebewerk-input:focus {
     @apply outline-none;
-    border-color: #ff9f1c;
-    box-shadow: 0 0 12px rgba(255, 159, 28, 0.25);
-    background: #0f131a;
+    border-color: #2D3748;
+    box-shadow: 0 0 0 3px rgba(254, 240, 138, 0.7);
+    background: #FAF8F2;
   }
 
-  /* Text Gradients */
   .text-gradient-amber {
-    background: linear-gradient(135deg, #ffbf00 0%, #ff9f1c 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #1A1A1A;
+    background: linear-gradient(120deg, #FEF08A 0%, #FEF08A 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 45%;
+    background-position: 0 88%;
   }
 
   .text-gradient-cyan {
-    background: linear-gradient(135deg, #00e5ff 0%, #00b4d8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #0284c7;
   }
 
-  /* Glow Effects */
   .glow-amber {
-    box-shadow: 0 0 20px rgba(255, 159, 28, 0.35);
+    box-shadow: 0 4px 12px rgba(254, 240, 138, 0.6);
   }
 }
 
 @layer utilities {
-  /* Custom Scrollbar */
+  /* Custom Notebook Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #090c10;
+    background: #F6F4EB;
   }
   ::-webkit-scrollbar-thumb {
-    background: #222b3d;
-    border-radius: 2px;
+    background: #CBD5E1;
+    border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #ff9f1c;
+    background: #FEF08A;
   }
 }
 
 /* Chart Canvas Drop Shadow */
 .chart-container canvas {
-  filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.08));
 }

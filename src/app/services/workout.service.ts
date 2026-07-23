@@ -297,20 +297,42 @@ export class WorkoutService {
     }
   }
 
-  clearLogs(): void {
+  async clearLogs(): Promise<void> {
     const user = this.authService.currentUser();
     const userId = user ? user.uid : 'local_guest';
     
+    // 1. Reset in-memory signal
     this._logs.set([]);
-    localStorage.removeItem(`hebewerk_logs_${userId}`);
 
+    // 2. Remove all local storage log & feed keys
+    localStorage.removeItem(`hebewerk_logs_${userId}`);
+    localStorage.removeItem('gym_logs');
+    localStorage.removeItem('hebewerk_activity_feed');
+    localStorage.removeItem('gym_activity_feed');
+
+    // 3. Delete from Firestore if configured & logged in
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      try {
+        const logsRef = collection(this.firestore, 'workout_logs');
+        const qLogs = query(logsRef, where('userId', '==', userId));
+        const snapLogs = await getDocs(qLogs);
+        const deletePromises: Promise<void>[] = [];
+        snapLogs.forEach(docSnap => {
+          deletePromises.push(deleteDoc(doc(this.firestore!, `workout_logs/${docSnap.id}`)));
+        });
+        await Promise.all(deletePromises);
+      } catch (e) {
+        console.warn('Firestore clearLogs error', e);
+      }
+    }
+
+    // 4. Reset user profile stats in AuthService
     if (user) {
       const resetUser = {
         ...user,
         stats: { level: 1, xp: 0, currentStreak: 0, lastActive: new Date().toISOString() }
       };
-      localStorage.setItem('hebewerk_user', JSON.stringify(resetUser));
-      this.authService.loginWithEmail(user.displayName + '@hebewerk.de', 'dummy').catch(() => {});
+      this.authService.resetUserStats(resetUser);
     }
   }
 

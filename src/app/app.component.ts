@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 
   async logout() {
     await this.authService.logout();
-    this.router.navigate(['/auth']);
+    await this.router.navigateByUrl('/auth');
   }
 
   // Pure Canvas Premium Confetti Effect (No packages required)

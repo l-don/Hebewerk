@@ -10,23 +10,22 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <div class="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
+    <div class="p-3 sm:p-5 md:p-6 max-w-5xl mx-auto space-y-5 animate-fade-in font-body">
       
       <!-- Header -->
-      <div class="flex items-center justify-between">
+      <div class="pb-2 border-b border-[#2D3748]/20 flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-extrabold tracking-tight text-white font-display uppercase">Meine Trainingspläne</h1>
-          <p class="text-sm text-slate-400 mt-1">Verwalte deine Schwerlast-Routinen oder erstelle neue Pläne.</p>
+          <h1 class="text-2xl sm:text-3xl font-bold font-heading text-[#1A1A1A]">
+            <span class="highlighter-line inline-block px-1">MEINE TRAININGSPLÄNE</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-[#718096] font-body mt-0.5">Verwalte deine Routinen oder erstelle neue Notizbuch-Pläne.</p>
         </div>
         @if (!isEditing()) {
           <button 
             (click)="startCreateNewPlan()"
-            class="hebewerk-btn-amber px-5 py-3 rounded-xl text-sm flex items-center gap-2 shadow-lg"
+            class="notebook-btn-primary px-5 py-2.5 rounded-xl text-base font-heading shadow-sm flex items-center gap-2"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>Neuer Plan</span>
+            <span>+ Neuer Plan</span>
           </button>
         }
       </div>
@@ -35,35 +34,35 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
       @if (!isEditing()) {
         
         <!-- Plans Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           @for (plan of plans(); track plan.id) {
-            <div class="hebewerk-card hebewerk-card-hover rounded-2xl p-6 flex flex-col justify-between min-h-[220px]">
+            <div class="notebook-card rounded-2xl p-5 flex flex-col justify-between min-h-[220px]">
               <div>
                 <div class="flex items-start justify-between gap-3 mb-2">
-                  <h3 class="text-xl font-bold text-white tracking-tight font-display">{{ plan.name }}</h3>
+                  <h3 class="text-xl font-bold text-[#1A1A1A] font-heading">{{ plan.name }}</h3>
                   <span 
-                    class="text-[9px] px-2 py-0.5 rounded border uppercase tracking-wider font-mono font-bold"
-                    [ngClass]="plan.isPublic ? 'bg-amber-500/15 border-amber-500/30 text-amber-400' : 'bg-iron-950 border-slate-800 text-slate-400'"
+                    class="text-[10px] font-bold font-heading px-2 py-0.5 rounded border uppercase"
+                    [ngClass]="plan.isPublic ? 'highlighter-yellow border-[#2D3748]/30' : 'bg-[#FAF8F2] border-[#2D3748]/20 text-[#718096]'"
                   >
                     {{ plan.isPublic ? 'Öffentlich' : 'Privat' }}
                   </span>
                 </div>
                 
-                <p class="text-xs text-slate-400 line-clamp-2 mb-4 leading-relaxed">
+                <p class="text-xs text-[#718096] font-body line-clamp-2 mb-4 leading-relaxed">
                   {{ plan.description || 'Keine Beschreibung hinzugefügt.' }}
                 </p>
 
                 <!-- Exercise preview list -->
                 <div class="space-y-1.5 mb-6">
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display">Übungen ({{ plan.exercises.length }})</span>
+                  <span class="text-xs font-bold font-heading text-[#1A1A1A] uppercase block">Übungen ({{ plan.exercises.length }})</span>
                   <div class="flex flex-wrap gap-1.5">
                     @for (ex of plan.exercises.slice(0, 3); track ex.id) {
-                      <span class="text-xs bg-iron-950 border border-slate-800 px-2 py-1 rounded-lg text-slate-300 font-mono font-semibold">
+                      <span class="text-xs bg-[#FAF8F2] border border-[#2D3748]/20 px-2 py-1 rounded-lg text-[#1A1A1A] font-body">
                         {{ ex.name }} ({{ ex.sets.length }}s)
                       </span>
                     }
                     @if (plan.exercises.length > 3) {
-                      <span class="text-xs bg-iron-950 border border-slate-800 px-2 py-1 rounded-lg text-slate-400 font-mono font-bold">
+                      <span class="text-xs bg-[#FAF8F2] border border-[#2D3748]/20 px-2 py-1 rounded-lg text-[#718096] font-body">
                         +{{ plan.exercises.length - 3 }} weitere
                       </span>
                     }
@@ -72,43 +71,35 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
               </div>
 
               <!-- Plan Card Buttons -->
-              <div class="flex items-center gap-3 border-t border-slate-800/80 pt-4 mt-auto">
+              <div class="flex items-center gap-2.5 border-t border-[#2D3748]/15 pt-3.5 mt-auto">
                 <a 
                   [routerLink]="['/workout', plan.id]"
-                  class="hebewerk-btn-amber flex-1 py-2.5 rounded-xl text-center text-xs tracking-wider uppercase shadow-md shrink-0 flex items-center justify-center gap-2"
+                  class="notebook-btn-primary flex-1 py-2.5 rounded-xl text-center text-base font-heading shadow-sm flex items-center justify-center gap-1.5"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-iron-950 stroke-none" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
                   <span>STARTEN</span>
+                  <img src="assets/icons/Arrow-Right--Streamline-Freehand.png" class="w-4 h-4 object-contain" alt="Start" />
                 </a>
                 <button 
                   (click)="startEditPlan(plan)"
-                  class="p-2.5 rounded-xl bg-iron-950 hover:bg-iron-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors shrink-0 flex items-center justify-center"
+                  class="p-2.5 rounded-xl bg-[#FAF8F2] hover:bg-[#FEF08A]/50 border border-[#2D3748]/30 text-[#1A1A1A] transition-colors shrink-0"
                   title="Plan bearbeiten"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 stroke-[2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                  </svg>
+                  <img src="assets/icons/Edit-Pencil-1--Streamline-Freehand.png" class="w-5 h-5 object-contain" alt="Bearbeiten" />
                 </button>
                 <button 
                   (click)="deletePlan(plan.id)"
-                  class="p-2.5 rounded-xl bg-rose-950/30 hover:bg-rose-900/50 border border-rose-800/80 text-rose-400 hover:text-rose-300 transition-colors shrink-0 flex items-center justify-center"
+                  class="p-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 transition-colors shrink-0"
                   title="Plan löschen"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 stroke-[2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
+                  <img src="assets/icons/Delete-Bin-1--Streamline-Freehand.png" class="w-5 h-5 object-contain" alt="Löschen" />
                 </button>
               </div>
             </div>
           } @empty {
-            <div class="col-span-2 hebewerk-card rounded-2xl p-12 text-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              <h3 class="text-lg font-bold text-slate-300 font-display uppercase">Keine Trainingspläne</h3>
-              <p class="text-sm text-slate-400 mt-1 max-w-sm mx-auto">Du hast noch keine eigenen Trainingspläne angelegt. Erstelle jetzt deinen ersten Plan!</p>
+            <div class="col-span-2 notebook-card rounded-2xl p-10 text-center bg-[#FAF8F2]">
+              <img src="assets/icons/Lists-Bullets--Streamline-Freehand.png" class="w-12 h-12 mx-auto mb-3 opacity-60 object-contain" alt="Pläne" />
+              <h3 class="text-lg font-bold text-[#1A1A1A] font-heading">Keine Trainingspläne</h3>
+              <p class="text-xs text-[#718096] font-body mt-1 max-w-sm mx-auto">Du hast noch keine eigenen Trainingspläne angelegt. Erstelle jetzt deinen ersten Notizbuch-Plan!</p>
             </div>
           }
         </div>
@@ -116,62 +107,59 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
       } @else {
 
         <!-- Plan Editor (Create/Edit Form) -->
-        <div class="hebewerk-card rounded-2xl p-6 md:p-8 space-y-6 animate-slide-up border-l-4 border-l-forge-amber">
-          <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
-            <h2 class="text-xl font-bold text-white font-display uppercase">{{ editingPlanId ? 'Trainingsplan bearbeiten' : 'Neuen Trainingsplan erstellen' }}</h2>
+        <div class="notebook-card rounded-2xl p-5 md:p-7 space-y-5 shadow-lg bg-white border-2 border-[#2D3748]">
+          <div class="flex items-center justify-between border-b border-[#2D3748]/15 pb-3">
+            <h2 class="text-xl font-bold text-[#1A1A1A] font-heading">{{ editingPlanId ? 'Trainingsplan bearbeiten' : 'Neuen Trainingsplan erstellen' }}</h2>
             <button 
               (click)="cancelEditing()"
-              class="px-4 py-2 text-xs font-bold font-display rounded-xl bg-iron-950 border border-slate-800 hover:bg-iron-850 text-slate-300 transition-colors uppercase tracking-wider"
+              class="notebook-btn-outline px-4 py-1.5 text-sm font-heading rounded-xl"
             >
               Abbrechen
             </button>
           </div>
 
           <!-- Basic Meta Form -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
-              <label class="block text-xs font-bold text-slate-300 font-display uppercase tracking-wider mb-2">Plan Name</label>
+              <label class="block text-xs font-bold text-[#1A1A1A] font-heading mb-1">Plan Name</label>
               <input 
                 type="text" 
                 [(ngModel)]="editName" 
                 placeholder="z.B. Push A, Ganzkörper..." 
-                class="w-full px-4 py-3 rounded-xl hebewerk-input font-bold text-white text-sm"
+                class="w-full px-3.5 py-2.5 rounded-xl notebook-input font-body text-[#1A1A1A] text-sm border border-[#2D3748]/30"
               />
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 font-display uppercase tracking-wider mb-2">Sichtbarkeit</label>
-              <div class="flex items-center h-11 bg-iron-950 border border-slate-800 rounded-xl px-4">
+              <label class="block text-xs font-bold text-[#1A1A1A] font-heading mb-1">Sichtbarkeit</label>
+              <div class="flex items-center h-11 bg-[#FAF8F2] border border-[#2D3748]/30 rounded-xl px-4">
                 <input 
                   type="checkbox" 
                   id="isPublic"
                   [(ngModel)]="editIsPublic" 
-                  class="w-4 h-4 rounded accent-forge-amber mr-3 cursor-pointer"
+                  class="w-4 h-4 rounded accent-[#FEF08A] mr-3 cursor-pointer"
                 />
-                <label for="isPublic" class="text-sm text-slate-300 font-bold font-display uppercase cursor-pointer">Öffentlich teilen</label>
+                <label for="isPublic" class="text-xs text-[#1A1A1A] font-bold font-heading uppercase cursor-pointer">Öffentlich teilen</label>
               </div>
             </div>
             <div class="md:col-span-3">
-              <label class="block text-xs font-bold text-slate-300 font-display uppercase tracking-wider mb-2">Beschreibung</label>
+              <label class="block text-xs font-bold text-[#1A1A1A] font-heading mb-1">Beschreibung</label>
               <textarea 
                 [(ngModel)]="editDescription" 
                 rows="2"
                 placeholder="Fokus auf Brust/Rücken, Pausenzeiten streng einhalten..." 
-                class="w-full px-4 py-3 rounded-xl hebewerk-input font-medium text-white text-sm resize-none"
+                class="w-full px-3.5 py-2.5 rounded-xl notebook-input font-body text-[#1A1A1A] text-sm resize-none border border-[#2D3748]/30"
               ></textarea>
             </div>
           </div>
 
           <!-- Exercise Section Header -->
-          <div class="flex items-center justify-between border-t border-slate-800/80 pt-6">
-            <h3 class="text-base font-bold text-white font-display uppercase">Übungen</h3>
+          <div class="flex items-center justify-between border-t border-[#2D3748]/15 pt-5">
+            <h3 class="text-base font-bold text-[#1A1A1A] font-heading">Übungen</h3>
             <button 
               (click)="addExerciseField()"
-              class="hebewerk-btn-cyan px-4 py-2 rounded-xl text-xs flex items-center gap-1.5"
+              class="notebook-btn-outline px-4 py-1.5 text-sm font-heading rounded-xl"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Übung hinzufügen</span>
+              + Übung hinzufügen
             </button>
           </div>
 
@@ -187,23 +175,21 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
                       type="text" 
                       [(ngModel)]="ex.name"
                       placeholder="z.B. Kniebeugen, Bankdrücken..." 
-                      class="w-full px-3 py-2.5 rounded-lg hebewerk-input font-bold text-white text-sm"
+                      class="w-full px-3 py-2 rounded-lg notebook-input font-heading text-[#1A1A1A] font-bold text-sm border border-[#2D3748]/30"
                     />
                   </div>
                   <button 
                     (click)="removeExerciseField(exIdx)"
-                    class="p-2.5 rounded-lg bg-rose-950/30 hover:bg-rose-900/50 border border-rose-800/80 text-rose-400 transition-colors flex items-center justify-center shrink-0"
+                    class="p-2.5 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 transition-colors flex items-center justify-center shrink-0"
                     title="Übung entfernen"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7" />
-                    </svg>
+                    <img src="assets/icons/Delete-Bin-1--Streamline-Freehand.png" class="w-4 h-4 object-contain" alt="Löschen" />
                   </button>
                 </div>
 
                 <!-- Sets List inside Exercise -->
                 <div class="space-y-2">
-                  <div class="grid grid-cols-4 gap-2 text-[10px] font-bold text-slate-400 font-display uppercase tracking-widest px-1">
+                  <div class="grid grid-cols-4 gap-2 text-[11px] font-bold text-[#718096] font-heading uppercase tracking-wider px-1">
                     <span>Satz</span>
                     <span>Wdh. (Reps)</span>
                     <span>Gewicht (kg)</span>
@@ -212,19 +198,19 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
 
                   @for (set of ex.sets; track setIdx; let setIdx = $index) {
                     <div class="grid grid-cols-4 gap-2 items-center">
-                      <span class="text-xs font-mono font-bold text-slate-300 px-2 py-2 rounded-lg bg-iron-900 border border-slate-800 text-center">{{ setIdx + 1 }}</span>
+                      <span class="text-xs font-body font-bold text-[#1A1A1A] px-2 py-2 rounded-lg bg-[#FAF8F2] border border-[#2D3748]/20 text-center">{{ setIdx + 1 }}</span>
                       <input 
                         type="number" 
                         [(ngModel)]="set.reps" 
                         min="1"
-                        class="px-2 py-2 rounded-lg hebewerk-input text-center text-xs font-mono font-bold"
+                        class="px-2 py-2 rounded-lg notebook-input text-center text-xs font-body font-bold border border-[#2D3748]/20"
                       />
                       <input 
                         type="number" 
                         [(ngModel)]="set.weight" 
                         min="0"
                         step="0.5"
-                        class="px-2 py-2 rounded-lg hebewerk-input text-center text-xs font-mono font-bold"
+                        class="px-2 py-2 rounded-lg notebook-input text-center text-xs font-body font-bold border border-[#2D3748]/20"
                       />
                       <div class="flex items-center gap-2">
                         <input 
@@ -232,16 +218,14 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
                           [(ngModel)]="set.restSeconds" 
                           min="0"
                           step="5"
-                          class="flex-1 min-w-0 px-2 py-2 rounded-lg hebewerk-input text-center text-xs font-mono font-bold"
+                          class="flex-1 min-w-0 px-2 py-2 rounded-lg notebook-input text-center text-xs font-body font-bold border border-[#2D3748]/20"
                         />
                         <button 
                           (click)="removeSetField(exIdx, setIdx)"
                           [disabled]="ex.sets.length === 1"
-                          class="p-1 text-slate-400 hover:text-rose-400 disabled:opacity-30 flex items-center justify-center shrink-0"
+                          class="p-1 text-[#718096] hover:text-rose-600 disabled:opacity-30 flex items-center justify-center shrink-0"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                          </svg>
+                          ✕
                         </button>
                       </div>
                     </div>
@@ -249,35 +233,32 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
                   
                   <button 
                     (click)="addSetField(exIdx)"
-                    class="text-[11px] font-bold font-mono text-forge-amber hover:text-white transition-colors flex items-center gap-1 pt-1.5"
+                    class="text-xs font-bold font-heading text-[#d97706] hover:text-black transition-colors flex items-center gap-1 pt-1.5"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 stroke-[3]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                    <span>Satz hinzufügen</span>
+                    <span>+ Satz hinzufügen</span>
                   </button>
                 </div>
 
               </div>
             } @empty {
-              <div class="p-8 text-center text-slate-400 text-sm border border-dashed border-slate-800 rounded-xl font-mono">
+              <div class="p-6 text-center text-[#718096] text-xs border border-dashed border-[#2D3748]/20 rounded-xl font-body bg-[#FAF8F2]">
                 Füge mindestens eine Übung hinzu, um den Plan zu vervollständigen.
               </div>
             }
           </div>
 
           <!-- Save and Cancel actions -->
-          <div class="flex gap-4 pt-6 border-t border-slate-800/80">
+          <div class="flex gap-3 pt-5 border-t border-[#2D3748]/15">
             <button 
               (click)="savePlan()"
               [disabled]="!isValidForm()"
-              class="hebewerk-btn-amber flex-1 py-3.5 rounded-xl text-sm font-extrabold shadow-lg disabled:opacity-50 disabled:pointer-events-none"
+              class="notebook-btn-primary flex-1 py-3 rounded-xl text-base font-heading shadow-sm disabled:opacity-50 disabled:pointer-events-none"
             >
               Speichern
             </button>
             <button 
               (click)="cancelEditing()"
-              class="px-6 py-3.5 rounded-xl bg-iron-950 border border-slate-800 hover:bg-iron-850 text-slate-300 font-display font-bold text-sm uppercase transition-colors"
+              class="notebook-btn-outline px-6 py-3 rounded-xl text-base font-heading"
             >
               Abbrechen
             </button>
