@@ -51,29 +51,60 @@ interface ActiveExercise {
           </div>
         </div>
 
-        <!-- Timer Panel -->
-        @if (timerService.isActive() || timerService.isCompleted()) {
-          <div class="notebook-card rounded-2xl p-4 border-2 border-[#FEF08A] bg-[#FEF08A]/40 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-full bg-[#FEF08A] border border-[#2D3748]/30 flex items-center justify-center font-heading font-bold text-[#1A1A1A] text-lg shrink-0">
-                ⏱️ {{ timerService.timeLeft() }}s
+        <!-- ⏱️ Satzpause Timer Panel (Notizbuch Style) -->
+        @if (timerService.isActive() || timerService.elapsedSeconds() > 0) {
+          <div 
+            class="notebook-card rounded-2xl p-4 sm:p-5 border-2 transition-all shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4"
+            [ngClass]="{
+              'border-[#2D3748] bg-[#FEF08A]/30': !timerService.isTargetReached(),
+              'border-[#2D3748] bg-[#FEF08A] shadow-md animate-pulse-slow': timerService.isTargetReached()
+            }"
+          >
+            <div class="flex items-center gap-3.5 w-full sm:w-auto">
+              <!-- Circular Time Badge with Stopwatch Icon -->
+              <div 
+                class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-[#2D3748] flex flex-col items-center justify-center shrink-0 shadow-xs relative"
+                [ngClass]="timerService.isTargetReached() ? 'bg-white text-[#1A1A1A]' : 'bg-[#FEF08A] text-[#1A1A1A]'"
+              >
+                <img src="assets/icons/Time-Clock-Circle-1--Streamline-Freehand.png" class="w-4 h-4 sm:w-5 sm:h-5 object-contain" alt="Stoppuhr" />
+                <span class="text-xs sm:text-base font-bold font-heading leading-tight mt-0.5">
+                  {{ timerService.formattedElapsed() }}
+                </span>
               </div>
-              <div>
-                <h4 class="text-sm font-bold font-heading text-[#1A1A1A]">Satzpause</h4>
-                <p class="text-xs text-[#718096] font-body">Atme tief durch und trinke einen Schluck.</p>
+
+              <!-- Info & Target Text -->
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base sm:text-lg font-bold font-heading text-[#1A1A1A] leading-none">Satzpause</h3>
+                  @if (timerService.isTargetReached()) {
+                    <span class="text-[11px] font-bold font-heading bg-emerald-600 text-white px-2 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
+                      Zielzeit erreicht! 🎉
+                    </span>
+                  }
+                </div>
+
+                <p class="text-xs text-[#2D3748] font-body">
+                  @if (timerService.isTargetReached()) {
+                    <span class="font-bold text-emerald-900">Pause beendet (Ziel war {{ timerService.formattedTarget() }}). Nächster Satz kann starten!</span>
+                  } @else {
+                    <span>Zielzeit: <strong>{{ timerService.formattedTarget() }}</strong> • Atme tief durch & trinke etwas Wasser.</span>
+                  }
+                </p>
               </div>
             </div>
-            <div class="flex items-center gap-2">
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
               @if (timerService.isActive()) {
-                <button (click)="timerService.pauseTimer()" class="px-3 py-1.5 notebook-btn-outline text-xs font-heading">
+                <button (click)="timerService.pauseTimer()" class="px-4 py-2 notebook-btn-outline text-xs font-heading border-[#2D3748]">
                   Pause
                 </button>
               } @else {
-                <button (click)="timerService.resumeTimer()" class="px-3 py-1.5 notebook-btn-primary text-xs font-heading">
+                <button (click)="timerService.resumeTimer()" class="px-4 py-2 notebook-btn-primary text-xs font-heading border-[#2D3748]">
                   Weiter
                 </button>
               }
-              <button (click)="skipTimer()" class="px-3 py-1.5 notebook-btn-outline text-xs font-heading">
+              <button (click)="skipTimer()" class="px-4 py-2 notebook-btn-outline text-xs font-heading border-[#2D3748]">
                 Überspringen
               </button>
             </div>
