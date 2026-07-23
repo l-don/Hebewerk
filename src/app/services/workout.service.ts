@@ -25,10 +25,23 @@ export class WorkoutService {
     this.initializeData();
     effect(() => {
       const user = this.authService.currentUser();
-      if (user && !user.uid.startsWith('local_')) {
+      if (user) {
         this.initializeData();
       }
     });
+  }
+
+  private getEffectiveUserId(): string {
+    const user = this.authService.currentUser();
+    if (user && user.uid) return user.uid;
+    const savedUser = localStorage.getItem('hebewerk_user');
+    if (savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser);
+        if (parsed && parsed.uid) return parsed.uid;
+      } catch (e) {}
+    }
+    return 'local_guest';
   }
 
   private isFirebaseConfigured(): boolean {
@@ -37,7 +50,7 @@ export class WorkoutService {
 
   async initializeData() {
     const user = this.authService.currentUser();
-    const userId = user ? user.uid : 'local_guest';
+    const userId = this.getEffectiveUserId();
 
     if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
       try {
@@ -63,6 +76,16 @@ export class WorkoutService {
         snapLogs.forEach(docSnap => fsLogs.push(docSnap.data() as WorkoutLog));
         this._logs.set(fsLogs);
         localStorage.setItem(`hebewerk_logs_${userId}`, JSON.stringify(fsLogs));
+
+        // Active Workout session recovery
+        let storedActive = localStorage.getItem(`hebewerk_active_workout_${userId}`) || localStorage.getItem('hebewerk_active_workout_global');
+        if (storedActive) {
+          try {
+            this._activeWorkout.set(JSON.parse(storedActive));
+          } catch (e) {
+            this._activeWorkout.set(null);
+          }
+        }
 
         return;
       } catch (e) {
@@ -94,7 +117,7 @@ export class WorkoutService {
     }
 
     // Active Workout session recovery
-    let storedActive = localStorage.getItem(`hebewerk_active_workout_${userId}`);
+    let storedActive = localStorage.getItem(`hebewerk_active_workout_${userId}`) || localStorage.getItem('hebewerk_active_workout_global');
     if (storedActive) {
       try {
         this._activeWorkout.set(JSON.parse(storedActive));
@@ -107,26 +130,26 @@ export class WorkoutService {
   }
 
   saveActiveWorkout(session: ActiveWorkoutSession): void {
-    const user = this.authService.currentUser();
-    const userId = user ? user.uid : 'local_guest';
+    const userId = this.getEffectiveUserId();
 
     this._activeWorkout.set(session);
     localStorage.setItem(`hebewerk_active_workout_${userId}`, JSON.stringify(session));
+    localStorage.setItem('hebewerk_active_workout_global', JSON.stringify(session));
 
-    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+    if (this.firestore && this.isFirebaseConfigured() && userId && !userId.startsWith('local_')) {
       const activeDocRef = doc(this.firestore, `active_workouts/${userId}`);
       setDoc(activeDocRef, session).catch(e => {});
     }
   }
 
   clearActiveWorkout(): void {
-    const user = this.authService.currentUser();
-    const userId = user ? user.uid : 'local_guest';
+    const userId = this.getEffectiveUserId();
 
     this._activeWorkout.set(null);
     localStorage.removeItem(`hebewerk_active_workout_${userId}`);
+    localStorage.removeItem('hebewerk_active_workout_global');
 
-    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+    if (this.firestore && this.isFirebaseConfigured() && userId && !userId.startsWith('local_')) {
       const activeDocRef = doc(this.firestore, `active_workouts/${userId}`);
       deleteDoc(activeDocRef).catch(e => {});
     }
