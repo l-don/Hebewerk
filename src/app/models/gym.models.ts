@@ -46,11 +46,13 @@ export interface LoggedSet {
   weight: number;
   targetReps: number;
   targetWeight: number;
+  notes?: string;
 }
 
 export interface LoggedExercise {
   name: string;
   sets: LoggedSet[];
+  notes?: string;
 }
 
 export interface WorkoutLog {
@@ -95,6 +97,7 @@ export interface ActiveWorkoutSession {
   currentExIndex: number;
   exercises: {
     name: string;
+    notes?: string;
     sets: {
       reps: number;
       weight: number;
@@ -102,6 +105,7 @@ export interface ActiveWorkoutSession {
       targetWeight: number;
       restSeconds: number;
       completed: boolean;
+      notes?: string;
     }[];
   }[];
 }

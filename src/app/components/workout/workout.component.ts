@@ -13,11 +13,13 @@ interface ActiveSet {
   targetWeight: number;
   restSeconds: number;
   completed: boolean;
+  notes?: string;
   isPR?: boolean;
 }
 
 interface ActiveExercise {
   name: string;
+  notes?: string;
   sets: ActiveSet[];
 }
 
@@ -114,13 +116,20 @@ interface ActiveExercise {
         <!-- Active Exercise Container -->
         @if (currentExercise(); as ex) {
           <div class="notebook-card rounded-2xl p-5 space-y-5">
-            <!-- Exercise navigation bar -->
-            <div class="flex items-center justify-between gap-4 border-b border-[#2D3748]/15 pb-3">
-              <div>
+            <!-- Exercise navigation bar & Exercise Note -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2D3748]/15 pb-3">
+              <div class="flex-1">
                 <span class="text-xs font-bold text-[#718096] font-heading uppercase">Übung {{ currentExIndex() + 1 }} von {{ exercises().length }}</span>
                 <h2 class="text-2xl font-bold text-[#1A1A1A] font-heading mt-0.5">{{ ex.name }}</h2>
+                <input 
+                  type="text" 
+                  [(ngModel)]="ex.notes" 
+                  (ngModelChange)="persistState()"
+                  placeholder="📝 Notiz zur Übung (z.B. Sitzhöhe 4, sauber geführt...)"
+                  class="w-full text-xs font-body px-3 py-1.5 mt-2 rounded-lg bg-[#FAF8F2] border border-[#2D3748]/20 focus:border-[#2D3748] text-[#1A1A1A]"
+                />
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                 <button 
                   (click)="prevExercise()" 
                   [disabled]="currentExIndex() === 0"
@@ -150,51 +159,66 @@ interface ActiveExercise {
 
               @for (set of ex.sets; track setIdx; let setIdx = $index) {
                 <div 
-                  class="grid grid-cols-12 gap-2 items-center p-2 rounded-xl transition-all border"
+                  class="p-2.5 rounded-xl transition-all border space-y-2"
                   [ngClass]="set.completed ? 'bg-[#FEF08A]/50 border-[#2D3748]' : 'bg-[#FAF8F2] border-[#2D3748]/20'"
                 >
-                  <!-- Set number -->
-                  <div class="col-span-2 text-center">
-                    <span class="text-xs font-body font-bold text-[#1A1A1A]">{{ setIdx + 1 }}</span>
+                  <div class="grid grid-cols-12 gap-2 items-center">
+                    <!-- Set number -->
+                    <div class="col-span-2 text-center">
+                      <span class="text-xs font-body font-bold text-[#1A1A1A]">{{ setIdx + 1 }}</span>
+                    </div>
+
+                    <!-- Reference target -->
+                    <div class="col-span-3 text-center text-xs text-[#718096] font-body font-bold">
+                      {{ set.targetWeight }}kg x {{ set.targetReps }}
+                    </div>
+
+                    <!-- Actual weight input -->
+                    <div class="col-span-3">
+                      <input 
+                        type="number" 
+                        [(ngModel)]="set.weight" 
+                        (ngModelChange)="persistState()"
+                        [disabled]="set.completed"
+                        step="0.5"
+                        min="0"
+                        class="w-full text-center px-1 py-1.5 text-sm font-body font-bold rounded-lg notebook-input border border-[#2D3748]/20 disabled:opacity-60"
+                      />
+                    </div>
+
+                    <!-- Actual reps input -->
+                    <div class="col-span-2">
+                      <input 
+                        type="number" 
+                        [(ngModel)]="set.reps" 
+                        (ngModelChange)="persistState()"
+                        [disabled]="set.completed"
+                        min="0"
+                        class="w-full text-center px-1 py-1.5 text-sm font-body font-bold rounded-lg notebook-input border border-[#2D3748]/20 disabled:opacity-60"
+                      />
+                    </div>
+
+                    <!-- Checkbox / Complete set -->
+                    <div class="col-span-2 flex justify-center">
+                      <button 
+                        (click)="toggleSetComplete(setIdx)"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center border font-bold text-sm transition-all"
+                        [ngClass]="set.completed ? 'bg-[#FEF08A] border-[#2D3748] text-[#1A1A1A] shadow-sm' : 'bg-white border-[#2D3748]/30 text-transparent hover:text-gray-400'"
+                      >
+                        ✓
+                      </button>
+                    </div>
                   </div>
 
-                  <!-- Reference target -->
-                  <div class="col-span-3 text-center text-xs text-[#718096] font-body font-bold">
-                    {{ set.targetWeight }}kg x {{ set.targetReps }}
-                  </div>
-
-                  <!-- Actual weight input -->
-                  <div class="col-span-3">
+                  <!-- Optional Set Note Input -->
+                  <div class="px-1">
                     <input 
-                      type="number" 
-                      [(ngModel)]="set.weight" 
-                      [disabled]="set.completed"
-                      step="0.5"
-                      min="0"
-                      class="w-full text-center px-1 py-1.5 text-sm font-body font-bold rounded-lg notebook-input border border-[#2D3748]/20 disabled:opacity-60"
+                      type="text" 
+                      [(ngModel)]="set.notes" 
+                      (ngModelChange)="persistState()"
+                      placeholder="✏️ Notiz zum Satz {{ setIdx + 1 }} (z.B. Saubere Form, 2 RIR...)"
+                      class="w-full text-[11px] font-body px-2.5 py-1 rounded-md bg-white/80 border border-[#2D3748]/15 focus:border-[#2D3748] text-[#1A1A1A]"
                     />
-                  </div>
-
-                  <!-- Actual reps input -->
-                  <div class="col-span-2">
-                    <input 
-                      type="number" 
-                      [(ngModel)]="set.reps" 
-                      [disabled]="set.completed"
-                      min="0"
-                      class="w-full text-center px-1 py-1.5 text-sm font-body font-bold rounded-lg notebook-input border border-[#2D3748]/20 disabled:opacity-60"
-                    />
-                  </div>
-
-                  <!-- Checkbox / Complete set -->
-                  <div class="col-span-2 flex justify-center">
-                    <button 
-                      (click)="toggleSetComplete(setIdx)"
-                      class="w-8 h-8 rounded-lg flex items-center justify-center border font-bold text-sm transition-all"
-                      [ngClass]="set.completed ? 'bg-[#FEF08A] border-[#2D3748] text-[#1A1A1A] shadow-sm' : 'bg-white border-[#2D3748]/30 text-transparent hover:text-gray-400'"
-                    >
-                      ✓
-                    </button>
                   </div>
                 </div>
               }
@@ -493,11 +517,13 @@ export class WorkoutComponent implements OnInit, OnDestroy {
         
         return {
           name: ex.name,
+          notes: ex.notes ? ex.notes.trim() : undefined,
           sets: completedSets.map(s => ({
             reps: s.reps,
             weight: s.weight,
             targetReps: s.targetReps,
-            targetWeight: s.targetWeight
+            targetWeight: s.targetWeight,
+            notes: s.notes ? s.notes.trim() : undefined
           }))
         };
       })

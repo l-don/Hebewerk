@@ -61,6 +61,13 @@ import { WorkoutLog } from '../../models/gym.models';
                 @for (ex of log.exercises; track $index) {
                   <div class="p-3 rounded-xl bg-[#FAF8F2] border border-[#2D3748]/15 space-y-2">
                     <h4 class="text-sm font-bold text-[#1A1A1A] font-heading">{{ ex.name }}</h4>
+
+                    @if (ex.notes) {
+                      <div class="text-xs font-body text-[#1A1A1A] bg-[#FEF08A] px-2.5 py-1 rounded-md border border-[#2D3748]/20 flex items-center gap-1.5 shadow-xs">
+                        <span>📝</span>
+                        <span class="italic font-bold">{{ ex.notes }}</span>
+                      </div>
+                    }
                     
                     <!-- Sets subtable -->
                     <div class="grid grid-cols-4 gap-2 text-[11px] font-bold text-[#718096] font-heading uppercase tracking-wider px-1">
@@ -71,11 +78,19 @@ import { WorkoutLog } from '../../models/gym.models';
                     </div>
 
                     @for (set of ex.sets; track setIdx; let setIdx = $index) {
-                      <div class="grid grid-cols-4 gap-2 items-center text-xs text-[#1A1A1A] font-body px-1">
-                        <span class="text-[#718096] font-bold">#{{ setIdx + 1 }}</span>
-                        <span class="text-center font-bold text-[#0284c7]">{{ set.weight }} kg</span>
-                        <span class="text-center font-bold text-[#1A1A1A]">{{ set.reps }}</span>
-                        <span class="text-right text-[#718096]">{{ set.targetWeight }}kg x {{ set.targetReps }}</span>
+                      <div class="space-y-1">
+                        <div class="grid grid-cols-4 gap-2 items-center text-xs text-[#1A1A1A] font-body px-1">
+                          <span class="text-[#718096] font-bold">#{{ setIdx + 1 }}</span>
+                          <span class="text-center font-bold text-[#0284c7]">{{ set.weight }} kg</span>
+                          <span class="text-center font-bold text-[#1A1A1A]">{{ set.reps }}</span>
+                          <span class="text-right text-[#718096]">{{ set.targetWeight }}kg x {{ set.targetReps }}</span>
+                        </div>
+                        @if (set.notes) {
+                          <div class="text-[11px] font-body text-[#2D3748] bg-white px-2 py-0.5 rounded border border-[#2D3748]/15 ml-4 flex items-center gap-1">
+                            <span>💬</span>
+                            <span class="italic">{{ set.notes }}</span>
+                          </div>
+                        }
                       </div>
                     }
                   </div>
