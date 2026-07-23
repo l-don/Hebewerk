@@ -334,6 +334,17 @@ export class WorkoutComponent implements OnInit, OnDestroy {
   }
 
   private initializeWorkout(plan: WorkoutPlan) {
+    const active = this.workoutService.activeWorkout();
+
+    if (active && active.planId === plan.id) {
+      // Restore existing active session
+      this.startTime = new Date(active.startTime);
+      this.exercises.set(active.exercises);
+      this.currentExIndex.set(active.currentExIndex || 0);
+      this.workoutCompleted.set(false);
+      return;
+    }
+
     this.startTime = new Date();
     this.durationMinutes.set(0);
     this.workoutCompleted.set(false);
@@ -370,6 +381,21 @@ export class WorkoutComponent implements OnInit, OnDestroy {
 
     this.exercises.set(activeExercises);
     this.currentExIndex.set(0);
+
+    this.persistState();
+  }
+
+  persistState() {
+    const plan = this.plan();
+    if (!plan || this.workoutCompleted()) return;
+
+    this.workoutService.saveActiveWorkout({
+      planId: plan.id,
+      planName: plan.name,
+      startTime: this.startTime.toISOString(),
+      currentExIndex: this.currentExIndex(),
+      exercises: this.exercises()
+    });
   }
 
   toggleSetComplete(setIdx: number) {
@@ -391,6 +417,8 @@ export class WorkoutComponent implements OnInit, OnDestroy {
         this.activeTimerSetIdx = null;
       }
     }
+
+    this.persistState();
   }
 
   skipTimer() {
@@ -402,12 +430,14 @@ export class WorkoutComponent implements OnInit, OnDestroy {
   prevExercise() {
     if (this.currentExIndex() > 0) {
       this.currentExIndex.update(idx => idx - 1);
+      this.persistState();
     }
   }
 
   nextExercise() {
     if (this.currentExIndex() < this.exercises().length - 1) {
       this.currentExIndex.update(idx => idx + 1);
+      this.persistState();
     }
   }
 
@@ -415,6 +445,7 @@ export class WorkoutComponent implements OnInit, OnDestroy {
     if (confirm('Bist du sicher, dass du das Training abbrechen möchtest? Alle erfassten Sätze gehen verloren.')) {
       this.timerService.stopTimer();
       this.timerService.resetTimer();
+      this.workoutService.clearActiveWorkout();
       this.router.navigate(['/plans']);
     }
   }
@@ -495,6 +526,9 @@ export class WorkoutComponent implements OnInit, OnDestroy {
 
     // Log workout in system and retrieve XP
     const xpGained = this.workoutService.logWorkout(newLog);
+
+    // Clear active workout session state
+    this.workoutService.clearActiveWorkout();
 
     // Save outputs for summary view
     this.summaryMinutes.set(duration);

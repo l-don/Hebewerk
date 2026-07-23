@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { Firestore, collection, doc, setDoc, getDocs, query, where, deleteDoc } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
-import { WorkoutPlan, WorkoutLog } from '../models/gym.models';
+import { WorkoutPlan, WorkoutLog, ActiveWorkoutSession } from '../models/gym.models';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -17,6 +17,9 @@ export class WorkoutService {
 
   private _logs = signal<WorkoutLog[]>([]);
   readonly logs = computed(() => this._logs().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+
+  private _activeWorkout = signal<ActiveWorkoutSession | null>(null);
+  readonly activeWorkout = computed(() => this._activeWorkout());
 
   constructor() {
     this.initializeData();
@@ -88,6 +91,44 @@ export class WorkoutService {
       }
     } else {
       this._logs.set([]);
+    }
+
+    // Active Workout session recovery
+    let storedActive = localStorage.getItem(`hebewerk_active_workout_${userId}`);
+    if (storedActive) {
+      try {
+        this._activeWorkout.set(JSON.parse(storedActive));
+      } catch (e) {
+        this._activeWorkout.set(null);
+      }
+    } else {
+      this._activeWorkout.set(null);
+    }
+  }
+
+  saveActiveWorkout(session: ActiveWorkoutSession): void {
+    const user = this.authService.currentUser();
+    const userId = user ? user.uid : 'local_guest';
+
+    this._activeWorkout.set(session);
+    localStorage.setItem(`hebewerk_active_workout_${userId}`, JSON.stringify(session));
+
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      const activeDocRef = doc(this.firestore, `active_workouts/${userId}`);
+      setDoc(activeDocRef, session).catch(e => {});
+    }
+  }
+
+  clearActiveWorkout(): void {
+    const user = this.authService.currentUser();
+    const userId = user ? user.uid : 'local_guest';
+
+    this._activeWorkout.set(null);
+    localStorage.removeItem(`hebewerk_active_workout_${userId}`);
+
+    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+      const activeDocRef = doc(this.firestore, `active_workouts/${userId}`);
+      deleteDoc(activeDocRef).catch(e => {});
     }
   }
 
@@ -303,6 +344,7 @@ export class WorkoutService {
     
     // 1. Reset in-memory signal
     this._logs.set([]);
+    this.clearActiveWorkout();
 
     // 2. Remove all local storage log & feed keys
     localStorage.removeItem(`hebewerk_logs_${userId}`);

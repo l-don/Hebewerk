@@ -8,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { WorkoutService } from '../../services/workout.service';
 import { FriendsService } from '../../services/friends.service';
 import { MockDataService } from '../../services/mock-data.service';
-import { WorkoutPlan, ActivityFeedItem, Exercise } from '../../models/gym.models';
+import { WorkoutPlan, ActivityFeedItem, Exercise, ActiveWorkoutSession } from '../../models/gym.models';
 import { environment } from '../../../environments/environment';
 
 // Register Chart.js components
@@ -57,31 +57,75 @@ Chart.register(...registerables);
         </div>
       }
 
-      <!-- 2️⃣ Main Action Card ("TRAINING STARTEN") -->
-      <div class="notebook-postit rounded-2xl p-4 sm:p-5 relative shadow-md flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-        <!-- CSS Tape Strips on corners -->
-        <div class="notebook-tape-left"></div>
-        <div class="notebook-tape-right"></div>
+      <!-- ⚡ ACTIVE WORKOUT RESUME BANNER -->
+      @if (workoutService.activeWorkout(); as active) {
+        <div class="notebook-card p-4 sm:p-5 rounded-2xl border-2 border-[#2D3748] bg-[#FEF08A] shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left relative overflow-hidden">
+          <div class="notebook-tape-left"></div>
+          <div class="notebook-tape-right"></div>
 
-        <div class="flex items-center gap-4">
-          <img src="assets/symbols/dumbell_symbol_1.png" class="w-14 h-14 sm:w-16 sm:h-16 object-contain shrink-0 drop-shadow-sm" alt="Dumbbell Symbol" />
-          <div>
-            <span class="text-[11px] font-heading font-bold uppercase tracking-wider bg-white/80 px-2 py-0.5 rounded border border-[#2D3748]/20 text-[#1A1A1A]">
-              Bereit fürs heutige Training?
-            </span>
-            <h2 class="text-xl sm:text-2xl font-bold text-[#1A1A1A] font-heading mt-1">Nächste Einheit eintragen</h2>
-            <p class="text-xs text-[#2D3748]/80 font-body">Wähle deinen Trainingsplan & halte deine Gewichte fest.</p>
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-white border border-[#2D3748] flex items-center justify-center text-2xl shrink-0 shadow-sm">
+              🏋️
+            </div>
+            <div>
+              <div class="flex items-center justify-center sm:justify-start gap-2">
+                <span class="highlighter-line font-heading font-bold text-xs uppercase px-1 text-[#1A1A1A]">
+                  ● LAUFENDES TRAINING AKTIV
+                </span>
+              </div>
+              <h2 class="text-xl sm:text-2xl font-bold text-[#1A1A1A] font-heading mt-0.5">
+                {{ active.planName }}
+              </h2>
+              <p class="text-xs text-[#2D3748] font-body mt-0.5">
+                {{ getActiveCompletedSetsCount(active) }} Sätze abgehakt • Gestartet um {{ active.startTime | date:'HH:mm':'':'de-DE' }} Uhr
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-center">
+            <a 
+              [routerLink]="['/workout', active.planId]"
+              class="notebook-btn-primary flex-1 sm:flex-none px-6 py-3 rounded-xl text-lg font-heading shadow-md flex items-center justify-center gap-2"
+            >
+              <span>TRAINING FORTSETZEN</span>
+              <img src="assets/icons/Arrow-Right--Streamline-Freehand.png" class="w-5 h-5 object-contain" alt="Fortsetzen" />
+            </a>
+            <button 
+              (click)="cancelActiveWorkout()"
+              class="px-3.5 py-3 rounded-xl bg-white hover:bg-rose-100 border border-[#2D3748]/30 text-rose-700 font-heading font-bold text-xs transition-colors shrink-0"
+              title="Training verwerfen"
+            >
+              Abbrechen
+            </button>
           </div>
         </div>
+      } @else {
+        <!-- 2️⃣ Main Action Card ("TRAINING STARTEN") -->
+        <div class="notebook-postit rounded-2xl p-4 sm:p-5 relative shadow-md flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <!-- CSS Tape Strips on corners -->
+          <div class="notebook-tape-left"></div>
+          <div class="notebook-tape-right"></div>
 
-        <a 
-          routerLink="/plans"
-          class="notebook-btn-primary px-6 py-3 rounded-xl text-lg font-heading shadow-md hover:bg-yellow-300 transition-all flex items-center gap-2 shrink-0 border border-[#2D3748]"
-        >
-          <span>TRAINING STARTEN</span>
-          <img src="assets/icons/Arrow-Right--Streamline-Freehand.png" class="w-5 h-5 object-contain" alt="Arrow" />
-        </a>
-      </div>
+          <div class="flex items-center gap-4">
+            <img src="assets/symbols/dumbell_symbol_1.png" class="w-14 h-14 sm:w-16 sm:h-16 object-contain shrink-0 drop-shadow-sm" alt="Dumbbell Symbol" />
+            <div>
+              <span class="text-[11px] font-heading font-bold uppercase tracking-wider bg-white/80 px-2 py-0.5 rounded border border-[#2D3748]/20 text-[#1A1A1A]">
+                Bereit fürs heutige Training?
+              </span>
+              <h2 class="text-xl sm:text-2xl font-bold text-[#1A1A1A] font-heading mt-1">Nächste Einheit eintragen</h2>
+              <p class="text-xs text-[#2D3748]/80 font-body">Wähle deinen Trainingsplan & halte deine Gewichte fest.</p>
+            </div>
+          </div>
+
+          <a 
+            routerLink="/plans"
+            class="notebook-btn-primary px-6 py-3 rounded-xl text-lg font-heading shadow-md hover:bg-yellow-300 transition-all flex items-center gap-2 shrink-0 border border-[#2D3748]"
+          >
+            <span>TRAINING STARTEN</span>
+            <img src="assets/icons/Arrow-Right--Streamline-Freehand.png" class="w-5 h-5 object-contain" alt="Arrow" />
+          </a>
+        </div>
+      }
 
       <!-- 3️⃣ Middle Section (2-Spalten Grid: Streak & Letztes Training) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -508,6 +552,23 @@ export class DashboardComponent implements OnDestroy {
     const relativeXp = user.stats.xp - this.currentLevelXpStart();
     return Math.max(0, Math.min(100, Math.round((relativeXp / range) * 100)));
   });
+
+  getActiveCompletedSetsCount(active: ActiveWorkoutSession): number {
+    let completed = 0;
+    active.exercises.forEach(ex => {
+      ex.sets.forEach(s => {
+        if (s.completed) completed++;
+      });
+    });
+    return completed;
+  }
+
+  cancelActiveWorkout() {
+    if (confirm('Möchtest du das laufende Training abbrechen? Alle nicht gespeicherten Sätze werden verworfen.')) {
+      this.workoutService.clearActiveWorkout();
+      this.showToast('Laufendes Training abgebrochen.');
+    }
+  }
 
   // Chart configuration options
   chartOptions: ChartConfiguration['options'] = {

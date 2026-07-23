@@ -87,3 +87,21 @@ export interface ActivityFeedItem {
     exercises?: LoggedExercise[];
   };
 }
+
+export interface ActiveWorkoutSession {
+  planId: string;
+  planName: string;
+  startTime: string; // ISO String
+  currentExIndex: number;
+  exercises: {
+    name: string;
+    sets: {
+      reps: number;
+      weight: number;
+      targetReps: number;
+      targetWeight: number;
+      restSeconds: number;
+      completed: boolean;
+    }[];
+  }[];
+}
