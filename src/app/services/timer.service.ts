@@ -5,6 +5,8 @@ import { Injectable, signal, computed } from '@angular/core';
 })
 export class TimerService {
   private timerInterval: any = null;
+  private startTimeMs: number = 0;
+  private pausedAccumulatedMs: number = 0;
 
   // Signals for state tracking
   private _elapsedSeconds = signal<number>(0);
@@ -37,6 +39,22 @@ export class TimerService {
     return Math.min(100, Math.round((this._elapsedSeconds() / this._targetSeconds()) * 100));
   });
 
+  constructor() {
+    // Listen for tab focus / screen unlock events to instantly sync real elapsed time
+    if (typeof window !== 'undefined') {
+      document.addEventListener('visibilitychange', () => this.syncTime());
+      window.addEventListener('focus', () => this.syncTime());
+      window.addEventListener('pageshow', () => this.syncTime());
+    }
+
+    // Request notification permission if available
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {});
+      }
+    }
+  }
+
   formatTime(seconds: number): string {
     if (seconds < 60) {
       return `${seconds}s`;
@@ -54,44 +72,31 @@ export class TimerService {
     this._hasPlayedAlert.set(false);
     this._isActive.set(true);
 
-    this.timerInterval = setInterval(() => {
-      this._elapsedSeconds.update(val => val + 1);
+    this.startTimeMs = Date.now();
+    this.pausedAccumulatedMs = 0;
 
-      // Check if target reached for audio & vibration alert (triggers once)
-      if (this._elapsedSeconds() >= this._targetSeconds() && !this._hasPlayedAlert() && this._targetSeconds() > 0) {
-        this._hasPlayedAlert.set(true);
-        this.triggerAlert();
-      }
-    }, 1000);
+    this.startInterval();
   }
 
   pauseTimer(): void {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
+    if (this._isActive()) {
+      this.syncTime();
+      this.stopInterval();
+      this.pausedAccumulatedMs = this._elapsedSeconds() * 1000;
       this._isActive.set(false);
     }
   }
 
   resumeTimer(): void {
     if (!this._isActive()) {
+      this.startTimeMs = Date.now() - this.pausedAccumulatedMs;
       this._isActive.set(true);
-      this.timerInterval = setInterval(() => {
-        this._elapsedSeconds.update(val => val + 1);
-
-        if (this._elapsedSeconds() >= this._targetSeconds() && !this._hasPlayedAlert() && this._targetSeconds() > 0) {
-          this._hasPlayedAlert.set(true);
-          this.triggerAlert();
-        }
-      }, 1000);
+      this.startInterval();
     }
   }
 
   stopTimer(): void {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
-    }
+    this.stopInterval();
     this._isActive.set(false);
   }
 
@@ -100,6 +105,37 @@ export class TimerService {
     this._elapsedSeconds.set(0);
     this._targetSeconds.set(0);
     this._hasPlayedAlert.set(false);
+    this.startTimeMs = 0;
+    this.pausedAccumulatedMs = 0;
+  }
+
+  private startInterval(): void {
+    this.stopInterval();
+    this.timerInterval = setInterval(() => {
+      this.syncTime();
+    }, 500);
+  }
+
+  private stopInterval(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  private syncTime(): void {
+    if (!this._isActive()) return;
+
+    const realElapsedMs = Date.now() - this.startTimeMs;
+    const realElapsedSecs = Math.max(0, Math.floor(realElapsedMs / 1000));
+
+    this._elapsedSeconds.set(realElapsedSecs);
+
+    // Check if target reached for audio & vibration alert (triggers once)
+    if (realElapsedSecs >= this._targetSeconds() && !this._hasPlayedAlert() && this._targetSeconds() > 0) {
+      this._hasPlayedAlert.set(true);
+      this.triggerAlert();
+    }
   }
 
   private triggerAlert(): void {
@@ -109,7 +145,6 @@ export class TimerService {
       if (AudioContextClass) {
         const ctx = new AudioContextClass();
         
-        // Quadruple chime sequence for clear notification: 880Hz (A5), 1100Hz (C#6), 1320Hz (E6), 1760Hz (A6)
         const chime = (freq: number, startTime: number, duration: number) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -118,7 +153,7 @@ export class TimerService {
           osc.frequency.setValueAtTime(freq, startTime);
           
           gain.gain.setValueAtTime(0, startTime);
-          gain.gain.linearRampToValueAtTime(0.2, startTime + 0.04);
+          gain.gain.linearRampToValueAtTime(0.25, startTime + 0.04);
           gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
           
           osc.connect(gain);
@@ -144,6 +179,18 @@ export class TimerService {
         navigator.vibrate([200, 100, 200, 100, 300]);
       } catch (e) {
         console.warn('Vibration API not supported or blocked');
+      }
+    }
+
+    // 3. Web Push Notification (works even when phone was locked/unlocked)
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification('Satzpause beendet! 🎉', {
+          body: `Deine Pause von ${this.formattedTarget()} ist abgelaufen. Zeit für den nächsten Satz!`,
+          icon: 'assets/icons/Time-Clock-Circle-1--Streamline-Freehand.png'
+        });
+      } catch (e) {
+        console.warn('Browser Notification failed', e);
       }
     }
   }
