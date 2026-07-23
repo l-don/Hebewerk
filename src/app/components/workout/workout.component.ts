@@ -488,8 +488,8 @@ export class WorkoutComponent implements OnInit, OnDestroy {
     // Check if any sets are logged
     const loggedExercises: LoggedExercise[] = this.exercises()
       .map(ex => {
-        // Save only completed sets (or save all if user hits finish, treating them as completed if they have values)
-        const completedSets = ex.sets.filter(s => s.completed || (s.reps > 0 && s.weight >= 0));
+        // Save ONLY sets that were explicitly checked off / completed by the user
+        const completedSets = ex.sets.filter(s => s.completed);
         
         return {
           name: ex.name,
@@ -501,7 +501,7 @@ export class WorkoutComponent implements OnInit, OnDestroy {
           }))
         };
       })
-      .filter(ex => ex.sets.length > 0); // exclude exercises where no sets were registered
+      .filter(ex => ex.sets.length > 0); // exclude exercises where no sets were completed
 
     if (loggedExercises.length === 0) {
       alert('Bitte logge mindestens einen abgeschlossenen Satz, bevor du das Training beendest.');
