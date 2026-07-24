@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1784889218503,
+  "timestamp": 1784889370518,
   "index": "/Hebewerk/index.html",
   "assetGroups": [
     {
@@ -20,16 +20,16 @@
         "/Hebewerk/chunk-JLXUVMQO.js",
         "/Hebewerk/chunk-MFBBCE6V.js",
         "/Hebewerk/chunk-MWZTQMCZ.js",
+        "/Hebewerk/chunk-OPYQSFV3.js",
         "/Hebewerk/chunk-OZZLQL2R.js",
         "/Hebewerk/chunk-QQOOFQIS.js",
         "/Hebewerk/chunk-X5IAEHI5.js",
-        "/Hebewerk/chunk-YVDB3ZJY.js",
         "/Hebewerk/favicon.ico",
         "/Hebewerk/index.html",
-        "/Hebewerk/main-SYCMDRLJ.js",
+        "/Hebewerk/main-T2VLYAPG.js",
         "/Hebewerk/manifest.webmanifest",
         "/Hebewerk/polyfills-FFHMD2TL.js",
-        "/Hebewerk/styles-KZETQTQN.css"
+        "/Hebewerk/styles-GQUEHAN7.css"
       ],
       "patterns": []
     },
@@ -120,16 +120,16 @@
     "/Hebewerk/chunk-JLXUVMQO.js": "65669e8c0063d7dcafeec42ee6f75eb88d5f5f85",
     "/Hebewerk/chunk-MFBBCE6V.js": "a72c6fef348028394f4eabfc7a47b73d1f672221",
     "/Hebewerk/chunk-MWZTQMCZ.js": "ef6241d6a83a6e08a2bcafad6439f727e6fd1e96",
+    "/Hebewerk/chunk-OPYQSFV3.js": "48d3fd7c5f274331eaa3a4f6cb16eec125892c93",
     "/Hebewerk/chunk-OZZLQL2R.js": "c972881267eed7b940b262720a69fcc777c4b73a",
     "/Hebewerk/chunk-QQOOFQIS.js": "e2fd91887b7496e2d4b4b32228c16f9a3be1239b",
     "/Hebewerk/chunk-X5IAEHI5.js": "41fa52e4e5ffdadf7298dd81966f86c214feb52f",
-    "/Hebewerk/chunk-YVDB3ZJY.js": "f203554041e4d0fb835873f063c14efbe2c9cea4",
     "/Hebewerk/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
-    "/Hebewerk/index.html": "d5153de1d2d2354de5e72210f1ae7d1041436b10",
-    "/Hebewerk/main-SYCMDRLJ.js": "7281b6ce7ea1cc69c6ca36cda9f4738ebdac01e9",
+    "/Hebewerk/index.html": "4eeeefb8562e3f004e424be3c0f98b1a2be499e0",
+    "/Hebewerk/main-T2VLYAPG.js": "f18fea2ac83c0306ffc015c4396adc090ff1bbbe",
     "/Hebewerk/manifest.webmanifest": "b6d7403847f307415e7b1e799653c9b5df50df5e",
     "/Hebewerk/polyfills-FFHMD2TL.js": "f49b49a155bc7d192db62a4c15d0a612b460a667",
-    "/Hebewerk/styles-KZETQTQN.css": "0860cafa9d81b2233b778e716f1a1ddc39ff126f"
+    "/Hebewerk/styles-GQUEHAN7.css": "8ba441bc78899775a34b8f4a517251d2a3e0b6c1"
   },
   "navigationUrls": [
     {
