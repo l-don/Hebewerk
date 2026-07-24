@@ -1,0 +1,25 @@
+{
+  "name": "Hebewerk - Gym Tracker",
+  "short_name": "Hebewerk",
+  "theme_color": "#FAF7EF",
+  "background_color": "#FAF7EF",
+  "display": "standalone",
+  "scope": "./",
+  "start_url": "./",
+  "description": "Dein persönlicher Gym Tracker im Notebook-Stil",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

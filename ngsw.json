@@ -1,0 +1,153 @@
+{
+  "configVersion": 1,
+  "timestamp": 1784889218503,
+  "index": "/Hebewerk/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/Hebewerk/chunk-2XD6YJ7Z.js",
+        "/Hebewerk/chunk-AIGTICFC.js",
+        "/Hebewerk/chunk-BWVGDO47.js",
+        "/Hebewerk/chunk-C7QP4R7T.js",
+        "/Hebewerk/chunk-CI3P4YML.js",
+        "/Hebewerk/chunk-JH2CJ5TY.js",
+        "/Hebewerk/chunk-JLXUVMQO.js",
+        "/Hebewerk/chunk-MFBBCE6V.js",
+        "/Hebewerk/chunk-MWZTQMCZ.js",
+        "/Hebewerk/chunk-OZZLQL2R.js",
+        "/Hebewerk/chunk-QQOOFQIS.js",
+        "/Hebewerk/chunk-X5IAEHI5.js",
+        "/Hebewerk/chunk-YVDB3ZJY.js",
+        "/Hebewerk/favicon.ico",
+        "/Hebewerk/index.html",
+        "/Hebewerk/main-SYCMDRLJ.js",
+        "/Hebewerk/manifest.webmanifest",
+        "/Hebewerk/polyfills-FFHMD2TL.js",
+        "/Hebewerk/styles-KZETQTQN.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/Hebewerk/assets/GymTrackerNotebookStyle_refrence.png",
+        "/Hebewerk/assets/icons/Alert-Alarm-Bell--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Analytics-Graph-Bar-Line--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Arrow-Right--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Arrow-Thick-Right-1--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Copy-Paste-Clipboard--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Delete-Bin-1--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Edit-Pencil-1--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Fitness-Biceps--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Fitness-Dumbbell--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Fitness-Dumbells-Time--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Form-Validation-Check-Circle--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Home-1--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Lists-Bullets--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Logout-Door--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Menu-Navigation-1--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Multiple-Man-Woman--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Settings-Cog--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/Time-Clock-Circle-1--Streamline-Freehand.png",
+        "/Hebewerk/assets/icons/icon-192x192.png",
+        "/Hebewerk/assets/icons/icon-512x512.png",
+        "/Hebewerk/assets/logo/notebook_with_dumbell.png",
+        "/Hebewerk/assets/logo/notebook_with_dumbell_app_symbol.png",
+        "/Hebewerk/assets/sticky_notes/sticky_note_large_1.png",
+        "/Hebewerk/assets/sticky_notes/sticky_note_large_2.png",
+        "/Hebewerk/assets/sticky_notes/sticky_note_small.png",
+        "/Hebewerk/assets/symbols/calendar_symbol.png",
+        "/Hebewerk/assets/symbols/dumbell_symbol_1.png",
+        "/Hebewerk/assets/symbols/dumbell_symbol_2.png",
+        "/Hebewerk/assets/symbols/dumbell_symbol_3.png",
+        "/Hebewerk/assets/symbols/energy_symbol.png",
+        "/Hebewerk/assets/symbols/flame_symbol.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/Hebewerk/assets/GymTrackerNotebookStyle_refrence.png": "01099f02eaf622a534f92cae2c239723333667be",
+    "/Hebewerk/assets/icons/Alert-Alarm-Bell--Streamline-Freehand.png": "73b7ffa7499147ea89546bfff9da52ea64d0ade5",
+    "/Hebewerk/assets/icons/Analytics-Graph-Bar-Line--Streamline-Freehand.png": "10ba4c4042c47af088f837cd9118bb7ea149d90e",
+    "/Hebewerk/assets/icons/Arrow-Right--Streamline-Freehand.png": "73e3b66c28da7a6da52c4b2c9487395eede98a0e",
+    "/Hebewerk/assets/icons/Arrow-Thick-Right-1--Streamline-Freehand.png": "469f83662dd33c52678071273e32aa858e9ee58e",
+    "/Hebewerk/assets/icons/Copy-Paste-Clipboard--Streamline-Freehand.png": "8ec2ea8e1a9a9437e092fc8ff08c0207384694c8",
+    "/Hebewerk/assets/icons/Delete-Bin-1--Streamline-Freehand.png": "7e7a5744e3dbbb522dbaed0a50d3725ddb01388f",
+    "/Hebewerk/assets/icons/Edit-Pencil-1--Streamline-Freehand.png": "ce29227803764b32fcc979414f18ad1b04c85598",
+    "/Hebewerk/assets/icons/Fitness-Biceps--Streamline-Freehand.png": "76da99006691020687f6836a92369ae86db834a7",
+    "/Hebewerk/assets/icons/Fitness-Dumbbell--Streamline-Freehand.png": "a725b174e07c40516dedddeb299eecc9a34d9e04",
+    "/Hebewerk/assets/icons/Fitness-Dumbells-Time--Streamline-Freehand.png": "76baf353790e925539c68c45c9e1a7800093fcd4",
+    "/Hebewerk/assets/icons/Form-Validation-Check-Circle--Streamline-Freehand.png": "0658f5b1bec6925226130b9e1adaeefef2ca4471",
+    "/Hebewerk/assets/icons/Home-1--Streamline-Freehand.png": "6ea97e5085747f1c9fa1c6db0ba96348a2a3a987",
+    "/Hebewerk/assets/icons/Lists-Bullets--Streamline-Freehand.png": "68b636f36c515a2756c0ff15a7034901d0858dcb",
+    "/Hebewerk/assets/icons/Logout-Door--Streamline-Freehand.png": "47ac16036ae092d78054cc7505dec1a96b64f877",
+    "/Hebewerk/assets/icons/Menu-Navigation-1--Streamline-Freehand.png": "47491e4f02f4d2e756b700581c26c0681fc5ac11",
+    "/Hebewerk/assets/icons/Multiple-Man-Woman--Streamline-Freehand.png": "fb7a03faf5ade2b235d9f2412894dd0acc4ab6e0",
+    "/Hebewerk/assets/icons/Settings-Cog--Streamline-Freehand.png": "f7d49ec95c19b61fbfd27db94c820d1d2ea203b7",
+    "/Hebewerk/assets/icons/Time-Clock-Circle-1--Streamline-Freehand.png": "c7210cbbce0d2f401c2e5d9b52926b6a5be0ca2c",
+    "/Hebewerk/assets/icons/icon-192x192.png": "9b46f8b3c04af3f8e771940fc3d588371aaea41d",
+    "/Hebewerk/assets/icons/icon-512x512.png": "2fc7a2f016dfbe6c009b749e85cd45a26cd34336",
+    "/Hebewerk/assets/logo/notebook_with_dumbell.png": "a77baa1fad01a4775e6d1b52bff7d3cbddfa946e",
+    "/Hebewerk/assets/logo/notebook_with_dumbell_app_symbol.png": "79b3a220ffed70f9135eca3fdfb733bf76dff021",
+    "/Hebewerk/assets/sticky_notes/sticky_note_large_1.png": "78ac9d6b2d9ab5e19dfd2150acf9cde54add4ed0",
+    "/Hebewerk/assets/sticky_notes/sticky_note_large_2.png": "fff01a6ea2d7f0cf46bf7a6b358cb103d9b490b0",
+    "/Hebewerk/assets/sticky_notes/sticky_note_small.png": "93fdc71c245ae1c015b897ffc3084bdf473062e7",
+    "/Hebewerk/assets/symbols/calendar_symbol.png": "a0f72f3ea6d1be61bf4e7018c7ae6782297d7048",
+    "/Hebewerk/assets/symbols/dumbell_symbol_1.png": "837c9101f355364d6e2fdad9a881fe31b708e89a",
+    "/Hebewerk/assets/symbols/dumbell_symbol_2.png": "9dda3d287a8a1ad77c1633e0e770d5034fea195a",
+    "/Hebewerk/assets/symbols/dumbell_symbol_3.png": "900dab1373c090562563300d589a8111491777e0",
+    "/Hebewerk/assets/symbols/energy_symbol.png": "314a5f77ebd12b0775d4b599575ea811c332f9ed",
+    "/Hebewerk/assets/symbols/flame_symbol.png": "bc2d535fe445c96e0d1a6e0b68782d104c921843",
+    "/Hebewerk/chunk-2XD6YJ7Z.js": "c2d4b968bf5c5ff962fd63af54a1743ccc4942aa",
+    "/Hebewerk/chunk-AIGTICFC.js": "d67ff754a759e1585ca4864fa252f56dda9b844c",
+    "/Hebewerk/chunk-BWVGDO47.js": "b64f76adcf8c40fa9951cf1e224d643d361e6141",
+    "/Hebewerk/chunk-C7QP4R7T.js": "9b9f8839e6d5ea8da1e25a621038cd405f8d1cf3",
+    "/Hebewerk/chunk-CI3P4YML.js": "1cc235a080dbeba694e1770d2b583a039e38544c",
+    "/Hebewerk/chunk-JH2CJ5TY.js": "38e3219303b91b897aa354feff93dc56379260fb",
+    "/Hebewerk/chunk-JLXUVMQO.js": "65669e8c0063d7dcafeec42ee6f75eb88d5f5f85",
+    "/Hebewerk/chunk-MFBBCE6V.js": "a72c6fef348028394f4eabfc7a47b73d1f672221",
+    "/Hebewerk/chunk-MWZTQMCZ.js": "ef6241d6a83a6e08a2bcafad6439f727e6fd1e96",
+    "/Hebewerk/chunk-OZZLQL2R.js": "c972881267eed7b940b262720a69fcc777c4b73a",
+    "/Hebewerk/chunk-QQOOFQIS.js": "e2fd91887b7496e2d4b4b32228c16f9a3be1239b",
+    "/Hebewerk/chunk-X5IAEHI5.js": "41fa52e4e5ffdadf7298dd81966f86c214feb52f",
+    "/Hebewerk/chunk-YVDB3ZJY.js": "f203554041e4d0fb835873f063c14efbe2c9cea4",
+    "/Hebewerk/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
+    "/Hebewerk/index.html": "d5153de1d2d2354de5e72210f1ae7d1041436b10",
+    "/Hebewerk/main-SYCMDRLJ.js": "7281b6ce7ea1cc69c6ca36cda9f4738ebdac01e9",
+    "/Hebewerk/manifest.webmanifest": "b6d7403847f307415e7b1e799653c9b5df50df5e",
+    "/Hebewerk/polyfills-FFHMD2TL.js": "f49b49a155bc7d192db62a4c15d0a612b460a667",
+    "/Hebewerk/styles-KZETQTQN.css": "0860cafa9d81b2233b778e716f1a1ddc39ff126f"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
