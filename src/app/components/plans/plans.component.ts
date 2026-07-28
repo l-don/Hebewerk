@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { WorkoutService } from '../../services/workout.service';
+import { AuthService } from '../../services/auth.service';
 import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
 
 @Component({
@@ -273,6 +274,7 @@ import { WorkoutPlan, Exercise, ExerciseSet } from '../../models/gym.models';
 })
 export class PlansComponent {
   private workoutService = inject(WorkoutService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   plans = this.workoutService.plans;
@@ -288,10 +290,13 @@ export class PlansComponent {
   editExercises: Exercise[] = [];
 
   startCreateNewPlan() {
+    const user = this.authService.currentUser();
+    const defaultPublic = user?.privacySettings?.plansVisibility === 'public';
+
     this.editingPlanId = null;
     this.editName = '';
     this.editDescription = '';
-    this.editIsPublic = false;
+    this.editIsPublic = defaultPublic;
     this.editExercises = [this.getNewExerciseObject('Kniebeugen (Squat)')];
     this.isEditing.set(true);
   }
