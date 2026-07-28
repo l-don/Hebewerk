@@ -611,10 +611,13 @@ export class DashboardComponent implements OnDestroy {
   constructor() {
     this.loadActivityFeed();
     
-    // Auto-update feed when friends or logs change or user logs out
+    // Auto-update feed when friends, user, or logs change
     effect(() => {
       const user = this.currentUser();
-      if (user) {
+      const logs = this.workoutService.logs();
+      const friends = this.friendsService.friends();
+      
+      if (user || logs.length >= 0 || friends.length >= 0) {
         this.loadActivityFeed();
       } else {
         if (this.unsubFeed) { this.unsubFeed(); this.unsubFeed = null; }

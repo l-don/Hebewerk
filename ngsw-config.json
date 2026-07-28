@@ -33,5 +33,19 @@
     "!/**/*.*/**",
     "!https://firestore.googleapis.com/**",
     "!https://*.firebaseio.com/**"
+  ],
+  "dataGroups": [
+    {
+      "name": "firestore-channel-bypass",
+      "urls": [
+        "https://firestore.googleapis.com/**",
+        "https://*.firebaseio.com/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 0,
+        "maxAge": "0u",
+        "strategy": "freshness"
+      }
+    }
   ]
 }

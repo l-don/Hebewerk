@@ -21,11 +21,14 @@ export class WorkoutService {
   private _activeWorkout = signal<ActiveWorkoutSession | null>(null);
   readonly activeWorkout = computed(() => this._activeWorkout());
 
+  private lastInitializedUid: string | null = null;
+
   constructor() {
     this.initializeData();
     effect(() => {
       const user = this.authService.currentUser();
-      if (user) {
+      const currentUid = user ? user.uid : 'local_guest';
+      if (currentUid !== this.lastInitializedUid) {
         this.initializeData();
       }
     });
@@ -51,6 +54,7 @@ export class WorkoutService {
   async initializeData() {
     const user = this.authService.currentUser();
     const userId = this.getEffectiveUserId();
+    this.lastInitializedUid = userId;
 
     if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
       try {
@@ -444,7 +448,7 @@ export class WorkoutService {
 
       const newItem = {
         id: 'feed_' + Math.random().toString(36).substring(2, 9),
-        userId: user ? user.uid : 'guest',
+        userId: user ? user.uid : 'local_guest',
         displayName,
         photoURL,
         type: 'workout_completed',
