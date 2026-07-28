@@ -53,8 +53,19 @@ export class FriendsService {
       const user = this.authService.currentUser();
       if (user && !user.uid.startsWith('local_')) {
         this.initializeData();
+      } else if (!user) {
+        this.cleanupSubscriptions();
       }
     });
+  }
+
+  cleanupSubscriptions(): void {
+    if (this.unsub1) { this.unsub1(); this.unsub1 = null; }
+    if (this.unsub2) { this.unsub2(); this.unsub2 = null; }
+    this._friends.set([]);
+    this._pendingRequests.set([]);
+    this._sentRequests.set([]);
+    this._searchResults.set([]);
   }
 
   private isFirebaseConfigured(): boolean {
