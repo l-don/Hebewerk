@@ -143,7 +143,7 @@ Chart.register(...registerables);
               <div>
                 <div class="flex items-baseline gap-2">
                   <span class="text-4xl sm:text-5xl font-bold font-heading text-[#1A1A1A]">{{ user.stats.currentStreak || 0 }}</span>
-                  <span class="highlighter-yellow text-sm font-bold font-heading uppercase text-[#1A1A1A]">WOCHEN</span>
+                  <span class="highlighter-yellow text-sm font-bold font-heading uppercase text-[#1A1A1A]">TAGE</span>
                 </div>
                 <p class="text-xs text-[#718096] font-body mt-1">Dranbleiben für maximale Gains!</p>
               </div>
