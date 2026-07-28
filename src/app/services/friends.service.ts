@@ -313,20 +313,35 @@ export class FriendsService {
 
   async sendFriendRequest(targetUserId: string): Promise<void> {
     const user = this.authService.currentUser();
-    if (!user) return;
+    if (!user || user.uid === targetUserId) return;
 
-    const friendshipId = `friendship_${user.uid}_${targetUserId}`;
-    const newFriendship: Friendship = {
-      id: friendshipId,
-      user1Id: user.uid,
-      user2Id: targetUserId,
-      status: 'pending',
-      updatedAt: new Date().toISOString()
-    };
+    // Deterministic undirected ID to prevent duplicate friendships
+    const sortedUids = [user.uid, targetUserId].sort();
+    const friendshipId = `friendship_${sortedUids[0]}_${sortedUids[1]}`;
 
     if (this.firestore && this.isFirebaseConfigured()) {
       try {
         const docRef = doc(this.firestore, `friends/${friendshipId}`);
+        const snap = await getDoc(docRef);
+
+        if (snap.exists()) {
+          const data = snap.data() as Friendship;
+          // If incoming request from targetUser, auto-accept it!
+          if (data.status === 'pending' && data.user2Id === user.uid) {
+            await updateDoc(docRef, { status: 'accepted', updatedAt: new Date().toISOString() });
+            return;
+          }
+          // Already sent or already accepted -> do nothing
+          return;
+        }
+
+        const newFriendship: Friendship = {
+          id: friendshipId,
+          user1Id: user.uid,
+          user2Id: targetUserId,
+          status: 'pending',
+          updatedAt: new Date().toISOString()
+        };
         await setDoc(docRef, newFriendship);
       } catch (e) {
         console.warn('Firestore sendFriendRequest failed', e);
@@ -335,15 +350,20 @@ export class FriendsService {
       // Local optimistic update for sent requests
       const recipient = this._searchResults().find(u => u.uid === targetUserId);
       if (recipient) {
-        this._sentRequests.update(list => [
-          ...list,
-          {
-            friendshipId,
-            recipient,
-            status: 'pending',
-            updatedAt: new Date().toISOString()
-          }
-        ]);
+        const existsInSent = this._sentRequests().some(r => r.friendshipId === friendshipId);
+        const existsInFriends = this._friends().some(f => f.profile.uid === targetUserId);
+        
+        if (!existsInSent && !existsInFriends) {
+          this._sentRequests.update(list => [
+            ...list,
+            {
+              friendshipId,
+              recipient,
+              status: 'pending',
+              updatedAt: new Date().toISOString()
+            }
+          ]);
+        }
       }
     }
 
