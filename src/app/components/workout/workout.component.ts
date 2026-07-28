@@ -400,6 +400,17 @@ export class WorkoutComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (active && active.planId !== plan.id) {
+      const confirmOverride = confirm(
+        `Du hast bereits ein laufendes Training für '${active.planName}'. Möchtest du dieses abbrechen und das neue Training für '${plan.name}' starten?`
+      );
+      if (!confirmOverride) {
+        this.router.navigate(['/plans']);
+        return;
+      }
+      this.workoutService.clearActiveWorkout();
+    }
+
     this.startTime = new Date();
     this.durationMinutes.set(0);
     this.workoutCompleted.set(false);
