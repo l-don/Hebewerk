@@ -520,11 +520,10 @@ export class WorkoutComponent implements OnInit, OnDestroy {
     const plan = this.plan();
     if (!plan) return;
 
-    // Check if any sets are logged
+    // Check if any sets are logged (explicitly checked off OR filled with valid values)
     const loggedExercises: LoggedExercise[] = this.exercises()
       .map(ex => {
-        // Save ONLY sets that were explicitly checked off / completed by the user
-        const completedSets = ex.sets.filter(s => s.completed);
+        const completedSets = ex.sets.filter(s => s.completed || (s.reps > 0 && s.weight >= 0));
         
         return {
           name: ex.name,
