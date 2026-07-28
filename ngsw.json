@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1785268589763,
+  "timestamp": 1785269287942,
   "index": "/Hebewerk/index.html",
   "assetGroups": [
     {
@@ -19,14 +19,14 @@
         "/Hebewerk/chunk-JTSWXIXO.js",
         "/Hebewerk/chunk-KIWC4UE4.js",
         "/Hebewerk/chunk-LILJS7PZ.js",
+        "/Hebewerk/chunk-ODFURC37.js",
         "/Hebewerk/chunk-ODUGN3GT.js",
-        "/Hebewerk/chunk-TSI7PW2B.js",
         "/Hebewerk/chunk-TYR7CWYH.js",
         "/Hebewerk/chunk-U4MPNEYX.js",
         "/Hebewerk/chunk-YN54JKP7.js",
         "/Hebewerk/favicon.ico",
         "/Hebewerk/index.html",
-        "/Hebewerk/main-E6T44ZFA.js",
+        "/Hebewerk/main-PQJVWQMF.js",
         "/Hebewerk/manifest.webmanifest",
         "/Hebewerk/polyfills-FFHMD2TL.js",
         "/Hebewerk/styles-JHRC7ULV.css"
@@ -119,14 +119,14 @@
     "/Hebewerk/chunk-JTSWXIXO.js": "ee7f27ff1ca7aa8837e9756191eba5e680b6860e",
     "/Hebewerk/chunk-KIWC4UE4.js": "c3576012b2687fff6cb50e5a3e2d61849368ea03",
     "/Hebewerk/chunk-LILJS7PZ.js": "c10521ebf7655f531d2f85dcde477fa48cdf0d4f",
+    "/Hebewerk/chunk-ODFURC37.js": "6ba7d4279fa73229dea323e41eece52e16f7f081",
     "/Hebewerk/chunk-ODUGN3GT.js": "88d8865ffb6bf27ed3adf79a28e170e1a6e7e5fe",
-    "/Hebewerk/chunk-TSI7PW2B.js": "1937e5c9e2f53387087a7156de53dc4e0d9d9199",
     "/Hebewerk/chunk-TYR7CWYH.js": "1f536d9209a4e8fb468a3254a623b6d4289867aa",
     "/Hebewerk/chunk-U4MPNEYX.js": "b535dc44b7a0e96b7db27cb284f796eaec88677e",
     "/Hebewerk/chunk-YN54JKP7.js": "11a60c7964f5abd0d06f1b10b0c02a6a096d9358",
     "/Hebewerk/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
-    "/Hebewerk/index.html": "81300383eb842ad5da571a85a02c8efaa2d132bc",
-    "/Hebewerk/main-E6T44ZFA.js": "6415ba0d1c229df98974e482b9c19af8dd87b392",
+    "/Hebewerk/index.html": "0ad8963bf8d740550936c994245b04b61e6571c3",
+    "/Hebewerk/main-PQJVWQMF.js": "6176777e6cc63db67ab59b066fdea052b3544cc8",
     "/Hebewerk/manifest.webmanifest": "b6d7403847f307415e7b1e799653c9b5df50df5e",
     "/Hebewerk/polyfills-FFHMD2TL.js": "f49b49a155bc7d192db62a4c15d0a612b460a667",
     "/Hebewerk/styles-JHRC7ULV.css": "7eba5c8b6a67e914d53ffee5d1e8a8ec48c52818"
