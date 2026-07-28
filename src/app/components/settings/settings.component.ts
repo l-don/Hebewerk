@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { WorkoutService } from '../../services/workout.service';
 import { MockDataService } from '../../services/mock-data.service';
+import { PwaService } from '../../services/pwa.service';
 import { UserPrivacySettings } from '../../models/gym.models';
 
 @Component({
@@ -34,6 +35,42 @@ import { UserPrivacySettings } from '../../models/gym.models';
           <button (click)="toastMessage.set(null)" class="text-[#2D3748] hover:text-black text-xs font-bold">✕</button>
         </div>
       }
+
+      <!-- APP INSTALLATION CARD (PWA) -->
+      <div class="notebook-card p-5 sm:p-6 rounded-2xl bg-[#FEF08A]/30 border-2 border-[#FEF08A] space-y-3">
+        <div class="flex items-center gap-3">
+          <img src="assets/logo/notebook_with_dumbell_app_symbol.png" class="w-10 h-10 rounded-xl shadow-sm object-cover bg-white p-1 border border-[#2D3748]/20" alt="Hebewerk App" />
+          <div>
+            <h2 class="text-xl font-bold font-heading text-[#1A1A1A]">HEBEWERK ALS APP INSTALLIEREN</h2>
+            <p class="text-xs text-[#718096]">Nutze Hebewerk direkt vom Startbildschirm deines Handys</p>
+          </div>
+        </div>
+
+        @if (pwaService.isInstalled()) {
+          <div class="p-3 bg-emerald-100 border border-emerald-300 rounded-xl text-emerald-900 text-xs font-bold font-heading flex items-center gap-2">
+            <span>✅ App ist bereits auf deinem Startbildschirm installiert!</span>
+          </div>
+        } @else if (pwaService.canInstall()) {
+          <button 
+            (click)="pwaService.promptInstall()"
+            class="notebook-btn-primary w-full py-3 rounded-xl text-base font-heading shadow-md flex items-center justify-center gap-2"
+          >
+            <span>📱 Jetzt auf Startbildschirm installieren</span>
+          </button>
+        } @else if (pwaService.isIos()) {
+          <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs font-body text-[#1A1A1A] space-y-1">
+            <span class="font-bold font-heading text-sm block">Anleitung für iPhone / iPad:</span>
+            <p>1. Tippe unten in Safari auf das <strong>Teilen-Symbol 📤</strong></p>
+            <p>2. Scrolle nach unten & wähle <strong>"Zum Home-Bildschirm" ➕</strong></p>
+          </div>
+        } @else {
+          <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs font-body text-[#1A1A1A] space-y-1">
+            <span class="font-bold font-heading text-sm block">Anleitung für Android / Chrome:</span>
+            <p>1. Tippe oben rechts auf die <strong>3 Punkte ⋮ (Browser-Menü)</strong></p>
+            <p>2. Wähle <strong>"App installieren"</strong> oder <strong>"Zum Startbildschirm hinzufügen"</strong></p>
+          </div>
+        }
+      </div>
 
       @if (currentUser(); as user) {
         
@@ -238,6 +275,7 @@ export class SettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private workoutService = inject(WorkoutService);
   private mockDataService = inject(MockDataService);
+  public pwaService = inject(PwaService);
   private router = inject(Router);
 
   currentUser = this.authService.currentUser;
