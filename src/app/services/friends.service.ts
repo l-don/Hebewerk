@@ -276,6 +276,7 @@ export class FriendsService {
         snap.forEach(d => {
           const u = d.data() as UserProfile;
           if (u.uid !== currentUser?.uid) {
+            if (u.privacySettings?.showInSearch === false) return;
             if (u.displayName?.toLowerCase().includes(qLower)) {
               results.push(u);
             }
@@ -295,18 +296,20 @@ export class FriendsService {
         displayName: 'Tom Lift',
         photoURL: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Tom',
         createdAt: new Date().toISOString(),
-        stats: { level: 5, xp: 2100, currentStreak: 3, lastActive: new Date().toISOString() }
+        stats: { level: 5, xp: 2100, currentStreak: 3, lastActive: new Date().toISOString() },
+        privacySettings: { profileVisibility: 'public', plansVisibility: 'public', showInSearch: true }
       },
       {
         uid: 'search_user_lisa',
         displayName: 'Lisa Fit',
         photoURL: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Lisa',
         createdAt: new Date().toISOString(),
-        stats: { level: 7, xp: 3400, currentStreak: 5, lastActive: new Date().toISOString() }
+        stats: { level: 7, xp: 3400, currentStreak: 5, lastActive: new Date().toISOString() },
+        privacySettings: { profileVisibility: 'public', plansVisibility: 'public', showInSearch: true }
       }
     ];
 
-    const filtered = mockDb.filter(u => u.displayName.toLowerCase().includes(qLower));
+    const filtered = mockDb.filter(u => u.privacySettings?.showInSearch !== false && u.displayName.toLowerCase().includes(qLower));
     this._searchResults.set(filtered);
     return filtered;
   }

@@ -242,12 +242,29 @@ import { UserProfile, WorkoutPlan } from '../../models/gym.models';
                     <span class="text-xs text-[#718096] font-body">Level {{ user.stats.level }}</span>
                   </div>
                 </div>
-                <button 
-                  (click)="sendRequest(user.uid, user.displayName)"
-                  class="notebook-btn-primary px-4 py-2 rounded-xl text-xs font-heading shadow-sm flex items-center gap-1"
-                >
-                  <span>Anfrage senden</span>
-                </button>
+                @if (isFriend(user.uid)) {
+                  <span class="highlighter-yellow text-xs font-bold font-heading uppercase px-3 py-1.5 rounded-xl border border-[#2D3748]/20">
+                    ✓ Befreundet
+                  </span>
+                } @else if (isSentPending(user.uid)) {
+                  <span class="bg-[#FAF8F2] text-[#718096] text-xs font-bold font-heading uppercase px-3 py-1.5 rounded-xl border border-[#2D3748]/20">
+                    Ausstehend
+                  </span>
+                } @else if (isIncomingPending(user.uid)) {
+                  <button 
+                    (click)="activeTab.set('requests')"
+                    class="notebook-btn-primary px-4 py-2 rounded-xl text-xs font-heading shadow-sm"
+                  >
+                    Anfrage annehmen
+                  </button>
+                } @else {
+                  <button 
+                    (click)="sendRequest(user.uid, user.displayName)"
+                    class="notebook-btn-primary px-4 py-2 rounded-xl text-xs font-heading shadow-sm flex items-center gap-1"
+                  >
+                    <span>Anfrage senden</span>
+                  </button>
+                }
               </div>
             } @empty {
               @if (searchQuery.trim().length >= 2) {
@@ -280,6 +297,18 @@ export class FriendsComponent {
   searchResults = this.friendsService.searchResults;
 
   searchQuery = '';
+
+  isFriend(uid: string): boolean {
+    return this.friends().some(f => f.profile.uid === uid);
+  }
+
+  isSentPending(uid: string): boolean {
+    return this.sentRequests().some(r => r.recipient.uid === uid);
+  }
+
+  isIncomingPending(uid: string): boolean {
+    return this.pendingRequests().some(r => r.requester.uid === uid);
+  }
 
   onSearchInput() {
     this.friendsService.searchUsers(this.searchQuery);
