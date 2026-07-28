@@ -298,14 +298,14 @@ export class SettingsComponent implements OnInit {
     }
   }
 
-  saveName() {
+  async saveName() {
     if (!this.editName.trim()) return;
-    this.authService.updateDisplayName(this.editName.trim());
+    await this.authService.updateDisplayName(this.editName.trim());
     this.showToast('Anzeigename erfolgreich geändert!');
   }
 
-  savePrivacy() {
-    this.authService.updatePrivacySettings(this.privacySettings);
+  async savePrivacy() {
+    await this.authService.updatePrivacySettings(this.privacySettings);
     this.showToast('Privatsphäre-Einstellungen gespeichert!');
   }
 

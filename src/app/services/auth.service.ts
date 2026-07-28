@@ -268,7 +268,7 @@ export class AuthService {
     return updatedStats;
   }
 
-  updateDisplayName(newName: string): UserProfile {
+  async updateDisplayName(newName: string): Promise<UserProfile> {
     const user = this._currentUser();
     if (!user) throw new Error('No user logged in');
 
@@ -286,10 +286,19 @@ export class AuthService {
       this.saveUsersDb(db);
     }
 
+    if (this.firestore && this.isFirebaseConfigured() && !updatedUser.uid.startsWith('local_')) {
+      try {
+        const userDocRef = doc(this.firestore, `users/${updatedUser.uid}`);
+        await setDoc(userDocRef, { displayName: updatedUser.displayName, photoURL: updatedUser.photoURL }, { merge: true });
+      } catch (e) {
+        console.warn('Firestore updateDisplayName failed', e);
+      }
+    }
+
     return updatedUser;
   }
 
-  updatePrivacySettings(settings: any): UserProfile {
+  async updatePrivacySettings(settings: any): Promise<UserProfile> {
     const user = this._currentUser();
     if (!user) throw new Error('No user logged in');
 
@@ -304,6 +313,15 @@ export class AuthService {
     if (db[updatedUser.uid]) {
       db[updatedUser.uid] = updatedUser;
       this.saveUsersDb(db);
+    }
+
+    if (this.firestore && this.isFirebaseConfigured() && !updatedUser.uid.startsWith('local_')) {
+      try {
+        const userDocRef = doc(this.firestore, `users/${updatedUser.uid}`);
+        await setDoc(userDocRef, { privacySettings: updatedUser.privacySettings }, { merge: true });
+      } catch (e) {
+        console.warn('Firestore updatePrivacySettings failed', e);
+      }
     }
 
     return updatedUser;
