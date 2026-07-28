@@ -330,7 +330,10 @@ export class WorkoutService {
       this.authService.updateStats(xpGained);
     }
 
-    this.addToActivityFeed(log, xpGained);
+    const plan = this._plans().find(p => p.id === log.planId);
+    if (!plan || plan.isPublic !== false) {
+      this.addToActivityFeed(log, xpGained);
+    }
 
     // Sync log to Firestore async
     if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
