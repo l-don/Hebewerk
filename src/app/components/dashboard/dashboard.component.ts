@@ -831,24 +831,44 @@ export class DashboardComponent implements OnDestroy {
       return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
     });
 
-    const squatData = sorted.map(log => {
-      const squatEx = log.exercises.find(ex => ex.name.toLowerCase().includes('kniebeugen') || ex.name.toLowerCase().includes('squat'));
-      if (!squatEx) return null;
-      return Math.max(...squatEx.sets.map(s => s.weight));
+    // Count most frequent exercises across all logs
+    const exerciseCounts = new Map<string, number>();
+    this.logs().forEach(log => {
+      log.exercises.forEach(ex => {
+        if (ex.sets && ex.sets.length > 0) {
+          const name = ex.name.trim();
+          exerciseCounts.set(name, (exerciseCounts.get(name) || 0) + 1);
+        }
+      });
     });
 
-    const benchData = sorted.map(log => {
-      const benchEx = log.exercises.find(ex => ex.name.toLowerCase().includes('bankdrücken') || ex.name.toLowerCase().includes('bench'));
-      if (!benchEx) return null;
-      return Math.max(...benchEx.sets.map(s => s.weight));
+    const topExercises = Array.from(exerciseCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(entry => entry[0]);
+
+    const ex1Name = topExercises[0] || 'Kniebeugen';
+    const ex2Name = topExercises[1] || (ex1Name !== 'Bankdrücken' ? 'Bankdrücken' : 'Kreuzheben');
+
+    const ex1Data = sorted.map(log => {
+      const match = log.exercises.find(ex => ex.name.trim().toLowerCase() === ex1Name.toLowerCase());
+      if (!match || !match.sets.length) return null;
+      const maxW = Math.max(...match.sets.map(s => s.weight));
+      return maxW > 0 ? maxW : null;
+    });
+
+    const ex2Data = sorted.map(log => {
+      const match = log.exercises.find(ex => ex.name.trim().toLowerCase() === ex2Name.toLowerCase());
+      if (!match || !match.sets.length) return null;
+      const maxW = Math.max(...match.sets.map(s => s.weight));
+      return maxW > 0 ? maxW : null;
     });
 
     return {
       labels,
       datasets: [
         {
-          data: squatData,
-          label: 'Kniebeugen (kg)',
+          data: ex1Data,
+          label: `${ex1Name} (kg)`,
           borderColor: '#ff9f1c',
           backgroundColor: 'rgba(255, 159, 28, 0.2)',
           tension: 0.3,
@@ -856,8 +876,8 @@ export class DashboardComponent implements OnDestroy {
           pointBackgroundColor: '#ffbf00'
         },
         {
-          data: benchData,
-          label: 'Bankdrücken (kg)',
+          data: ex2Data,
+          label: `${ex2Name} (kg)`,
           borderColor: '#00e5ff',
           backgroundColor: 'rgba(0, 229, 255, 0.2)',
           tension: 0.3,
