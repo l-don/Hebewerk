@@ -530,17 +530,27 @@ export class WorkoutComponent implements OnInit, OnDestroy {
         .map(ex => {
           const completedSets = (ex.sets || []).filter(s => s.completed || Number(s.reps) > 0);
           
-          return {
-            name: ex.name,
-            notes: ex.notes ? ex.notes.trim() : undefined,
-            sets: completedSets.map(s => ({
+          const sets: LoggedSet[] = completedSets.map(s => {
+            const setObj: LoggedSet = {
               reps: Number(s.reps) || 0,
               weight: Number(s.weight) || 0,
               targetReps: Number(s.targetReps) || 0,
-              targetWeight: Number(s.targetWeight) || 0,
-              notes: s.notes ? s.notes.trim() : undefined
-            }))
+              targetWeight: Number(s.targetWeight) || 0
+            };
+            if (s.notes && s.notes.trim()) {
+              setObj.notes = s.notes.trim();
+            }
+            return setObj;
+          });
+
+          const exObj: LoggedExercise = {
+            name: ex.name,
+            sets
           };
+          if (ex.notes && ex.notes.trim()) {
+            exObj.notes = ex.notes.trim();
+          }
+          return exObj;
         })
         .filter(ex => ex.sets.length > 0);
 

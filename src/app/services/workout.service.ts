@@ -138,7 +138,8 @@ export class WorkoutService {
 
     if (this.firestore && this.isFirebaseConfigured() && userId && !userId.startsWith('local_')) {
       const activeDocRef = doc(this.firestore, `active_workouts/${userId}`);
-      setDoc(activeDocRef, session).catch(e => {});
+      const cleanSession = JSON.parse(JSON.stringify(session));
+      setDoc(activeDocRef, cleanSession).catch(e => {});
     }
   }
 
@@ -354,7 +355,8 @@ export class WorkoutService {
       // Sync log to Firestore async
       if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
         const logDocRef = doc(this.firestore, `workout_logs/${log.id}`);
-        setDoc(logDocRef, log).catch(err => console.warn('Firestore logWorkout error', err));
+        const cleanLog = JSON.parse(JSON.stringify(log));
+        setDoc(logDocRef, cleanLog).catch(err => console.warn('Firestore logWorkout error', err));
       }
 
       return xpGained;
@@ -379,7 +381,8 @@ export class WorkoutService {
     if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
       logs.forEach(log => {
         const logDocRef = doc(this.firestore!, `workout_logs/${log.id}`);
-        setDoc(logDocRef, log).catch(e => {});
+        const cleanLog = JSON.parse(JSON.stringify(log));
+        setDoc(logDocRef, cleanLog).catch(e => {});
       });
     }
   }
@@ -459,7 +462,8 @@ export class WorkoutService {
 
       if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
         const feedDocRef = doc(this.firestore, `activity_feed/${newItem.id}`);
-        setDoc(feedDocRef, newItem).catch(e => {});
+        const cleanItem = JSON.parse(JSON.stringify(newItem));
+        setDoc(feedDocRef, cleanItem).catch(e => {});
       }
     } catch (e) {
       console.warn('addToActivityFeed error', e);

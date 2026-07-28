@@ -26,5 +26,12 @@
         ]
       }
     }
+  ],
+  "navigationUrls": [
+    "/**",
+    "!/**/*.*",
+    "!/**/*.*/**",
+    "!https://firestore.googleapis.com/**",
+    "!https://*.firebaseio.com/**"
   ]
 }
