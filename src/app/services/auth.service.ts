@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { Auth, user, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from '@angular/fire/auth';
+import { Auth, user, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, sendPasswordResetEmail } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { UserProfile, UserStats } from '../models/gym.models';
 import { environment } from '../../environments/environment';
@@ -201,6 +201,21 @@ export class AuthService {
     }
     this._currentUser.set(null);
     localStorage.removeItem('hebewerk_user');
+  }
+
+  async resetPassword(email: string): Promise<void> {
+    if (this.afAuth && this.isFirebaseConfigured()) {
+      await sendPasswordResetEmail(this.afAuth, email);
+      return;
+    }
+
+    // Local Fallback simulation
+    await new Promise(resolve => setTimeout(resolve, 600));
+    const usersDb = this.getUsersDb();
+    const uid = 'local_user_' + btoa(email).substring(0, 10);
+    if (!usersDb[uid]) {
+      throw new Error('Kein Konto mit dieser E-Mail-Adresse gefunden.');
+    }
   }
 
   resetUserStats(resetUser: UserProfile) {
