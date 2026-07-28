@@ -370,7 +370,18 @@ export class PlansComponent {
   }
 
   deletePlan(planId: string) {
-    if (confirm('Bist du sicher, dass du diesen Trainingsplan löschen möchtest?')) {
+    const active = this.workoutService.activeWorkout();
+    const isActiveSessionForPlan = active && active.planId === planId;
+
+    let msg = 'Bist du sicher, dass du diesen Trainingsplan löschen möchtest?';
+    if (isActiveSessionForPlan) {
+      msg = 'Für diesen Plan läuft aktuell eine aktive Trainingseinheit. Möchtest du den Plan löschen und das laufende Training abbrechen?';
+    }
+
+    if (confirm(msg)) {
+      if (isActiveSessionForPlan) {
+        this.workoutService.clearActiveWorkout();
+      }
       this.workoutService.deletePlan(planId);
     }
   }
