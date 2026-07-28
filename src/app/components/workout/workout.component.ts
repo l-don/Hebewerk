@@ -517,104 +517,130 @@ export class WorkoutComponent implements OnInit, OnDestroy {
   }
 
   finishWorkout() {
-    const plan = this.plan();
-    if (!plan) return;
+    try {
+      const plan = this.plan();
+      if (!plan) {
+        this.workoutService.clearActiveWorkout();
+        this.router.navigate(['/plans']);
+        return;
+      }
 
-    // Check if any sets are logged (explicitly checked off OR filled with valid values)
-    const loggedExercises: LoggedExercise[] = this.exercises()
-      .map(ex => {
-        const completedSets = ex.sets.filter(s => s.completed || (s.reps > 0 && s.weight >= 0));
-        
-        return {
-          name: ex.name,
-          notes: ex.notes ? ex.notes.trim() : undefined,
-          sets: completedSets.map(s => ({
-            reps: s.reps,
-            weight: s.weight,
-            targetReps: s.targetReps,
-            targetWeight: s.targetWeight,
-            notes: s.notes ? s.notes.trim() : undefined
-          }))
-        };
-      })
-      .filter(ex => ex.sets.length > 0); // exclude exercises where no sets were completed
+      // Collect all logged exercises/sets (include explicitly checked off OR sets with reps > 0)
+      const loggedExercises: LoggedExercise[] = (this.exercises() || [])
+        .map(ex => {
+          const completedSets = (ex.sets || []).filter(s => s.completed || Number(s.reps) > 0);
+          
+          return {
+            name: ex.name,
+            notes: ex.notes ? ex.notes.trim() : undefined,
+            sets: completedSets.map(s => ({
+              reps: Number(s.reps) || 0,
+              weight: Number(s.weight) || 0,
+              targetReps: Number(s.targetReps) || 0,
+              targetWeight: Number(s.targetWeight) || 0,
+              notes: s.notes ? s.notes.trim() : undefined
+            }))
+          };
+        })
+        .filter(ex => ex.sets.length > 0);
 
-    if (loggedExercises.length === 0) {
-      alert('Bitte logge mindestens einen abgeschlossenen Satz, bevor du das Training beendest.');
-      return;
-    }
+      if (loggedExercises.length === 0) {
+        alert('Bitte trage mindestens einen Satz mit Wiederholungen ein oder hake ihn ab, bevor du das Training beendest.');
+        return;
+      }
 
-    // Stop tickers
-    if (this.elapsedInterval) {
-      clearInterval(this.elapsedInterval);
-    }
-    this.timerService.stopTimer();
+      // Stop tickers
+      if (this.elapsedInterval) {
+        clearInterval(this.elapsedInterval);
+        this.elapsedInterval = null;
+      }
+      this.timerService.stopTimer();
+      this.timerService.resetTimer();
 
-    const duration = Math.round(Math.max(1, (Date.now() - this.startTime.getTime()) / 60000));
-    
-    // Create log object
-    const newLog: WorkoutLog = {
-      id: '',
-      userId: '',
-      planId: plan.id,
-      planName: plan.name,
-      date: new Date().toISOString(),
-      durationMinutes: duration,
-      exercises: loggedExercises
-    };
+      const startTimeMs = this.startTime ? this.startTime.getTime() : Date.now();
+      const duration = Math.round(Math.max(1, (Date.now() - startTimeMs) / 60000));
+      
+      // Create log object
+      const newLog: WorkoutLog = {
+        id: 'log_' + Math.random().toString(36).substring(2, 9),
+        userId: '',
+        planId: plan.id,
+        planName: plan.name,
+        date: new Date().toISOString(),
+        durationMinutes: duration,
+        exercises: loggedExercises
+      };
 
-    // Calculate volume
-    let totalVolume = 0;
-    loggedExercises.forEach(ex => {
-      ex.sets.forEach(s => totalVolume += s.reps * s.weight);
-    });
-
-    // Check Personal Records (PRs)
-    const newPRs: Array<{ exerciseName: string; weight: number }> = [];
-    const allPastLogs = this.workoutService.logs();
-    
-    loggedExercises.forEach(ex => {
-      let maxWeightInPast = 0;
-      allPastLogs.forEach(pl => {
-        const pastEx = pl.exercises.find(e => e.name.toLowerCase() === ex.name.toLowerCase());
-        if (pastEx) {
-          pastEx.sets.forEach(s => {
-            if (s.weight > maxWeightInPast) maxWeightInPast = s.weight;
-          });
-        }
+      // Calculate volume
+      let totalVolume = 0;
+      loggedExercises.forEach(ex => {
+        ex.sets.forEach(s => totalVolume += (Number(s.reps) || 0) * (Number(s.weight) || 0));
       });
 
-      const maxWeightInActive = Math.max(...ex.sets.map(s => s.weight));
-      // It's a PR if the current max exceeds the past max (and there was past history)
-      if (maxWeightInPast > 0 && maxWeightInActive > maxWeightInPast) {
-        newPRs.push({ exerciseName: ex.name, weight: maxWeightInActive });
-      }
-    });
-
-    // Log workout in system and retrieve XP
-    const xpGained = this.workoutService.logWorkout(newLog);
-
-    // Clear active workout session state
-    this.workoutService.clearActiveWorkout();
-
-    // Save outputs for summary view
-    this.summaryMinutes.set(duration);
-    this.summaryVolume.set(totalVolume);
-    this.summaryXp.set(xpGained);
-    this.personalRecords.set(newPRs);
-
-    // Show summary screen
-    this.workoutCompleted.set(true);
-
-    // Trigger level up/confetti animation
-    setTimeout(() => {
+      // Check Personal Records (PRs) safely
+      const newPRs: Array<{ exerciseName: string; weight: number }> = [];
       try {
-        (window as any).triggerConfetti?.();
-      } catch (e) {}
-    }, 200);
+        const allPastLogs = this.workoutService.logs() || [];
+        
+        loggedExercises.forEach(ex => {
+          if (!ex.name) return;
+          const exNameLower = ex.name.trim().toLowerCase();
+          let maxWeightInPast = 0;
+          
+          allPastLogs.forEach(pl => {
+            if (!pl || !Array.isArray(pl.exercises)) return;
+            const pastEx = pl.exercises.find(e => e && e.name && e.name.trim().toLowerCase() === exNameLower);
+            if (pastEx && Array.isArray(pastEx.sets)) {
+              pastEx.sets.forEach(s => {
+                const w = Number(s?.weight) || 0;
+                if (w > maxWeightInPast) maxWeightInPast = w;
+              });
+            }
+          });
+
+          const activeWeights = ex.sets.map(s => Number(s?.weight) || 0);
+          const maxWeightInActive = activeWeights.length > 0 ? Math.max(...activeWeights) : 0;
+          
+          if (maxWeightInPast > 0 && maxWeightInActive > maxWeightInPast) {
+            newPRs.push({ exerciseName: ex.name, weight: maxWeightInActive });
+          }
+        });
+      } catch (prErr) {
+        console.warn('PR calculation error:', prErr);
+      }
+
+      // Log workout in system and retrieve XP
+      const xpGained = this.workoutService.logWorkout(newLog);
+
+      // Clear active workout session state ALWAYS
+      this.workoutService.clearActiveWorkout();
+
+      // Save outputs for summary view
+      this.summaryMinutes.set(duration);
+      this.summaryVolume.set(totalVolume);
+      this.summaryXp.set(xpGained);
+      this.personalRecords.set(newPRs);
+
+      // Show summary screen
+      this.workoutCompleted.set(true);
+
+      // Trigger level up/confetti animation
+      setTimeout(() => {
+        try {
+          (window as any).triggerConfetti?.();
+        } catch (e) {}
+      }, 150);
+
+    } catch (err) {
+      console.error('CRITICAL finishWorkout error:', err);
+      // Guarantee fallback: clear active workout and show dashboard
+      this.workoutService.clearActiveWorkout();
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   finishAndGoToDashboard() {
+    this.workoutService.clearActiveWorkout();
     this.router.navigate(['/dashboard']);
   }
 }

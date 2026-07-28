@@ -304,45 +304,64 @@ export class WorkoutService {
 
   // --- CRUD Logs ---
   logWorkout(log: WorkoutLog): number {
-    const user = this.authService.currentUser();
-    const userId = user ? user.uid : 'local_guest';
+    try {
+      const user = this.authService.currentUser();
+      const userId = user ? user.uid : 'local_guest';
 
-    let totalSets = 0;
-    let totalVolume = 0;
+      let totalSets = 0;
+      let totalVolume = 0;
 
-    log.exercises.forEach(ex => {
-      ex.sets.forEach(set => {
-        totalSets++;
-        totalVolume += set.reps * set.weight;
-      });
-    });
+      if (Array.isArray(log.exercises)) {
+        log.exercises.forEach(ex => {
+          if (Array.isArray(ex.sets)) {
+            ex.sets.forEach(set => {
+              totalSets++;
+              const reps = Number(set.reps) || 0;
+              const weight = Number(set.weight) || 0;
+              totalVolume += reps * weight;
+            });
+          }
+        });
+      }
 
-    const xpGained = Math.round((totalSets * 10) + (totalVolume / 100));
-    log.xpGained = xpGained;
-    log.id = log.id || 'log_' + Math.random().toString(36).substring(2, 9);
-    log.userId = userId;
-    log.date = log.date || new Date().toISOString();
+      const xpGained = Math.max(10, Math.round((totalSets * 10) + (totalVolume / 100)));
+      log.xpGained = xpGained;
+      log.id = log.id || 'log_' + Math.random().toString(36).substring(2, 9);
+      log.userId = userId;
+      log.date = log.date || new Date().toISOString();
 
-    const currentLogs = [log, ...this._logs()];
-    this._logs.set(currentLogs);
-    localStorage.setItem(`hebewerk_logs_${userId}`, JSON.stringify(currentLogs));
+      const currentLogs = [log, ...this._logs()];
+      this._logs.set(currentLogs);
+      localStorage.setItem(`hebewerk_logs_${userId}`, JSON.stringify(currentLogs));
 
-    if (user) {
-      this.authService.updateStats(xpGained);
+      if (user) {
+        try {
+          this.authService.updateStats(xpGained);
+        } catch (e) {
+          console.warn('updateStats error', e);
+        }
+      }
+
+      try {
+        const plan = this._plans().find(p => p.id === log.planId);
+        if (!plan || plan.isPublic !== false) {
+          this.addToActivityFeed(log, xpGained);
+        }
+      } catch (e) {
+        console.warn('addToActivityFeed error', e);
+      }
+
+      // Sync log to Firestore async
+      if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+        const logDocRef = doc(this.firestore, `workout_logs/${log.id}`);
+        setDoc(logDocRef, log).catch(err => console.warn('Firestore logWorkout error', err));
+      }
+
+      return xpGained;
+    } catch (err) {
+      console.error('logWorkout critical error:', err);
+      return 50;
     }
-
-    const plan = this._plans().find(p => p.id === log.planId);
-    if (!plan || plan.isPublic !== false) {
-      this.addToActivityFeed(log, xpGained);
-    }
-
-    // Sync log to Firestore async
-    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
-      const logDocRef = doc(this.firestore, `workout_logs/${log.id}`);
-      setDoc(logDocRef, log).catch(err => console.warn('Firestore logWorkout error', err));
-    }
-
-    return xpGained;
   }
 
   getPreviousWorkoutForPlan(planId: string): WorkoutLog | null {
@@ -406,32 +425,44 @@ export class WorkoutService {
   }
 
   private addToActivityFeed(log: WorkoutLog, xpGained: number) {
-    const user = this.authService.currentUser();
-    const displayName = user ? user.displayName : 'Gast Athlet';
-    const photoURL = user ? user.photoURL : 'https://api.dicebear.com/7.x/adventurer/svg?seed=Guest';
+    try {
+      const user = this.authService.currentUser();
+      const displayName = user ? user.displayName : 'Gast Athlet';
+      const photoURL = user ? user.photoURL : 'https://api.dicebear.com/7.x/adventurer/svg?seed=Guest';
 
-    const feed: any[] = JSON.parse(localStorage.getItem('hebewerk_activity_feed') || '[]');
-    const newItem = {
-      id: 'feed_' + Math.random().toString(36).substring(2, 9),
-      userId: user ? user.uid : 'guest',
-      displayName,
-      photoURL,
-      type: 'workout_completed',
-      timestamp: new Date().toISOString(),
-      details: {
-        planId: log.planId,
-        workoutName: log.planName,
-        xpGained,
-        detailsString: `${log.exercises.length} Übungen in ${log.durationMinutes} min absolviert`,
-        exercises: log.exercises
+      let feed: any[] = [];
+      try {
+        const rawFeed = localStorage.getItem('hebewerk_activity_feed');
+        feed = rawFeed ? JSON.parse(rawFeed) : [];
+        if (!Array.isArray(feed)) feed = [];
+      } catch (e) {
+        feed = [];
       }
-    };
-    feed.unshift(newItem);
-    localStorage.setItem('hebewerk_activity_feed', JSON.stringify(feed.slice(0, 50)));
 
-    if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
-      const feedDocRef = doc(this.firestore, `activity_feed/${newItem.id}`);
-      setDoc(feedDocRef, newItem).catch(e => {});
+      const newItem = {
+        id: 'feed_' + Math.random().toString(36).substring(2, 9),
+        userId: user ? user.uid : 'guest',
+        displayName,
+        photoURL,
+        type: 'workout_completed',
+        timestamp: new Date().toISOString(),
+        details: {
+          planId: log.planId,
+          workoutName: log.planName,
+          xpGained,
+          detailsString: `${log.exercises?.length || 0} Übungen in ${log.durationMinutes} min absolviert`,
+          exercises: log.exercises || []
+        }
+      };
+      feed.unshift(newItem);
+      localStorage.setItem('hebewerk_activity_feed', JSON.stringify(feed.slice(0, 50)));
+
+      if (this.firestore && this.isFirebaseConfigured() && user && !user.uid.startsWith('local_')) {
+        const feedDocRef = doc(this.firestore, `activity_feed/${newItem.id}`);
+        setDoc(feedDocRef, newItem).catch(e => {});
+      }
+    } catch (e) {
+      console.warn('addToActivityFeed error', e);
     }
   }
 }
