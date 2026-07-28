@@ -81,6 +81,21 @@ import { AuthService } from '../../services/auth.service';
             />
           </div>
 
+          @if (isRegisterMode()) {
+            <div>
+              <label class="block text-xs font-bold text-[#2D3748] uppercase font-heading mb-1">Passwort wiederholen</label>
+              <input 
+                type="password" 
+                name="confirmPassword"
+                [(ngModel)]="confirmPassword"
+                required
+                minlength="6"
+                placeholder="••••••••" 
+                class="w-full px-3.5 py-2.5 rounded-xl notebook-input placeholder-[#A0AEC0] font-body text-[#1A1A1A] text-sm border border-[#2D3748]/30"
+              />
+            </div>
+          }
+
           <button 
             type="submit" 
             [disabled]="authForm.invalid || isLoading()"
@@ -143,6 +158,7 @@ export class AuthComponent {
   // Form Fields
   email = '';
   password = '';
+  confirmPassword = '';
   displayName = '';
 
   toggleAuthMode() {
@@ -151,6 +167,11 @@ export class AuthComponent {
   }
 
   async onSubmit() {
+    if (this.isRegisterMode() && this.password !== this.confirmPassword) {
+      this.errorMessage.set('Die eingegebenen Passwörter stimmen nicht überein.');
+      return;
+    }
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
 

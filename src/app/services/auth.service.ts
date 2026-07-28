@@ -157,8 +157,11 @@ export class AuthService {
     // Local Fallback
     await new Promise(resolve => setTimeout(resolve, 600));
     const uid = 'local_user_' + btoa(email).substring(0, 10);
-    const user = this.createDefaultProfile(uid, displayName || email.split('@')[0], email);
     const usersDb = this.getUsersDb();
+    if (usersDb[uid]) {
+      throw new Error('Ein Konto mit dieser E-Mail-Adresse existiert bereits.');
+    }
+    const user = this.createDefaultProfile(uid, displayName || email.split('@')[0], email);
     usersDb[uid] = user;
     this.saveUsersDb(usersDb);
     this.saveSession(user);
