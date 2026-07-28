@@ -90,9 +90,18 @@ import { UserProfile, WorkoutPlan } from '../../models/gym.models';
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center justify-between gap-2">
                     <h3 class="text-xl font-bold font-heading text-[#1A1A1A] truncate">{{ item.profile.displayName }}</h3>
-                    <span class="highlighter-yellow text-xs font-bold font-heading uppercase shrink-0 px-2 py-0.5 rounded border border-[#2D3748]/20">
-                      LVL {{ item.profile.stats.level }}
-                    </span>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="highlighter-yellow text-xs font-bold font-heading uppercase px-2 py-0.5 rounded border border-[#2D3748]/20">
+                        LVL {{ item.profile.stats.level }}
+                      </span>
+                      <button 
+                        (click)="removeFriend(item.profile.uid, item.profile.displayName)"
+                        class="p-1 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 transition-colors"
+                        title="Freund entfernen"
+                      >
+                        <img src="assets/icons/Delete-Bin-1--Streamline-Freehand.png" class="w-4 h-4 object-contain" alt="Entfernen" />
+                      </button>
+                    </div>
                   </div>
                   <div class="flex items-center gap-3 text-xs text-[#718096] font-body mt-1">
                     <span class="font-bold text-[#d97706] flex items-center gap-1">
@@ -294,6 +303,13 @@ export class FriendsComponent {
   async cancelSentRequest(friendshipId: string) {
     await this.friendsService.cancelSentRequest(friendshipId);
     this.showToast('Abgesendete Anfrage zurückgezogen.');
+  }
+
+  async removeFriend(friendUid: string, friendName: string) {
+    if (confirm(`Möchtest du ${friendName} wirklich aus deinen Freunden entfernen?`)) {
+      await this.friendsService.removeFriend(friendUid);
+      this.showToast(`Freundschaft mit ${friendName} aufgehoben.`);
+    }
   }
 
   copyPlan(plan: WorkoutPlan) {

@@ -429,4 +429,23 @@ export class FriendsService {
 
     this.workoutService.savePlan(copiedPlan);
   }
+
+  async removeFriend(friendUid: string): Promise<void> {
+    const user = this.authService.currentUser();
+    if (!user) return;
+
+    const sortedUids = [user.uid, friendUid].sort();
+    const friendshipId = `friendship_${sortedUids[0]}_${sortedUids[1]}`;
+
+    if (this.firestore && this.isFirebaseConfigured()) {
+      try {
+        const docRef = doc(this.firestore, `friends/${friendshipId}`);
+        await deleteDoc(docRef);
+      } catch (e) {
+        console.warn('Firestore removeFriend failed', e);
+      }
+    }
+
+    this._friends.update(current => current.filter(f => f.profile.uid !== friendUid));
+  }
 }
