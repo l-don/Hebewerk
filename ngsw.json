@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1785270093245,
+  "timestamp": 1785270374184,
   "index": "/Hebewerk/index.html",
   "assetGroups": [
     {
@@ -11,22 +11,22 @@
         "ignoreVary": true
       },
       "urls": [
-        "/Hebewerk/chunk-2SZUEHMM.js",
         "/Hebewerk/chunk-3J23ISLR.js",
-        "/Hebewerk/chunk-4GJ6MBJT.js",
-        "/Hebewerk/chunk-7LQC2D5O.js",
-        "/Hebewerk/chunk-7MD3FY6G.js",
+        "/Hebewerk/chunk-4VVLMJON.js",
         "/Hebewerk/chunk-7OMUBUGO.js",
-        "/Hebewerk/chunk-ASI44ZSE.js",
         "/Hebewerk/chunk-BBO3G4CT.js",
-        "/Hebewerk/chunk-GMFQ7Q2R.js",
+        "/Hebewerk/chunk-CN2OILJS.js",
+        "/Hebewerk/chunk-DTDOARAJ.js",
+        "/Hebewerk/chunk-DUJXRO6A.js",
+        "/Hebewerk/chunk-KFIJ2IZD.js",
+        "/Hebewerk/chunk-KK7OLPW3.js",
         "/Hebewerk/chunk-LILJS7PZ.js",
-        "/Hebewerk/chunk-LYIQ6ZSO.js",
-        "/Hebewerk/chunk-UMMKP3R6.js",
-        "/Hebewerk/chunk-WRSL65HO.js",
+        "/Hebewerk/chunk-OOMALD57.js",
+        "/Hebewerk/chunk-T236MAW7.js",
+        "/Hebewerk/chunk-T6SOXH5T.js",
         "/Hebewerk/favicon.ico",
         "/Hebewerk/index.html",
-        "/Hebewerk/main-YPW2MI6N.js",
+        "/Hebewerk/main-S5NKE4SJ.js",
         "/Hebewerk/manifest.webmanifest",
         "/Hebewerk/polyfills-FFHMD2TL.js",
         "/Hebewerk/styles-JHRC7ULV.css"
@@ -77,7 +77,22 @@
       "patterns": []
     }
   ],
-  "dataGroups": [],
+  "dataGroups": [
+    {
+      "name": "firestore-channel-bypass",
+      "patterns": [
+        "https:\\/\\/firestore\\.googleapis\\.com\\/.*",
+        "https:\\/\\/[^/]*\\.firebaseio\\.com\\/.*"
+      ],
+      "strategy": "freshness",
+      "maxSize": 0,
+      "maxAge": 0,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
   "hashTable": {
     "/Hebewerk/assets/GymTrackerNotebookStyle_refrence.png": "01099f02eaf622a534f92cae2c239723333667be",
     "/Hebewerk/assets/icons/Alert-Alarm-Bell--Streamline-Freehand.png": "73b7ffa7499147ea89546bfff9da52ea64d0ade5",
@@ -111,22 +126,22 @@
     "/Hebewerk/assets/symbols/dumbell_symbol_3.png": "900dab1373c090562563300d589a8111491777e0",
     "/Hebewerk/assets/symbols/energy_symbol.png": "314a5f77ebd12b0775d4b599575ea811c332f9ed",
     "/Hebewerk/assets/symbols/flame_symbol.png": "bc2d535fe445c96e0d1a6e0b68782d104c921843",
-    "/Hebewerk/chunk-2SZUEHMM.js": "4e877ed59250905521f9ad46d3603577395d25bd",
     "/Hebewerk/chunk-3J23ISLR.js": "ed3e3ec7e85ea199bb9594f7421cd3b475515bfa",
-    "/Hebewerk/chunk-4GJ6MBJT.js": "abd0b62f380e62eb420aee34d3a8c750808a6a99",
-    "/Hebewerk/chunk-7LQC2D5O.js": "fafb9ad87a96b9c841b8e82079e9b54990aefdec",
-    "/Hebewerk/chunk-7MD3FY6G.js": "542a53f72407d8422d1d6fcdb6786aa421b15cc4",
+    "/Hebewerk/chunk-4VVLMJON.js": "da986350a13aae6581154532e738a8ba8e987175",
     "/Hebewerk/chunk-7OMUBUGO.js": "500c34aea307298951f0e1d272f8c0df2433f917",
-    "/Hebewerk/chunk-ASI44ZSE.js": "94e72d6c0049340a592849c28a95cc1cab6a8065",
     "/Hebewerk/chunk-BBO3G4CT.js": "3da889a9210a978822840f6f7f96202691742e62",
-    "/Hebewerk/chunk-GMFQ7Q2R.js": "d0e927dd7c2c34f7da7973a804f27545d644a763",
+    "/Hebewerk/chunk-CN2OILJS.js": "2525e63f75541036640d2bc034c351053f8004e5",
+    "/Hebewerk/chunk-DTDOARAJ.js": "f8643ed31732c0d0298b52ec9ead975fcf2cf569",
+    "/Hebewerk/chunk-DUJXRO6A.js": "f206bc8d7ecf951d005aaf348144f188080b822f",
+    "/Hebewerk/chunk-KFIJ2IZD.js": "a0761989a586c1f30f45f792c779476ddda48496",
+    "/Hebewerk/chunk-KK7OLPW3.js": "c23722540fa673c2a8fa1fe0b0660cecbfbc5cd8",
     "/Hebewerk/chunk-LILJS7PZ.js": "c10521ebf7655f531d2f85dcde477fa48cdf0d4f",
-    "/Hebewerk/chunk-LYIQ6ZSO.js": "5b2cad23f8873a4aace4ee66e60cff932bad141b",
-    "/Hebewerk/chunk-UMMKP3R6.js": "83341db818719d0a28bd0d5d3505e5fd2d6a47cd",
-    "/Hebewerk/chunk-WRSL65HO.js": "b556c04312e070897457fcc6be7843c84a90e2ac",
+    "/Hebewerk/chunk-OOMALD57.js": "f6a39ae334005e2a5ca5a02b41e22a9ef48b1e32",
+    "/Hebewerk/chunk-T236MAW7.js": "859fd114097ca474c57f125e1ce489c7e67ef1fd",
+    "/Hebewerk/chunk-T6SOXH5T.js": "e680e7450a047e20ff4e7baab7af67d90b392c88",
     "/Hebewerk/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
-    "/Hebewerk/index.html": "51a504f871a831e70d181a9cc9d823209b2e703b",
-    "/Hebewerk/main-YPW2MI6N.js": "20a27a538a1d8c192c8a01ff71c7fa0ad361da14",
+    "/Hebewerk/index.html": "c376d896279faaf78ccdd9f81284ccfd0231603e",
+    "/Hebewerk/main-S5NKE4SJ.js": "782670d516a64a8bfed6c28763343e734b50a415",
     "/Hebewerk/manifest.webmanifest": "b6d7403847f307415e7b1e799653c9b5df50df5e",
     "/Hebewerk/polyfills-FFHMD2TL.js": "f49b49a155bc7d192db62a4c15d0a612b460a667",
     "/Hebewerk/styles-JHRC7ULV.css": "7eba5c8b6a67e914d53ffee5d1e8a8ec48c52818"
