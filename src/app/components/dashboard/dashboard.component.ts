@@ -650,7 +650,7 @@ export class DashboardComponent implements OnDestroy {
 
         snapshot.forEach(docSnap => {
           const item = docSnap.data() as ActivityFeedItem;
-          if (friendIds.has(item.userId) || item.userId === userId || friendIds.size <= 1) {
+          if (friendIds.has(item.userId)) {
             items.push(item);
           }
         });
@@ -669,7 +669,14 @@ export class DashboardComponent implements OnDestroy {
 
   private loadLocalFeed() {
     const local = localStorage.getItem('hebewerk_activity_feed') || localStorage.getItem('gym_activity_feed');
-    this.activityFeedItems.set(local ? JSON.parse(local) : []);
+    const allItems: ActivityFeedItem[] = local ? JSON.parse(local) : [];
+    const user = this.currentUser();
+    const userId = user ? user.uid : 'local_guest';
+    const friendIds = new Set(this.friendsService.friends().map(f => f.profile.uid));
+    friendIds.add(userId);
+
+    const filtered = allItems.filter(item => friendIds.has(item.userId));
+    this.activityFeedItems.set(filtered);
   }
 
   async openPlanPreview(item: ActivityFeedItem) {
