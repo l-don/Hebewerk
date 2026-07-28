@@ -303,7 +303,7 @@ interface ActiveExercise {
 
           <div class="pt-2">
             <button 
-              routerLink="/dashboard"
+              (click)="finishAndGoToDashboard()"
               class="notebook-btn-primary w-full py-3 rounded-xl text-lg font-heading shadow-sm"
             >
               Zum Dashboard
@@ -612,5 +612,9 @@ export class WorkoutComponent implements OnInit, OnDestroy {
         (window as any).triggerConfetti?.();
       } catch (e) {}
     }, 200);
+  }
+
+  finishAndGoToDashboard() {
+    this.router.navigate(['/dashboard']);
   }
 }
