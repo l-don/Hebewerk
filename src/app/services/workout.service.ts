@@ -148,6 +148,7 @@ export class WorkoutService {
     this._activeWorkout.set(null);
     localStorage.removeItem(`hebewerk_active_workout_${userId}`);
     localStorage.removeItem('hebewerk_active_workout_global');
+    localStorage.removeItem('gym_active_workout');
 
     if (this.firestore && this.isFirebaseConfigured() && userId && !userId.startsWith('local_')) {
       const activeDocRef = doc(this.firestore, `active_workouts/${userId}`);
